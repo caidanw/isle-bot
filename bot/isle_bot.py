@@ -6,8 +6,8 @@ from game.game import Game
 from game.player import Player
 from utils.clock import server_clock
 from utils.logs import log_command
+from utils.cache import Cache
 
-TOKEN = 'NDU2MDk5MzExMzM2NDIzNDM1.DgF-jA.ymkelNjBMc5sJHtXdB9jppgAI0U'
 PREFIXES = ('!', '?', '.', '-', '~')
 
 bot = Bot(PREFIXES)
@@ -112,4 +112,5 @@ async def clock():
 
 
 if __name__ == '__main__':
-    bot.run(TOKEN)
+    # run the bot with the token from the config file
+    bot.run(Cache.get_from_json('data/config.json')['token'])
