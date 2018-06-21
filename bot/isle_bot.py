@@ -1,17 +1,19 @@
-import asyncio
+import os
 
+from discord.ext import commands
 from discord.ext.commands import Bot
 
 from game.game import Game
-from game.player import Player
-from utils.clock import server_clock
-from utils.logs import log_command
+from utils.check import is_private
+from utils.logs import log_command, log
 from utils.cache import Cache
 
-PREFIXES = ('!', '?', '.', '-', '~')
+TOKEN = Cache.get_from_json('data/config.json')['token']
+PREFIXES = ('!', '?', '.', '~')
+COGS_DIR = "bot.cogs"  # this specifies what extensions to load when the bot starts up (from this directory)
 
 bot = Bot(PREFIXES)
-game = Game()
+game = None
 
 
 @bot.event
@@ -27,90 +29,63 @@ async def on_server_join(server):
     # create a new guild for the server
     guild = game.create_guild(server)
     print('Created a new Guild under the name \'{}\''.format(guild.name))
+    # Todo: add an option to ask whether or not the server should be created into a guild.
 
 
 @bot.event
 async def on_server_update(before, after):
     # create a new guild for the server
-    guild = game.create_guild(after)
-    print('Created a new Guild under the name \'{}\''.format(guild.name))
+    prev = game.get_guild(before)
+    if prev is None:
+        guild = game.create_guild(after)
+        print('Created a new Guild under the name \'{}\''.format(guild.name))
+    else:
+        prev.name = after.name
+        prev.save()
+        print('Updated the guild \'{}\' to be \'{}\''.format(before.name, after.name))
 
 
 @bot.event
 async def on_message(message):
-    if message.content.startswith(PREFIXES):
-        log_command(message.author, message.content[1:])
+    """ Run some checks to make sure the message is valid, then continue to process the valid commands. """
+    if not message.content.startswith(PREFIXES):
+        return
+
+    log_command(message.author, message.content.strip())
+
+    player = game.get_player(message.author)
+    if player is None and 'join' not in message.content:
+        return await bot.send_message(message.channel, 'You are not registered as a part of this game.')
+
+    if not is_private(message):
+        guild = game.get_guild(message.server)
+        if guild is None:
+            return await bot.send_message(message.channel, 'This discord server is not registered as a guild.')
+
     await bot.process_commands(message)
 
 
-@bot.command(pass_context=True)
-async def join(context):
-    guild = game.get_guild(context.message.server)
-    player = Player(user=context.message.author, guild=guild)
-
-    message = guild.add_member(player)
-    await bot.say(message)
-
-    game.save()
+@bot.event
+async def on_command_error(exception, context):
+    print(exception)
+    if isinstance(exception, commands.CommandNotFound):
+        return await bot.send_message(context.message.channel,
+                                      'Command \'{}\' unknown.\nTry \'?help\''.format(context.invoked_with))
 
 
-@bot.command(pass_context=True)
-async def harvest(context, desired_amount=5, resource_name=None):
-    guild = game.get_guild(context.message.server)
-    if not guild:
-        await bot.say('The discord server is not registered as a guild.')
-        return
+if __name__ == "__main__":
+    # load all the extensions from the cogs directory
+    for extension in os.listdir(COGS_DIR.replace('.', '/')):
+        try:
+            if extension.endswith('.py'):
+                extension_path = COGS_DIR + "." + extension.replace('.py', '')
+                bot.load_extension(extension_path)
+                log('Loaded extension {}'.format(extension))
+        except Exception as e:
+            exc = '{}: {}'.format(type(e).__name__, e)
+            print('Failed to load extension {}:\n\t{}'.format(extension, exc))
 
-    player = guild.get_member(context.message.author)
-    if not player:
-        await bot.say('You are not registered as a member of this guild.'
-                      '\n\nType \'.join_guild\' to join this discord server\'s guild')
-        return
+    game = Game()
 
-    island = player.on_island
-    resource = island.get_resource(resource_name)
-    if not resource:
-        await bot.say('The resource \'{}\' is not on the current island.'.format(resource_name))
-        return
-    elif resource.amount < desired_amount:
-        await bot.say('The resource only has {} items left to harvest.'.format(resource.amount))
-        return
-
-    player_inv = player.inventory
-    if not player_inv.validate_stack(resource.gives_item, desired_amount):
-        await bot.say('You don\'t have enough room in your inventory.')
-        return
-
-    await bot.say('Harvesting from {}, time to finish {}s'.format(desired_amount,
-                                                                  resource.seconds_to_one_item * desired_amount))
-    item_stack = await resource.harvest(desired_amount)
-    player_inv.add_item(item_stack.item, item_stack.amount)
-    await bot.say('{} harvested {} {}'.format(player.user.mention, item_stack.amount, item_stack.item))
-
-
-@bot.command(pass_context=True)
-async def hello(context):
-    await bot.say('Hello {}, you looking dashing today.'.format(context.message.author.mention))
-
-
-@bot.command(pass_context=True)
-async def smile(context):
-    await bot.add_reaction(context.message, emoji='😊')
-
-
-@bot.command(pass_context=True)
-async def sleep(context, amount: int=10):
-    await bot.say('Sleeping {}s'.format(amount))
-    await asyncio.sleep(amount)
-    await bot.say('Finished sleeping')
-    log_command(context.message.author, 'sleep {}'.format(amount), issued=False)
-
-
-@bot.command(pass_context=True)
-async def clock():
-    await bot.say(server_clock())
-
-
-if __name__ == '__main__':
     # run the bot with the token from the config file
-    bot.run(Cache.get_from_json('data/config.json')['token'])
+    bot.run(TOKEN)
