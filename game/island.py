@@ -1,30 +1,39 @@
 from datetime import datetime
 import random
 
-from game.resource import Resource
+from peewee import *
+
+from game.base_model import BaseModel
+from game.guild import Guild
 
 
-class Island:
-    def __init__(self, guild, name=None):
-        self.guild = guild
-        if guild:
-            self.name = name if not None else '{} island'.format(guild.name)
-            self.claimed = True
-        else:
-            self.name = 'lost island'
-            self.claimed = False
-        self.size = random.randint(30, 800)
-        self.claimed_at = datetime.now().isoformat()
-        self.days_since_claimed = 0
-        self.resources = []
-        self.populate_resources()
+class Island(BaseModel):
+    """
+    Island class used to represent an area a Guild can own,
+    and a place for Players to harvest Resources.
+    """
+
+    guild = ForeignKeyField(Guild, backref='islands')
+    name = CharField(default='Lost Island')
+    claimed = BooleanField(default=False)
+    size = IntegerField(default=random.randint(300, 800))
+    claimed_at = DateTimeField(default=datetime.now())
 
     def get_resource(self, name):
+        """ Get a Resource by name that is located on the this Island
+
+        :param name: of the resource
+        :return: a resource if found by the name
+        """
         for resource in self.resources:
             if resource.name == name:
                 return resource
         return None
 
-    def populate_resources(self):
-        for resource in range(5):
-            self.resources.append(Resource.random(50, 500))
+    def add_resource(self, resource):
+        """ Add a Resource to this current Island
+
+        :param resource: to add
+        """
+        resource.on_island = self
+        resource.save()

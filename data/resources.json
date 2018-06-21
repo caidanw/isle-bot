@@ -3,5 +3,10 @@
     "name": "forest",
     "item": "wood",
     "time": 2
+  },
+  {
+    "name": "quarry",
+    "item": "stone",
+    "time": 4
   }
 ]
