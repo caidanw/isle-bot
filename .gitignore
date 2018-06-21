@@ -8,3 +8,5 @@ game/ref/
 *.p
 
 data/config\.json
+
+data/universe\.db
