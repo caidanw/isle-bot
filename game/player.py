@@ -4,22 +4,28 @@ from game.base_model import BaseModel
 from game.guild import Guild
 from game.inventory import Inventory
 from game.island import Island
-from utils.enums import Action
+from game.enums.action import Action
 
 
 class Player(BaseModel):
     """ Player class used to represent a Discord User within the game world. """
 
     username = CharField()
-    uuid = UUIDField()
+    uuid = IntegerField()
     action = IntegerField(default=Action.idle.value)  # every action maps to an integer value
-    guild = ForeignKeyField(Guild, backref='members', default=None)
-    on_island = ForeignKeyField(Island, backref='residents', default=None)
-    inventory = ForeignKeyField(Inventory, default=Inventory())
+    guild = ForeignKeyField(Guild, backref='members', null=True)
+    on_island = ForeignKeyField(Island, backref='residents', null=True)
+    inventory = ForeignKeyField(Inventory)
 
     @property
     def is_idle(self):
         return self.action is Action.idle.value
+
+    @property
+    def get_location(self):
+        if self.on_island is not None:
+            return Island.get_or_none(Island.id == self.on_island)
+        return None
 
     def join_guild(self, guild):
         """ Join the desired Guild, first check that the Player does not belong
@@ -29,7 +35,7 @@ class Player(BaseModel):
         :return: a string declaring whether or not the player joined
         """
         if not guild.has_member(self):
-            self.guild = self
+            self.guild = guild
             if self.on_island is None:
                 self.on_island = guild.get_island()
             self.save()

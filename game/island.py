@@ -13,11 +13,15 @@ class Island(BaseModel):
     and a place for Players to harvest Resources.
     """
 
-    guild = ForeignKeyField(Guild, backref='islands')
+    guild = ForeignKeyField(Guild, backref='islands', null=True)
     name = CharField(default='Lost Island')
     claimed = BooleanField(default=False)
     size = IntegerField(default=random.randint(300, 800))
     claimed_at = DateTimeField(default=datetime.now())
+
+    @property
+    def owner(self):
+        return self.guild.name
 
     def get_resource(self, name):
         """ Get a Resource by name that is located on the this Island
@@ -25,6 +29,7 @@ class Island(BaseModel):
         :param name: of the resource
         :return: a resource if found by the name
         """
+        # Todo: add option to search for resource with desired amount
         for resource in self.resources:
             if resource.name == name:
                 return resource

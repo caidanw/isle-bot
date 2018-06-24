@@ -24,13 +24,26 @@ class Game:
         :param server: the discord server that the bot currently resides
         :return: a guild
         """
-        existing_guild = cls.get_guild(server)
-        if existing_guild:
-            return existing_guild
+        if cls.check_guild_exists(server):
+            return cls.get_guild(server)
 
         # create and return a new guild
         guild = Guild.create(server_id=server.id, name=server.name)
-        guild.claim_island(Island())
+        island = Game.create_island(guild)
+        guild.claim_island(island)
+        guild.save()
+        return guild
+
+    @classmethod
+    def check_guild_exists(cls, server: Server):
+        """ Check to see if a guild exists within the database
+
+        :param server: to check for
+        :return: a boolean
+        """
+        if Guild.get_or_none(Guild.server_id == server.id) is None:
+            return False
+        return True
 
     @classmethod
     def get_guild(cls, server: Server):
@@ -42,7 +55,7 @@ class Game:
         try:
             return Guild.get(Guild.server_id == server.id)
         except Exception:
-            log_db('Server #{} has not been registered as a guild.'.format(server.id))
+            log_db('Server \'{}\' [id:{}] has not been registered as a guild.'.format(server.name, server.id))
             return None
 
     @classmethod
@@ -59,31 +72,13 @@ class Game:
             return None
 
     @classmethod
-    def create_player(cls, user: User):
-        """ Add a new Player to this game and return them.
-        Unless they already exist in the database, then return that player.
-
-        :param user: used to create a player
-        """
-        existing_player = cls.get_player(user)
-        if existing_player:
-            return existing_player
-
-        # create and return a new player
-        return Player.create(username=user.name, uuid=user.id)
-
-    @classmethod
     def get_player(cls, user: User):
         """ Retrieve the Player from the database with the desired User.
 
-        :param user: to search for in the database
+        :param user: to search for in the database by id
         :return: [Player | None] object
         """
-        try:
-            return Player.get(Player.uuid == user.id)
-        except Exception:
-            log_db('User #{} has not been registered to a guild.'.format(user.id))
-            return None
+        return Player.get_or_none(Player.uuid == user.id)
 
     @classmethod
     def create_island(cls, guild: Guild=None, resource_amount=5):
@@ -95,11 +90,12 @@ class Game:
         :param resource_amount: amount of resources on the island
         """
         island = Island()
-        for i in range(resource_amount):
-            resource = Resource.random(island)
-            island.add_resource(resource)
 
         if guild is not None:
             guild.claim_island(island)
 
+        for i in range(resource_amount):
+            Resource.random(island)
+
         island.save()
+        return island

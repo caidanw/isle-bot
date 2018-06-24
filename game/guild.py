@@ -63,7 +63,6 @@ class Guild(BaseModel):
         :param name: of the island
         :return: [Island or None] object
         """
-        print('reloaded')
         # query the db to islands associated with this guild id
         if not name:
             # return the first island if no name is given

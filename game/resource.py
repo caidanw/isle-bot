@@ -2,10 +2,11 @@ import random
 import asyncio
 
 from peewee import *
+from playhouse.sqlite_ext import JSONField
 
 from game.base_model import BaseModel
+from game.enums.item import Item
 from game.island import Island
-from game.item import ItemStack
 from utils.cache import Cache
 
 
@@ -13,8 +14,7 @@ class Resource(BaseModel):
     """ Resource class used to represent a place for Player's to obtain various items. """
 
     name = CharField()
-    gives_item = CharField()
-    seconds_to_one_item = IntegerField()
+    gives_items = JSONField(default=[])
     max_item_amount = IntegerField(default=100)
     item_amount = IntegerField(default=100)
     on_island = ForeignKeyField(Island, backref='resources')
@@ -32,12 +32,18 @@ class Resource(BaseModel):
         # get a random resource from our json data
         resource = get_random_resource()
         amount = random.randint(min_amt, max_amt)
-        return Resource(name=resource['name'],
-                        gives_item=resource['item'],
-                        seconds_to_one_item=resource['time'],
-                        max_item_amount=amount,
-                        item_amount=amount,
-                        on_island=island)
+        return Resource.create(name=resource['name'],
+                               gives_items=resource['gives_items'],
+                               max_item_amount=amount,
+                               item_amount=amount,
+                               on_island=island)
+
+    @property
+    def average_item_harvest_time(self):
+        average_time = 0
+        for item_name in self.gives_items:
+            average_time += Item[item_name].value
+        return average_time // len(self.gives_items)
 
     async def harvest(self, amount):
         """ Remove the amount of items within this resource,
@@ -46,9 +52,20 @@ class Resource(BaseModel):
         :param amount: of items to harvest
         :return: an ItemStack with the harvested item and amount
         """
+
         self.item_amount -= amount
-        await asyncio.sleep(amount * self.seconds_to_one_item)
-        return ItemStack(item=self.gives_item, amount=amount)
+        self.save()
+
+        harvested_items = {}
+        for i in range(amount):
+            item_name = random.choice(self.gives_items)
+            harvest_time = Item[item_name].value
+            await asyncio.sleep(harvest_time)
+            if harvested_items.get(item_name) is None:
+                harvested_items[item_name] = 1
+            else:
+                harvested_items[item_name] += 1
+        return harvested_items
 
 
 def get_random_resource():

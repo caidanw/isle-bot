@@ -7,28 +7,21 @@ from game.base_model import BaseModel
 class Inventory(BaseModel):
     """ Inventory class used to manage a Player's items. """
 
-    max_stack = IntegerField(default=50)
-    items = JSONField(default={})
+    max_harvested_items = IntegerField(default=50)
+    harvested_items = JSONField(default={})
+    crafted_items = JSONField(default=[])
 
-    def validate_stack(self, item, amount):
-        """ Check whether the amount of the item can be added to the inventory,
-        without going over the stack limit (also checks that the amount is a non-negative integer).
+    def validate_is_room(self, amount):
+        """ Check whether the amount of the harvested item can be added to harvested_items,
+        also checks that the amount is a non-negative integer.
 
-        :param item: the item to add
-        :param amount: the amount to add
+        :param amount: to check if there is room
         :return: a boolean determining if the amount of item can be added
         """
         if not isinstance(amount, int) or amount < 0:
             return False
 
-        if item not in self.items:
-            if amount > self.max_stack:
-                return False
-            return True
-
-        if self.items[item] + amount > self.max_stack:
-            return False
-        return True
+        return (sum(self.harvested_items.values()) + amount) <= self.max_harvested_items
 
     def add_item(self, item, amount=1):
         """ Add the specified amount of the item to the inventory
@@ -37,31 +30,48 @@ class Inventory(BaseModel):
         :param amount: of the item to add
         :return: a boolean showing whether or not the item was added
         """
-        if self.validate_stack(item, amount):
-            if item not in self.items:
-                self.items[item] = amount
+        if self.validate_is_room(amount):
+            if item not in self.harvested_items:
+                self.harvested_items[item] = amount
             else:
-                self.items[item] += amount
+                self.harvested_items[item] += amount
+            self.save()
             return True
         else:
             return False
 
-    def remove_item(self, item, amount):
+    def remove_item(self, item, amount=1):
         """ Remove an item of the specified amount from the inventory
 
         :param item: to remove
         :param amount: of the item to remove
         :return: a boolean showing whether or not the item was removed
         """
-        if self.items[item] >= amount:
-            self.items[item] -= amount
+        if self.harvested_items[item] >= amount:
+            self.harvested_items[item] -= amount
             return True
         return False
 
-    def __repr__(self):
+    def add_craftable(self, item, amount=1):
+        if amount > 0:
+            for i in range(amount):
+                self.crafted_items.append({item.name: item.durability()})
+            self.save()
+            return True
+        return False
+
+    def enough_to_craft(self, recipe):
+        for item, amount in recipe.items():
+            if item.name not in self.harvested_items:
+                return False
+            elif self.harvested_items[item.name] < amount:
+                return False
+        return True
+
+    def to_message(self):
         output = '```\n---Inventory---'
-        output += '\n{}: {}'.format('max stack'.ljust(10), str(self.max_stack).zfill(3))
-        for item, amount in self.items.items():
-            output += '\n{}: {}'.format(item.ljust(10), str(amount).zfill(3))
+        output += '\n{} : {}'.format('max amount'.ljust(10), str(self.max_harvested_items).zfill(3))
+        for item, amount in self.harvested_items.items():
+            output += '\n{} : {}'.format(item.ljust(10), str(amount).zfill(3))
         output += '\n```'
         return output
