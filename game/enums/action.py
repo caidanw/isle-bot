@@ -6,6 +6,3 @@ class Action(Enum):
     harvesting = 1
     crafting = 2
     traveling = 3
-
-    def __str__(self):
-        return self.name
