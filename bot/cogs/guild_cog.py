@@ -1,9 +1,9 @@
 from discord.ext import commands
 
-from utils.check import is_private
-
+from game.game import Game
+from game.inventory import Inventory
 from game.player import Player
-from bot.isle_bot import game
+from utils.check import is_private
 
 
 class GuildCog:
@@ -19,35 +19,40 @@ class GuildCog:
         if private_channel and guild_name is None:
             return await self.bot.say('You must enter the name of the guild you would like to join.')
 
-        if private_channel or guild_name is not None:
-            guild = game.search_guilds(guild_name)
+        if private_channel:
+            guild = Game.search_guilds(guild_name)
         else:
-            guild = game.get_guild(context.message.server)
+            guild = Game.get_guild(context.message.server)
 
         if guild is None:
             return await self.bot.say('That guild does not exist or is not registered.')
 
-        player = game.get_player(context.message.author)
-        if player and player.guild is not None:
+        player = Game.get_player(context.message.author)
+        if player and player.guild:
             return await self.bot.say('You already belong to the guild {}'.format(player.guild.name))
         elif player is None:
-            player = Player(game, context.message.author, guild)
+            author = context.message.author
 
-        game.create_player(player)
-        message = player.join_guild(guild)
+            player = Player.create(username=author.name,
+                                   uuid=author.id,
+                                   guild=guild,
+                                   on_island=guild.get_island(),
+                                   inventory=Inventory.create())
+
+        if player.guild is guild:
+            message = '{} was born and has joined {}'.format(player.username, guild.name)
+        else:
+            message = player.join_guild(guild)
+
         await self.bot.say(message)
-
-        game.save()
 
     @commands.command(pass_context=True)
     async def leave(self, context):
         """ Leave your current guild. """
-        player = game.get_player(context.message.author)
+        player = Game.get_player(context.message.author)
 
         message = player.leave_guild()
         await self.bot.say(message)
-
-        game.save()
 
 
 def setup(bot):
