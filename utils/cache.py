@@ -3,7 +3,9 @@ import json
 from peewee import SqliteDatabase
 
 db = SqliteDatabase('data/universe.db', pragmas={
-    'cache_size': -1024 * 32  # Set cache size to 32MB for *current connection*.
+    'cache_size': -1024 * 32,  # Set cache size to 32MB for *current connection*
+    'journal_mode': 'wal',
+    'foreign_keys': 'on'
 })
 
 
