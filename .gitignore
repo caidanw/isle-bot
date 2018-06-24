@@ -10,3 +10,7 @@ game/ref/
 data/config\.json
 
 data/universe\.db
+
+data/universe\.db-shm
+
+data/universe\.db-wal
