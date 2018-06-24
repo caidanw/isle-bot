@@ -1,5 +1,7 @@
 import os
+import traceback
 
+import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
 
@@ -8,12 +10,12 @@ from utils.check import is_private
 from utils.logs import log_command, log
 from utils.cache import Cache
 
+DEBUGGING = True
 TOKEN = Cache.get_from_json('data/config.json')['token']
 PREFIXES = ('!', '?', '.', '~')
 COGS_DIR = "bot.cogs"  # this specifies what extensions to load when the bot starts up (from this directory)
 
 bot = Bot(PREFIXES)
-game = None
 
 
 @bot.event
@@ -34,15 +36,15 @@ async def on_server_join(server):
 
 @bot.event
 async def on_server_update(before, after):
-    # create a new guild for the server
-    prev = game.get_guild(before)
-    if prev is None:
-        guild = game.create_guild(after)
-        print('Created a new Guild under the name \'{}\''.format(guild.name))
-    else:
+    # check to see if there is a guild within the database already
+    if game.check_guild_exists(before):
+        prev = game.get_guild(before)
         prev.name = after.name
         prev.save()
-        print('Updated the guild \'{}\' to be \'{}\''.format(before.name, after.name))
+        log('Updated the guild \'{}\' to be \'{}\''.format(before.name, after.name))
+    else:
+        guild = game.create_guild(after)
+        log('Created a new Guild under the name \'{}\''.format(guild.name))
 
 
 @bot.event
@@ -66,14 +68,39 @@ async def on_message(message):
 
 
 @bot.event
+async def on_member_remove(member):
+    """ Remove the banned player from the guild,
+    do nothing if the member wasn't currently in the guild. """
+    player = Game.get_player(member)
+    guild = Game.get_guild(member.server)
+
+    if player is None or guild is None:
+        return
+
+    if player in guild.members:
+        message = player.leave_guild()
+        return await bot.send_message(member.server, message)
+
+
+@bot.event
 async def on_command_error(exception, context):
-    print(exception)
+    """ Handle errors that are given from the bot. """
+    log(exception)
+    if DEBUGGING:
+        traceback.print_exc()
+
     if isinstance(exception, commands.CommandNotFound):
         return await bot.send_message(context.message.channel,
-                                      'Command \'{}\' unknown.\nTry \'?help\''.format(context.invoked_with))
+                                      'Command \'{}\' unknown. Try \'?help\''.format(context.invoked_with))
+    elif isinstance(exception, discord.InvalidArgument):
+        return await bot.send_message(context.message.channel,
+                                      'Invalid argument \'{}\'. Try \'?help\''.format(context.invoked_with))
 
 
 if __name__ == "__main__":
+    global game
+    game = Game()
+
     # load all the extensions from the cogs directory
     for extension in os.listdir(COGS_DIR.replace('.', '/')):
         try:
@@ -84,8 +111,6 @@ if __name__ == "__main__":
         except Exception as e:
             exc = '{}: {}'.format(type(e).__name__, e)
             print('Failed to load extension {}:\n\t{}'.format(extension, exc))
-
-    game = Game()
 
     # run the bot with the token from the config file
     bot.run(TOKEN)
