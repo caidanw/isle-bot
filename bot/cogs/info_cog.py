@@ -73,9 +73,9 @@ class InfoCog:
 
         if name is None:
             if island.resources:
-                header = '\n{} : Items'.format('Resource'.ljust(10))
-                msg += header
-                msg += '\n' + ('-' * (len(header) - 1))
+                header = '{} : Items'.format('Resource'.ljust(10))
+                msg += '\n' + header
+                msg += '\n' + '-' * len(header)
                 for resource in sorted(island.resources, key=attrgetter('name', 'number')):
                     full_name = resource.name.title() + '#' + str(resource.number)
                     item_amount = str(resource.item_amount).zfill(3)
