@@ -44,7 +44,8 @@ class MemberCog:
         player = Game.get_player(context.message.author)
 
         if not player.is_idle:
-            return await self.bot.say(f'You can not do any more actions until you have finished {Action(player.action)}.')
+            return await self.bot.say('You can not do any more actions until you have finished '
+                                      f'{Action(player.action)}.')
 
         at_guild = Game.get_guild(context.message.server)
         if at_guild and not at_guild.get_island(player.get_location.name):
@@ -91,6 +92,40 @@ class MemberCog:
             finished_message += '\n{} : {}'.format(item_name.ljust(8), str(item_amt).zfill(3))
         finished_message += '\n```'
         await self.bot.edit_message(msg, finished_message)
+
+    @commands.command(pass_context=True)
+    async def travel(self, context, *destination):
+        """ Travel to another island or guild. """
+        if not destination:
+            return await self.bot.say('You must enter a destination.')
+
+        destination_name = " ".join(destination)
+
+        guild = Game.search_guilds(destination_name)
+        island = Game.search_islands(destination_name)
+
+        if guild is None and island is None:
+            return await self.bot.say('There are no guilds or islands under that name.')
+
+        player = Game.get_player(context.message.author)
+
+        if guild:
+            if player.guild.id == guild.id:
+                return await self.bot.say('You are already at this guild.')
+
+            # TODO: add vehicle checking, but for now just return a generic string
+            return await self.bot.say('You can not travel out of your guild, because you do not have any vehicles.')
+
+        if island:
+            if player.get_location.id == island.id:
+                return await self.bot.say('You are already on this island.')
+
+            if island not in player.guild.islands:
+                return await self.bot.say('That island is not a part of this guild. '
+                                          'You must first travel to that guild\'s location.')
+
+            player.set_location(island)
+            await self.bot.say(f'You have traveled to the island {island.name}')
 
 
 def setup(bot):

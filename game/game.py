@@ -1,4 +1,5 @@
 from discord import Server, User
+from peewee import fn
 
 from game.player import Player
 from game.resource import Resource
@@ -65,11 +66,7 @@ class Game:
         :param name: the name of the guild to search for
         :return: the guild if found, otherwise None
         """
-        try:
-            return Guild.get(Guild.name == name)
-        except Exception:
-            log_db('The name "{}" could not be found among the guilds.'.format(name))
-            return None
+        return Guild.get_or_none(fn.Lower(Guild.name) == name)
 
     @classmethod
     def get_player(cls, user: User):
@@ -99,3 +96,23 @@ class Game:
 
         island.save()
         return island
+
+    @classmethod
+    def check_island_exists(cls, island: Island):
+        """ Check to see if an island exists within the database
+
+        :param island: to check for
+        :return: a boolean
+        """
+        if Island.get_or_none(Island.id == island.id) is None:
+            return False
+        return True
+
+    @classmethod
+    def search_islands(cls, name):
+        """ Attempt to find a guild with 'name' in the database
+
+        :param name: the name of the guild to search for
+        :return: the guild if found, otherwise None
+        """
+        return Island.get_or_none(fn.Lower(Island.name) == name)
