@@ -19,10 +19,11 @@ class CraftCog:
 
         recipe_name = '_'.join(item_to_craft)
         display_name = ' '.join(item_to_craft)
-        recipe = Recipe[recipe_name].needs_items()
 
-        if not recipe:
-            return await self.bot.say(f'Could not find the recipe for {recipe_name}.')
+        if recipe_name not in Recipe:
+            return await self.bot.say(f'Could not find the recipe for "{recipe_name}".')
+
+        recipe = Recipe[recipe_name].needs_items()
 
         if not inventory.enough_to_craft(recipe):
             return await self.bot.say(f'You do not have enough harvested items to craft this item.')
