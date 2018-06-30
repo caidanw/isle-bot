@@ -27,6 +27,10 @@ class Player(BaseModel):
             return Island.get_or_none(Island.id == self.on_island)
         return None
 
+    def set_location(self, island: Island):
+        self.on_island = island
+        self.save()
+
     def join_guild(self, guild):
         """ Join the desired Guild, first check that the Player does not belong
         to the desired Guild.

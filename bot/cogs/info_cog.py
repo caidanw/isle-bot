@@ -41,7 +41,7 @@ class InfoCog:
     @info.command(pass_context=True, aliases=['loc', 'island', 'isle'])
     async def location(self, context):
         player = Game.get_player(context.message.author)
-        location = player.get_location()
+        location = player.get_location
 
         msg = '```'
         msg += '\nLocation'
