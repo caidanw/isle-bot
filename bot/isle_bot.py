@@ -1,5 +1,7 @@
 import os
+import sys
 import traceback
+import logging
 
 import discord
 from discord.ext import commands
@@ -30,7 +32,7 @@ async def on_ready():
 async def on_server_join(server):
     # create a new guild for the server
     guild = game.create_guild(server)
-    print('Created a new Guild under the name \'{}\''.format(guild.name))
+    print('Created a new Guild under the name "{}"'.format(guild.name))
     # Todo: add an option to ask whether or not the server should be created into a guild.
 
 
@@ -41,10 +43,10 @@ async def on_server_update(before, after):
         prev = game.get_guild(before)
         prev.name = after.name
         prev.save()
-        log('Updated the guild \'{}\' to be \'{}\''.format(before.name, after.name))
+        log('Updated the guild "{}" to be "{}"'.format(before.name, after.name))
     else:
         guild = game.create_guild(after)
-        log('Created a new Guild under the name \'{}\''.format(guild.name))
+        log('Created a new Guild under the name "{}"'.format(guild.name))
 
 
 @bot.event
@@ -87,14 +89,16 @@ async def on_command_error(exception, context):
     """ Handle errors that are given from the bot. """
     log(exception)
     if DEBUGGING:
-        traceback.print_exc()
+        traceback.print_exception(type(exception), exception, exception.__traceback__, file=sys.stderr)
+
+    cmd = context.invoked_with
 
     if isinstance(exception, commands.CommandNotFound):
+        return await bot.send_message(context.message.channel, f'Command "{cmd}" unknown. Try "?help"')
+
+    elif isinstance(exception, discord.InvalidArgument) or isinstance(exception, commands.CommandInvokeError):
         return await bot.send_message(context.message.channel,
-                                      'Command \'{}\' unknown. Try \'?help\''.format(context.invoked_with))
-    elif isinstance(exception, discord.InvalidArgument):
-        return await bot.send_message(context.message.channel,
-                                      'Invalid argument \'{}\'. Try \'?help\''.format(context.invoked_with))
+                                      f'Invalid argument "{exception.original}" for command "{cmd}". \nTry ?help')
 
 
 if __name__ == "__main__":

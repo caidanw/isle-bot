@@ -55,7 +55,7 @@ class Game:
         try:
             return Guild.get(Guild.server_id == server.id)
         except Exception:
-            log_db('Server \'{}\' [id:{}] has not been registered as a guild.'.format(server.name, server.id))
+            log_db('Server "{}" [id:{}] has not been registered as a guild.'.format(server.name, server.id))
             return None
 
     @classmethod
@@ -68,7 +68,7 @@ class Game:
         try:
             return Guild.get(Guild.name == name)
         except Exception:
-            log_db('The name \'{}\' could not be found among the guilds.'.format(name))
+            log_db('The name "{}" could not be found among the guilds.'.format(name))
             return None
 
     @classmethod
