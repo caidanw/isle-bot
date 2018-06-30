@@ -10,14 +10,30 @@ class MemberCog:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(pass_context=True, aliases=['inv'])
+    @commands.group(pass_context=True, aliases=['inv'])
     async def inventory(self, context):
         """ Display every item in your inventory.
 
         :return: a string of the player's inventory items
         """
+        if context.invoked_subcommand is None:
+            player = Game.get_player(context.message.author)
+            await self.bot.say(player.inventory.to_message())
+
+    @inventory.command(pass_context=True, aliases=['a'])
+    async def all(self, context):
         player = Game.get_player(context.message.author)
-        await self.bot.say(player.inventory.to_message())
+        await self.bot.say(player.inventory.to_message(harvested=True, crafted=True))
+
+    @inventory.command(pass_context=True, aliases=['h', 'harvest'])
+    async def harvested(self, context):
+        player = Game.get_player(context.message.author)
+        await self.bot.say(player.inventory.to_message(harvested=True))
+
+    @inventory.command(pass_context=True, aliases=['c', 'craft'])
+    async def crafted(self, context):
+        player = Game.get_player(context.message.author)
+        await self.bot.say(player.inventory.to_message(crafted=True))
 
     @commands.command(pass_context=True)
     async def harvest(self, context, resource_name, desired_amount=5):
@@ -39,16 +55,23 @@ class MemberCog:
             return await self.bot.say('You must be on an island to harvest resources.')
 
         resource = island.get_resource(resource_name)
+
+        if isinstance(resource, str):
+            # at this point the resource is an error message we need to give to the player
+            return await self.bot.say(resource)
+
         if not resource:
-            return await self.bot.say('The resource \'{}\' is not on the current island.'.format(resource_name))
+            return await self.bot.say('The resource "{}" is not on the current island.'.format(resource_name))
         elif resource.item_amount < desired_amount:
-            return await self.bot.say('The resource only has {} items left to harvest.'.format(resource.item_amount))
+            return await self.bot.say('The resource has {} items left to harvest.'.format(resource.item_amount))
 
         player_inv = player.inventory
         if not player_inv.validate_is_room(desired_amount):
-            return await self.bot.say('You don\'t have enough room in your inventory.')
+            return await self.bot.say('You don"t have enough room in your inventory.')
 
         time_to_finish = format_time(resource.average_item_harvest_time * desired_amount)
+        if '#' not in resource_name:
+            resource_name = f'{resource.name}#{resource.number}'
         msg = await self.bot.say('Harvesting {} items from {}, estimated time to finish {}'.format(desired_amount,
                                                                                                    resource_name,
                                                                                                    time_to_finish))

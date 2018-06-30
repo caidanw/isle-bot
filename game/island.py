@@ -23,15 +23,31 @@ class Island(BaseModel):
     def owner(self):
         return self.guild.name
 
-    def get_resource(self, name):
+    def get_amount_of_resources(self, name):
+        from game.resource import Resource
+        return self.resources.select(fn.COUNT(Resource.name)).where(Resource.name == name).scalar()
+
+    def get_resource(self, name, number=1):
         """ Get a Resource by name that is located on the this Island
 
         :param name: of the resource
+        :param number: the specific resource to find
         :return: a resource if found by the name
         """
-        # Todo: add option to search for resource with desired amount
+        name = name.lower()
+        if '#' in name:
+            split_name = name.split('#')
+            name = split_name[0]
+            try:
+                num = int(split_name[1])
+                if num < 1:
+                    raise ValueError
+                number = num
+            except ValueError:
+                return f'"{split_name[1]}" is not a valid number.'
+
         for resource in self.resources:
-            if resource.name == name:
+            if resource.name == name and resource.number == number:
                 return resource
         return None
 
@@ -40,5 +56,5 @@ class Island(BaseModel):
 
         :param resource: to add
         """
-        resource.on_island = self
+        resource.island = self
         resource.save()

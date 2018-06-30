@@ -1,4 +1,5 @@
 import asyncio
+from operator import attrgetter
 
 from discord.ext import commands
 
@@ -33,35 +34,33 @@ class InfoCog:
             msg += f'\nAction : {Action(player.action)}'
             msg += '```'
 
-            await self.bot.say(msg, delete_after=10)
-            await asyncio.sleep(10)
+            await self.bot.say(msg, delete_after=60)
+            await asyncio.sleep(60)
             await self.bot.delete_message(context.message)
 
     @info.command(pass_context=True, aliases=['loc', 'island', 'isle'])
     async def location(self, context):
         player = Game.get_player(context.message.author)
-        location = player.get_location
+        location = player.get_location()
 
         msg = '```'
+        msg += '\nLocation'
+        msg += '\n--------'
 
         if location:
-            msg += f'\nArea     : {type(location).__name__}'
+            msg += f'\nType  : {type(location).__name__}'
         if location.name:
-            msg += f'\nLocation : {location.name}'
+            msg += f'\nName  : {location.name}'
         if location.owner:
-            msg += f'\nOwner    : {location.owner}'
+            msg += f'\nOwner : {location.owner}'
         if location.size:
-            msg += f'\nSize     : {location.size}'
-        if location.resources:
-            msg += '\nResources:'
-            for resource in location.resources:
-                msg += f'\n\t{resource.name} : {resource.item_amount}'
+            msg += f'\nSize  : {location.size}'
 
         msg += '```'
-        await self.bot.say(msg, delete_after=60)
+        await self.bot.say(msg)  # should use 'delete_after=60' param eventually
 
     @info.command(pass_context=True, aliases=['res'])
-    async def resource(self, context):
+    async def resource(self, context, name=None):
         island = Game.get_player(context.message.author).get_location
 
         if not isinstance(island, Island):
@@ -72,15 +71,39 @@ class InfoCog:
 
         msg = '```'
 
-        for res in island.resources:
-            msg += f'\n{res.name} has {str(res.item_amount).zfill(3)} items left'
-            msg += '\n\titem name : harvest time'
-            msg += '\n\t------------------------'
-            for item_name in res.gives_items:
-                item = Item[item_name]
-                msg += '\n\t{}: {}'.format(item.name.ljust(10), format_time(item.harvest_time()))
+        if name is None:
+            if island.resources:
+                header = '\n{} : Items'.format('Resource'.ljust(10))
+                msg += header
+                msg += '\n' + ('-' * (len(header) - 1))
+                for resource in sorted(island.resources, key=attrgetter('name', 'number')):
+                    full_name = resource.name.title() + '#' + str(resource.number)
+                    item_amount = str(resource.item_amount).zfill(3)
+                    msg += f'\n{full_name.ljust(10)} : {item_amount}'
+        else:
+            for res in island.resources:
+                if '#' in name:
+                    split_name = name.split('#')
+                    name = split_name[0]
+                    number = split_name[1]
+                    if res.number != number:
+                        continue
 
-        msg += '\n```'
+                if res.name == name:
+                    msg += f'\n{res.name.title()}#{res.number} has {str(res.item_amount).zfill(3)} items left'
+                    msg += '\n\titem name : harvest time'
+                    msg += '\n\t------------------------'
+                    for item_name in res.gives_items:
+                        item = Item[item_name]
+                        msg += '\n\t{}: {}'.format(item.name.ljust(10), format_time(item.harvest_time()))
+                    msg += '\n'
+
+        if msg == '```':
+            # there were no resources found
+            msg = f'No resources found for "{name}"'
+        else:
+            msg += '\n```'
+
         await self.bot.say(msg)
 
 
