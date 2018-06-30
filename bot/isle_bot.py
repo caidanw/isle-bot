@@ -55,6 +55,8 @@ async def on_message(message):
     if not message.content.startswith(PREFIXES):
         return
 
+    message.content = message.content.lower()
+
     log_command(message.author, message.content.strip())
 
     player = game.get_player(message.author)

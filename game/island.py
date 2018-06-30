@@ -34,7 +34,6 @@ class Island(BaseModel):
         :param number: the specific resource to find
         :return: a resource if found by the name
         """
-        name = name.lower()
         if '#' in name:
             split_name = name.split('#')
             name = split_name[0]
