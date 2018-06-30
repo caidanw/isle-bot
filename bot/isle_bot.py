@@ -89,8 +89,8 @@ async def on_member_remove(member):
 @bot.event
 async def on_command_error(exception, context):
     """ Handle errors that are given from the bot. """
-    log(exception)
     if DEBUGGING:
+        log(exception)
         traceback.print_exception(type(exception), exception, exception.__traceback__, file=sys.stderr)
 
     cmd = context.invoked_with
@@ -98,9 +98,18 @@ async def on_command_error(exception, context):
     if isinstance(exception, commands.CommandNotFound):
         return await bot.send_message(context.message.channel, f'Command "{cmd}" unknown. Try "?help"')
 
-    elif isinstance(exception, discord.InvalidArgument) or isinstance(exception, commands.CommandInvokeError):
+    elif isinstance(exception, discord.InvalidArgument):
         return await bot.send_message(context.message.channel,
-                                      f'Invalid argument "{exception.original}" for command "{cmd}". \nTry ?help')
+                                      f'Invalid argument for command "{cmd}". Try "?help {cmd}"')
+
+    elif isinstance(exception, commands.MissingRequiredArgument):
+        return await bot.send_message(context.message.channel,
+                                      f'Missing argument for command "{cmd}". Try "?help {cmd}"')
+
+    elif isinstance(exception, commands.CommandInvokeError):
+        return await bot.send_message(context.message.channel,
+                                      'Oops, looks like something on the back end broke. '
+                                      'Please contact the admin or developer.')
 
 
 if __name__ == "__main__":
