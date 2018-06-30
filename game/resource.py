@@ -14,10 +14,11 @@ class Resource(BaseModel):
     """ Resource class used to represent a place for Player's to obtain various items. """
 
     name = CharField()
+    number = IntegerField(default=0)
     gives_items = JSONField(default=[])
     max_item_amount = IntegerField(default=100)
     item_amount = IntegerField(default=100)
-    on_island = ForeignKeyField(Island, backref='resources')
+    island = ForeignKeyField(Island, backref='resources')
 
     @classmethod
     def random(cls, island, min_amt=50, max_amt=500):
@@ -29,21 +30,26 @@ class Resource(BaseModel):
         :param max_amt: of items to give
         :return: a new instance of the Resource class
         """
-        # get a random resource from our json data
-        resource = get_random_resource()
+        resource = get_random_resource()  # get a random resource from our json data
+        name = resource['name']
+        resource_num = island.get_amount_of_resources(name) + 1
+        items = resource['gives_items']
         amount = random.randint(min_amt, max_amt)
-        return Resource.create(name=resource['name'],
-                               gives_items=resource['gives_items'],
+
+        return Resource.create(name=name,
+                               number=resource_num,
+                               gives_items=items,
                                max_item_amount=amount,
                                item_amount=amount,
-                               on_island=island)
+                               island=island)
 
+    # noinspection PyTypeChecker
     @property
     def average_item_harvest_time(self):
-        average_time = 0
+        total_time = 0
         for item_name in self.gives_items:
-            average_time += Item[item_name].value
-        return average_time // len(self.gives_items)
+            total_time += Item[item_name].harvest_time()
+        return total_time // len(self.gives_items)
 
     async def harvest(self, amount):
         """ Remove the amount of items within this resource,
