@@ -34,7 +34,8 @@ class InfoCog:
             msg += f'\nAction : {Action(player.action)}'
             msg += '```'
 
-            await self.bot.say(msg, delete_after=60)
+            await self.bot.say(msg, delete_after=60)  # delete the message after a minute so chat doesn't get clogged
+            # delete user message for same reason
             await asyncio.sleep(60)
             await self.bot.delete_message(context.message)
 

@@ -26,6 +26,3 @@ class Item(Enum):
 
     def harvest_time(self):
         return self.value
-
-
-ItemStack = namedtuple('ItemStack', ['item', 'amount'])

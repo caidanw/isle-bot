@@ -76,6 +76,7 @@ class MemberCog:
         msg = await self.bot.say('Harvesting {} items from {}, estimated time to finish {}'.format(desired_amount,
                                                                                                    resource_name,
                                                                                                    time_to_finish))
+
         player.action = Action.harvesting.value
         player.save()
 
@@ -123,6 +124,8 @@ class MemberCog:
             if island not in player.guild.islands:
                 return await self.bot.say('That island is not a part of this guild. '
                                           'You must first travel to that guild\'s location.')
+
+            # TODO: confirm using reactions that the player wants to travel there
 
             player.set_location(island)
             await self.bot.say(f'You have traveled to the island {island.name}')
