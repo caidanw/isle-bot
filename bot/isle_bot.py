@@ -1,13 +1,14 @@
 import os
 import sys
 import traceback
-import logging
 
 import discord
+from discord import HTTPException
 from discord.ext import commands
 from discord.ext.commands import Bot
 
 from game.game import Game
+from ui.confirm_message import ConfirmMessage
 from utils.check import is_private
 from utils.logs import log_command, log
 from utils.cache import Cache
@@ -15,13 +16,14 @@ from utils.cache import Cache
 DEBUGGING = True
 TOKEN = Cache.get_from_json('data/config.json')['token']
 PREFIXES = ('!', '?', '.', '~')
-COGS_DIR = "bot.cogs"  # this specifies what extensions to load when the bot starts up (from this directory)
+COGS_DIR = "bot.cogs."  # this specifies the directory of extensions to load when the bot starts up ('.' replaces '/')
 
 bot = Bot(PREFIXES)
 
 
 @bot.event
 async def on_ready():
+    """ Runs after the bot logs in and before any commands are taken. """
     print('Logged in as')
     print('[name]:', bot.user.name)
     print('[  id]:', bot.user.id)
@@ -30,23 +32,47 @@ async def on_ready():
 
 @bot.event
 async def on_server_join(server):
-    # create a new guild for the server
-    guild = game.create_guild(server)
-    print('Created a new Guild under the name "{}"'.format(guild.name))
-    # Todo: add an option to ask whether or not the server should be created into a guild.
+    """ When the bot is added to a server, ask them to join the game. If they refuse, then leave the server. """
+    if not game.check_guild_exists(server):
+        # we don't to pollute our database with random servers that are inactive, so ask first if the want to join
+        confirm_msg = ConfirmMessage(bot, server,
+                                     ['Welcome, would you like this guild to be registered within the game?',
+                                      'This guild will not be registered.',   # message when dismissed
+                                      'This guild will now be registered.'])  # message when confirmed
+        await confirm_msg.send()
+        confirmed = await confirm_msg.wait_for_user_reaction()
+
+        if confirmed:
+            # create a new guild for the server
+            guild = game.create_guild(server)
+            log('Created a new Guild under the name "{}"'.format(guild.name))
+        else:
+            bot.send_message(server, 'I am leaving this server, as I am no longer needed. '
+                                     'If you change your mind and would like to register this guild, just add me back.')
+            try:
+                bot.leave_server(server)
+            except HTTPException as exception:
+                log(exception)
+                bot.send_message(server, 'Sorry to bother, I am having some trouble leaving. '
+                                         'Would you mind kicking me please?')
+
+    else:
+        bot.send_message(server, 'Ah, I glad to see you rejoined the game. Welcome back, we are happy to have you.')
 
 
 @bot.event
 async def on_server_update(before, after):
+    """ When a server updates, we want to update it's corresponding guild. """
     # check to see if there is a guild within the database already
     if game.check_guild_exists(before):
         prev = game.get_guild(before)
         prev.name = after.name
         prev.save()
         log('Updated the guild "{}" to be "{}"'.format(before.name, after.name))
-    else:
-        guild = game.create_guild(after)
-        log('Created a new Guild under the name "{}"'.format(guild.name))
+    # theoretically there shouldn't be a case where a guild is updated before it's created, but leaving this code here
+    # else:
+    #     guild = game.create_guild(after)
+    #     log('Created a new Guild under the name "{}"'.format(guild.name))
 
 
 @bot.event
@@ -73,8 +99,7 @@ async def on_message(message):
 
 @bot.event
 async def on_member_remove(member):
-    """ Remove the banned player from the guild,
-    do nothing if the member wasn't currently in the guild. """
+    """ Remove the banned player from the guild, do nothing if the player wasn't a member of the guild. """
     player = Game.get_player(member)
     guild = Game.get_guild(member.server)
 
@@ -120,7 +145,7 @@ if __name__ == "__main__":
     for extension in os.listdir(COGS_DIR.replace('.', '/')):
         try:
             if extension.endswith('.py'):
-                extension_path = COGS_DIR + "." + extension.replace('.py', '')
+                extension_path = COGS_DIR + extension.replace('.py', '')
                 bot.load_extension(extension_path)
                 log('Loaded extension {}'.format(extension))
         except Exception as e:
