@@ -48,7 +48,7 @@ class Guild(BaseModel):
         """
         if self.claimed_islands < self.max_islands:
             island.guild = self
-            island.name = 'Island #{} of {}'.format(self.claimed_islands+1, self.name)
+            island.name = f'Island #{self.claimed_islands+1} of {self.name}'
             island.claimed = True
             island.save()
 

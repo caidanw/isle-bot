@@ -2,7 +2,7 @@ from discord import Client, Channel, User
 
 
 class ReactionMessage:
-    TIMEOUT = 20
+    TIMEOUT = 60
 
     def __init__(self, client: Client, channel: Channel, messages: list, reactions: list):
         self.client = client
@@ -26,12 +26,16 @@ class ReactionMessage:
 
     async def wait_for_user_reaction(self, target_user: User=None):
         if self.message_literal is None:
-            return
+            raise ValueError('Message has not been sent yet, send a message before waiting for the response.')
 
         def check(reaction, user):
-            if user:
-                return str(reaction.emoji) in self.reactions and user == target_user
-            return str(reaction.emoji) in self.reactions
+            if not user.bot:
+                if target_user:
+                    return str(reaction.emoji) in self.reactions and user == target_user
+                else:
+                    return str(reaction.emoji) in self.reactions
+            else:
+                return False
 
         response = await self.client.wait_for_reaction(message=self.message_literal, check=check, timeout=self.TIMEOUT)
         await self.client.edit_message(self.message_literal, self.reaction_messages.get(str(response.reaction.emoji)))

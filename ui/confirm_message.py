@@ -10,19 +10,23 @@ class ConfirmMessage(ReactionMessage):
 
     async def wait_for_user_reaction(self, target_user: User=None):
         if self.message_literal is None:
-            raise ValueError('message has not been sent yet')
+            raise ValueError('Message has not been sent yet, send a message before waiting for the response.')
 
         def check(reaction, user):
-            if user:
-                return str(reaction.emoji) in self.reactions and user == target_user
-            return str(reaction.emoji) in self.reactions
+            if not user.bot:
+                if target_user:
+                    return str(reaction.emoji) in self.reactions and user == target_user
+                else:
+                    return str(reaction.emoji) in self.reactions
+            else:
+                return False
 
         response = await self.client.wait_for_reaction(message=self.message_literal, check=check)
         if response:
             emoji_code = str(response.reaction.emoji)
             await self.client.edit_message(self.message_literal,
                                            self.reaction_messages.get(emoji_code))
-            return emoji_code == Reaction.CONFIRM.value  # if the confirm button was clicked, then return truen
+            return emoji_code == Reaction.CONFIRM.value  # if the confirm button was clicked, then return true
         else:
             await self.client.delete_message(self.message_literal)
             return None

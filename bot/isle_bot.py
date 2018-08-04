@@ -3,14 +3,11 @@ import sys
 import traceback
 
 import discord
-from discord import HTTPException
 from discord.ext import commands
 from discord.ext.commands import Bot
 
 from game.game import Game
-from ui.confirm_message import ConfirmMessage
-from utils.check import is_private
-from utils.logs import log_command, log
+from utils import manage, logger, check
 from utils.cache import Cache
 
 DEBUGGING = True
@@ -34,28 +31,7 @@ async def on_ready():
 async def on_server_join(server):
     """ When the bot is added to a server, ask them to join the game. If they refuse, then leave the server. """
     if not game.check_guild_exists(server):
-        # we don't to pollute our database with random servers that are inactive, so ask first if the want to join
-        confirm_msg = ConfirmMessage(bot, server,
-                                     ['Welcome, would you like this guild to be registered within the game?',
-                                      'This guild will not be registered.',   # message when dismissed
-                                      'This guild will now be registered.'])  # message when confirmed
-        await confirm_msg.send()
-        confirmed = await confirm_msg.wait_for_user_reaction()
-
-        if confirmed:
-            # create a new guild for the server
-            guild = game.create_guild(server)
-            log('Created a new Guild under the name "{}"'.format(guild.name))
-        else:
-            bot.send_message(server, 'I am leaving this server, as I am no longer needed. '
-                                     'If you change your mind and would like to register this guild, just add me back.')
-            try:
-                bot.leave_server(server)
-            except HTTPException as exception:
-                log(exception)
-                bot.send_message(server, 'Sorry to bother, I am having some trouble leaving. '
-                                         'Would you mind kicking me please?')
-
+        await manage.ask_server_to_join_game(game, bot, server, server.default_channel)
     else:
         bot.send_message(server, 'Ah, I glad to see you rejoined the game. Welcome back, we are happy to have you.')
 
@@ -68,11 +44,10 @@ async def on_server_update(before, after):
         prev = game.get_guild(before)
         prev.name = after.name
         prev.save()
-        log('Updated the guild "{}" to be "{}"'.format(before.name, after.name))
-    # theoretically there shouldn't be a case where a guild is updated before it's created, but leaving this code here
-    # else:
-    #     guild = game.create_guild(after)
-    #     log('Created a new Guild under the name "{}"'.format(guild.name))
+        logger.log(f'Updated the guild "{before.name}" to be "{after.name}"')
+    else:
+        # theoretically there can't be a case where a guild is updated before it's created... except in testing
+        await manage.ask_server_to_join_game(game, bot, after, after.default_channel)
 
 
 @bot.event
@@ -83,16 +58,17 @@ async def on_message(message):
 
     message.content = message.content.lower()
 
-    log_command(message.author, message.content.strip())
+    logger.log_command(message.author, message.content.strip())
 
     player = game.get_player(message.author)
     if player is None and 'join' not in message.content:
         return await bot.send_message(message.channel, 'You are not registered as a part of this game.')
 
-    if not is_private(message):
+    if not check.is_private(message):
         guild = game.get_guild(message.server)
         if guild is None:
-            return await bot.send_message(message.channel, 'This discord server is not registered as a guild.')
+            await bot.send_message(message.channel, 'This discord server is not registered as a guild.')
+            return await manage.ask_server_to_join_game(game, bot, message.server, message.channel)
 
     await bot.process_commands(message)
 
@@ -115,7 +91,7 @@ async def on_member_remove(member):
 async def on_command_error(exception, context):
     """ Handle errors that are given from the bot. """
     if DEBUGGING:
-        log(exception)
+        logger.log(exception)
         traceback.print_exception(type(exception), exception, exception.__traceback__, file=sys.stderr)
 
     cmd = context.invoked_with
@@ -147,10 +123,10 @@ if __name__ == "__main__":
             if extension.endswith('.py'):
                 extension_path = COGS_DIR + extension.replace('.py', '')
                 bot.load_extension(extension_path)
-                log('Loaded extension {}'.format(extension))
+                logger.log(f'Loaded extension {extension}')
         except Exception as e:
-            exc = '{}: {}'.format(type(e).__name__, e)
-            print('Failed to load extension {}:\n\t{}'.format(extension, exc))
+            exc = f'{type(e).__name__}: {e}'
+            print(f'Failed to load extension {extension}:\n\t{exc}')
 
     # run the bot with the token from the config file
     bot.run(TOKEN)

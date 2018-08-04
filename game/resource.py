@@ -5,8 +5,8 @@ from peewee import *
 from playhouse.sqlite_ext import JSONField
 
 from game.base_model import BaseModel
-from game.enums.item import Item
 from game.island import Island
+from game.items.item import ItemLookup
 from utils.cache import Cache
 
 
@@ -48,7 +48,7 @@ class Resource(BaseModel):
     def average_item_harvest_time(self):
         total_time = 0
         for item_name in self.gives_items:
-            total_time += Item[item_name].harvest_time()
+            total_time += ItemLookup[item_name].harvest_time
         return total_time // len(self.gives_items)
 
     async def harvest(self, amount):
@@ -65,12 +65,15 @@ class Resource(BaseModel):
         harvested_items = {}
         for i in range(amount):
             item_name = random.choice(self.gives_items)
-            harvest_time = Item[item_name].value
-            await asyncio.sleep(harvest_time)
+
+            # have the program wait until the player has finished harvesting one item
+            await asyncio.sleep(ItemLookup[item_name].harvest_time)
+
             if harvested_items.get(item_name) is None:
                 harvested_items[item_name] = 1
             else:
                 harvested_items[item_name] += 1
+
         return harvested_items
 
 

@@ -1,6 +1,6 @@
 from enum import Enum
 
-from game.enums.item import Item
+from game.items.item import ItemLookup
 
 
 class Recipe(Enum):
@@ -9,7 +9,7 @@ class Recipe(Enum):
     """
 
     # tools
-    stone_axe = {Item.wood: 2, Item.stone: 1}
+    stone_axe = {ItemLookup['wood']: 2, ItemLookup['stone']: 1}
 
     def needs_items(self):
         return self.value

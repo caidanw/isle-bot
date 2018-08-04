@@ -3,10 +3,10 @@ from operator import attrgetter
 
 from discord.ext import commands
 
-from game.enums.item import Item
 from game.game import Game
 from game.enums.action import Action
 from game.island import Island
+from game.items.item import ItemLookup
 from utils.clock import format_time
 
 
@@ -74,7 +74,7 @@ class InfoCog:
 
         if name is None:
             if island.resources:
-                header = '{} : Items'.format('Resource'.ljust(10))
+                header = f'{"Resource".ljust(10)} : Items'
                 msg += '\n' + header
                 msg += '\n' + '-' * len(header)
                 for resource in sorted(island.resources, key=attrgetter('name', 'number')):
@@ -95,8 +95,8 @@ class InfoCog:
                     msg += '\n\titem name : harvest time'
                     msg += '\n\t------------------------'
                     for item_name in res.gives_items:
-                        item = Item[item_name]
-                        msg += '\n\t{}: {}'.format(item.name.ljust(10), format_time(item.harvest_time()))
+                        item = ItemLookup[item_name]
+                        msg += f'\n\t{item.name.ljust(10)}: {format_time(item.harvest_time())}'
                     msg += '\n'
 
         if msg == '```':

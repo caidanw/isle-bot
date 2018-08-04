@@ -29,7 +29,7 @@ class GuildCog:
 
         player = Game.get_player(context.message.author)
         if player and player.guild:
-            return await self.bot.say('You already belong to the guild {}'.format(player.guild.name))
+            return await self.bot.say(f'You already belong to the guild {player.guild.name}')
         elif player is None:
             author = context.message.author
 
@@ -40,7 +40,7 @@ class GuildCog:
                                    inventory=Inventory.create())
 
         if player.guild is guild:
-            message = '{} was born and has joined {}'.format(player.username, guild.name)
+            message = f'{player.username} was born and has joined {guild.name}'
         else:
             message = player.join_guild(guild)
 

@@ -62,9 +62,9 @@ class MemberCog:
             return await self.bot.say(resource)
 
         if not resource:
-            return await self.bot.say('The resource "{}" is not on the current island.'.format(resource_name))
+            return await self.bot.say(f'The resource "{resource_name}" is not on the current island.')
         elif resource.item_amount < desired_amount:
-            return await self.bot.say('The resource has {} items left to harvest.'.format(resource.item_amount))
+            return await self.bot.say(f'The resource has {resource.item_amount} items left to harvest.')
 
         player_inv = player.inventory
         if not player_inv.validate_is_room(desired_amount):
@@ -73,9 +73,8 @@ class MemberCog:
         time_to_finish = format_time(resource.average_item_harvest_time * desired_amount)
         if '#' not in resource_name:
             resource_name = f'{resource.name}#{resource.number}'
-        msg = await self.bot.say('Harvesting {} items from {}, estimated time to finish {}'.format(desired_amount,
-                                                                                                   resource_name,
-                                                                                                   time_to_finish))
+        msg = await self.bot.say(f'Harvesting {desired_amount} items from {resource_name}, '
+                                 f'estimated time to finish {time_to_finish}')
 
         player.action = Action.harvesting.value
         player.save()
@@ -87,10 +86,10 @@ class MemberCog:
         player.action = Action.idle.value
         player.save()
 
-        finished_message = '{} has finished harvesting.'.format(context.message.author.mention)
+        finished_message = f'{context.message.author.mention} has finished harvesting.'
         finished_message += '\n```'
         for item_name, item_amt in harvested_items.items():
-            finished_message += '\n{} : {}'.format(item_name.ljust(8), str(item_amt).zfill(3))
+            finished_message += f'\n{item_name.ljust(8)} : {str(item_amt).zfill(3)}'
         finished_message += '\n```'
         await self.bot.edit_message(msg, finished_message)
 

@@ -43,9 +43,9 @@ class Player(BaseModel):
             if self.on_island is None:
                 self.on_island = guild.get_island()
             self.save()
-            return '{} has joined {}'.format(self.username, guild.name)
+            return f'{self.username} has joined {guild.name}'
         else:
-            return '{} is already a member of {}'.format(self.username, guild.name)
+            return f'{self.username} is already a member of {guild.name}'
 
     def leave_guild(self):
         """ Leave the current Guild, check if the Player does not have a guild.
@@ -54,10 +54,10 @@ class Player(BaseModel):
         :return: a string declaring whether or not the player was removed
         """
         if self.guild is None:
-            return '{} is not a member of any guild'.format(self.username)
+            return f'{self.username} is not a member of any guild'
 
         if self.guild.has_member(self):
             guild_name = self.guild.name
             self.guild = None
             self.save()
-            return '{} has been removed from {}'.format(self.username, guild_name)
+            return f'{self.username} has been removed from {guild_name}'

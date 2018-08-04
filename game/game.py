@@ -6,7 +6,7 @@ from game.resource import Resource
 from utils import database
 from game.guild import Guild
 from game.island import Island
-from utils.logs import log_db
+from utils.logger import log_db
 
 
 class Game:
@@ -56,7 +56,7 @@ class Game:
         try:
             return Guild.get(Guild.server_id == server.id)
         except Exception:
-            log_db('Server "{}" [id:{}] has not been registered as a guild.'.format(server.name, server.id))
+            log_db(f'Server "{server.name}" [id:{server.id}] is not registered as a guild.')
             return None
 
     @classmethod

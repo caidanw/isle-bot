@@ -3,7 +3,7 @@ import asyncio
 from discord.ext import commands
 
 from utils.clock import server_clock
-from utils.logs import log_command
+from utils.logger import log_command
 
 
 class UtilCog:
@@ -13,10 +13,10 @@ class UtilCog:
     @commands.command(pass_context=True)
     async def sleep(self, context, amount: int = 10):
         """ Test command for asynchronous design to have bot wait while doing other things. """
-        await self.bot.say('Sleeping {}s'.format(amount))
+        await self.bot.say(f'Sleeping {amount}s')
         await asyncio.sleep(amount)
         await self.bot.say('Finished sleeping')
-        log_command(context.message.author, 'sleep {}'.format(amount), issued=False)
+        log_command(context.message.author, f'sleep {amount}', issued=False)
 
     @commands.command(pass_context=True)
     async def clock(self):
