@@ -61,7 +61,7 @@ class InfoCog:
         await self.bot.say(msg)  # should use 'delete_after=60' param eventually
 
     @info.command(pass_context=True, aliases=['res'])
-    async def resource(self, context, name=None):
+    async def resources(self, context, name=None):
         island = Game.get_player(context.message.author).get_location
 
         if not isinstance(island, Island):
