@@ -68,7 +68,7 @@ class MemberCog:
 
         if not player.is_idle:
             return await self.bot.say('You can not do any more actions until you have finished '
-                                      f'{Action(player.action)}.')
+                                      f'{Action(player.action).name}.')
 
         at_guild = Game.get_guild(context.message.server)
         if at_guild and not at_guild.get_island(player.get_location.name):
