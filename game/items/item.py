@@ -1,4 +1,4 @@
-import enum
+from enum import Enum
 
 
 class Item:
@@ -7,7 +7,7 @@ class Item:
         self.harvest_time = harvest_time
 
 
-class ItemLookup(enum.Enum):
+class ItemLookup(Enum):
     """ Look up items based on their class name """
 
     from game.items.harvested.field import Grass, Wheat
@@ -18,26 +18,23 @@ class ItemLookup(enum.Enum):
     """ Items that can be harvested or used in recipes, value represents harvest time. """
 
     # forest
-    WOOD = Wood()
-    MUSHROOM = Mushroom()
-    LEAF = Leaf()
+    wood = Wood
+    mushroom = Mushroom
+    leaf = Leaf
 
     # quarry
-    STONE = Stone()
-    IRON = Iron()
+    stone = Stone
+    iron = Iron
 
     # swamp
-    CLAY = Clay()
-    VINE = Vine()
+    clay = Clay
+    vine = Vine
 
     # field
-    GRASS = Grass()
-    WHEAT = Wheat()
+    grass = Grass
+    wheat = Wheat
 
     """ Tools that can be crafted from harvested items. """
 
     # todo: convert tools to classes
-    # STONE_AXE = StoneAxe
-
-    def __str__(self):
-        return self.name
+    # stone_axe = StoneAxe
