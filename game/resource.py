@@ -43,12 +43,11 @@ class Resource(BaseModel):
                                item_amount=amount,
                                island=island)
 
-    # noinspection PyTypeChecker
     @property
     def average_item_harvest_time(self):
         total_time = 0
         for item_name in self.gives_items:
-            total_time += ItemLookup[item_name].harvest_time
+            total_time += ItemLookup[item_name].value.harvest_time
         return total_time // len(self.gives_items)
 
     async def harvest(self, amount):
@@ -67,7 +66,7 @@ class Resource(BaseModel):
             item_name = random.choice(self.gives_items)
 
             # have the program wait until the player has finished harvesting one item
-            await asyncio.sleep(ItemLookup[item_name].harvest_time)
+            await asyncio.sleep(ItemLookup[item_name].value.harvest_time)
 
             if harvested_items.get(item_name) is None:
                 harvested_items[item_name] = 1
