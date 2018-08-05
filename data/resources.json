@@ -1,18 +1,18 @@
 [
   {
     "name": "forest",
-    "gives_items": ["wood", "mushroom", "leaf"]
+    "gives_items": ["WOOD", "MUSHROOM", "LEAF"]
   },
   {
     "name": "quarry",
-    "gives_items": ["stone", "iron"]
+    "gives_items": ["STONE", "IRON"]
   },
   {
     "name": "swamp",
-    "gives_items": ["clay", "vine"]
+    "gives_items": ["CLAY", "VINE"]
   },
   {
     "name": "field",
-    "gives_items": ["grass", "wheat"]
+    "gives_items": ["GRASS", "WHEAT"]
   }
 ]

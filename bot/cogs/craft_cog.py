@@ -55,15 +55,15 @@ class CraftCog:
         if not item_name:
             return await self.bot.say('A recipe name is required. Try "?help recipe"')
 
-        recipe_name = '_'.join(item_name)
-        display_name = ' '.join(item_name)
+        recipe_name = '_'.join(item_name).upper()
+        input_name = ' '.join(item_name)
 
         try:
             recipe = Recipe[recipe_name]
         except Exception:
-            return await self.bot.say(f'Could not find the recipe for "{display_name}".')
+            return await self.bot.say(f'Could not find the recipe for "{input_name}".')
 
-        await self.bot.say(recipe.to_string())
+        await self.bot.say(recipe.to_extended_string())
 
     @recipe.command(aliases=['all'])
     async def list(self):
@@ -72,7 +72,6 @@ class CraftCog:
         output += '```\n'
         for item in Recipe:
             name = item.name.replace('_', ' ')
-            name = name.title()
 
             try:
                 recipe = item.to_short_string()
