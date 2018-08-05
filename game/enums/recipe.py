@@ -9,7 +9,7 @@ class Recipe(Enum):
     """
 
     # tools
-    stone_axe = {ItemLookup['wood']: 2, ItemLookup['stone']: 1}
+    stone_axe = {ItemLookup.WOOD: 2, ItemLookup.STONE: 1}
 
     def needs_items(self):
         return self.value
@@ -22,7 +22,7 @@ class Recipe(Enum):
 
         output += '\n' + '-' * len(header)
         for item, amt in self.value.items():
-            name = item.name.ljust(10)
+            name = str(item).ljust(10)
             amt = str(amt).zfill(3)
             output += f'\n{name} : {amt}'
         output += '\n```'
@@ -34,7 +34,7 @@ class Recipe(Enum):
 
         index = 0
         for item, amt in self.value.items():
-            name = item.name
+            name = str(item)
             amt = str(amt)
             if index >= 1:
                 output += ', '
