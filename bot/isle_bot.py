@@ -31,9 +31,10 @@ async def on_ready():
 async def on_server_join(server):
     """ When the bot is added to a server, ask them to join the game. If they refuse, then leave the server. """
     if not game.check_guild_exists(server):
-        await manage.ask_server_to_join_game(game, bot, server, server.default_channel)
+        await manage.ask_server_to_join_game(game, bot, server)
     else:
-        bot.send_message(server, 'Ah, I glad to see you rejoined the game. Welcome back, we are happy to have you.')
+        await bot.send_message(server, 'Ah, I am glad to see you have rejoined the game. '
+                                       'Welcome back, we are happy to have you.')
 
 
 @bot.event
@@ -47,7 +48,7 @@ async def on_server_update(before, after):
         logger.log(f'Updated the guild "{before.name}" to be "{after.name}"')
     else:
         # theoretically there can't be a case where a guild is updated before it's created... except in testing
-        await manage.ask_server_to_join_game(game, bot, after, after.default_channel)
+        await manage.ask_server_to_join_game(game, bot, after)
 
 
 @bot.event
@@ -61,8 +62,9 @@ async def on_message(message):
     logger.log_command(message.author, message.content.strip())
 
     player = game.get_player(message.author)
-    if player is None and 'join' not in message.content:
-        return await bot.send_message(message.channel, 'You are not registered as a part of this game.')
+    if player is None:
+        if 'create' not in message.content and 'join' not in message.content:
+            return await bot.send_message(message.channel, 'You are not registered as a part of this game.')
 
     if not check.is_private(message):
         guild = game.get_guild(message.server)

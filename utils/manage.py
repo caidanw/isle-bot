@@ -1,10 +1,23 @@
-from discord import HTTPException
+from discord import HTTPException, ChannelType
 
 from ui.confirm_message import ConfirmMessage
 from utils import logger
 
 
-async def ask_server_to_join_game(game, bot, server, channel):
+def find_open_channel(server):
+    channel = None
+
+    for c in server.channels:
+        if c.type == ChannelType['text'] and not c.is_private:
+            channel = c
+
+    return channel
+
+
+async def ask_server_to_join_game(game, bot, server, channel=None):
+    if channel is None:
+        channel = find_open_channel(server)
+
     # we don't to pollute our database with random servers that are inactive, so ask first if they want to join
     confirm_msg = ConfirmMessage(bot, channel,
                                  ['Welcome, would you like this guild to be registered within the game?',

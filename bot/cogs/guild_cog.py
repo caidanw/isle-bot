@@ -11,8 +11,8 @@ class GuildCog:
         self.bot = bot
 
     @commands.command(pass_context=True,
-                      description='Join the guild of the current discord server, '
-                                  + 'if a name is passed then join that guild instead.')
+                      description='Join the guild of the current discord server, ' +
+                                  'if a name is passed then join that guild instead.')
     async def join(self, context, guild_name=None):
         """ Join a guild. """
         private_channel = is_private(context.message)
@@ -39,12 +39,9 @@ class GuildCog:
                                    on_island=guild.get_island(),
                                    inventory=Inventory.create())
 
-        if player.guild is guild:
-            message = f'{player.username} was born and has joined {guild.name}'
-        else:
-            message = player.join_guild(guild)
+            return await self.bot.say(f'The machine has created {player.username} for {guild.name}.')
 
-        await self.bot.say(message)
+        await self.bot.say(player.join_guild(guild))
 
     @commands.command(pass_context=True)
     async def leave(self, context):

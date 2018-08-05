@@ -1,7 +1,10 @@
 from discord.ext import commands
 
 from game.game import Game
+from game.inventory import Inventory
 from game.island import Island
+from game.player import Player
+from utils.check import is_private
 from utils.clock import format_time
 from game.enums.action import Action
 
@@ -9,6 +12,26 @@ from game.enums.action import Action
 class MemberCog:
     def __init__(self, bot):
         self.bot = bot
+
+    @commands.command(pass_context=True)
+    async def create(self, context):
+        author = context.message.author
+        guild = context.message.server
+
+        private_channel = is_private(context.message)
+        if private_channel:
+            return await self.bot.say('You can not be created on thin air. Only out of thin air. '
+                                      'Please ask one of the islands machines. (enter command in server chat)')
+        else:
+            guild = Game.get_guild(guild)
+
+        player = Player.create(username=author.name,
+                               uuid=author.id,
+                               guild=guild,
+                               on_island=guild.get_island(),
+                               inventory=Inventory.create())
+
+        await self.bot.say(f'The machine has created {player.username} for {guild.name}.')
 
     @commands.group(pass_context=True, aliases=['inv'])
     async def inventory(self, context):
