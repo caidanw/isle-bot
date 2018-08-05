@@ -16,12 +16,31 @@ class Recipe(Enum):
 
     def to_string(self):
         output = '```\n'
+
         header = self.name.title().replace('_', ' ') + ' Recipe'
         output += header
+
         output += '\n' + '-' * len(header)
         for item, amt in self.value.items():
             name = item.name.ljust(10)
             amt = str(amt).zfill(3)
             output += f'\n{name} : {amt}'
         output += '\n```'
+
+        return output
+
+    def to_short_string(self):
+        output = '['
+
+        index = 0
+        for item, amt in self.value.items():
+            name = item.name
+            amt = str(amt)
+            if index >= 1:
+                output += ', '
+            output += f'{name} : {amt}'
+            index += 1
+
+        output += ']'
+
         return output

@@ -15,6 +15,9 @@ class CraftCog:
     @commands.command(pass_context=True)
     async def craft(self, context, *item_to_craft):
         """ Craft a new item. """
+        if len(item_to_craft) == 0:
+            return await self.bot.say('You must enter a recipe name. Try "?help craft"')
+
         author = context.message.author
         inventory = Game.get_player(author).inventory
 
@@ -42,31 +45,44 @@ class CraftCog:
     @commands.group(pass_context=True)
     async def recipe(self, context, *item_name):
         """ Get the recipe of the desired craftable item. """
-        if context.invoked_subcommand:
+        subcommands = self.bot.commands.get('recipe').commands.keys()
+        for name in item_name:
             # ignore everything in this function if there was a subcommand passed
-            return
+            if name in subcommands:
+                subcommand = self.bot.commands.get('recipe').commands.get(name)
+                return await subcommand.invoke(context)
 
         if not item_name:
-            return await self.bot.say('A recipe name is required.')
+            return await self.bot.say('A recipe name is required. Try "?help recipe"')
 
         recipe_name = '_'.join(item_name)
         display_name = ' '.join(item_name)
 
-        if not Recipe[recipe_name]:
+        try:
+            recipe = Recipe[recipe_name]
+        except Exception:
             return await self.bot.say(f'Could not find the recipe for "{display_name}".')
 
-        recipe = Recipe[recipe_name]
+        await self.bot.say(recipe.to_string())
 
-        return await self.bot.say(recipe.to_string())
-
-    @recipe.command()
-    async def all(self):
+    @recipe.command(aliases=['all'])
+    async def list(self):
         """ Get all of the recipes of the craftable items. """
-        output = '```\n'
+        output = 'Recipe List:'
+        output += '```\n'
         for item in Recipe:
             name = item.name.replace('_', ' ')
             name = name.title()
-            print(name)
+
+            try:
+                recipe = item.to_short_string()
+            except Exception:
+                recipe = 'Unavailable'
+
+            output += f'\n{name} : {recipe}'
+        output += '\n```'
+
+        await self.bot.say(output)
 
 
 def setup(bot):
