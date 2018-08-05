@@ -31,15 +31,8 @@ class GuildCog:
         if player and player.guild:
             return await self.bot.say(f'You already belong to the guild {player.guild.name}')
         elif player is None:
-            author = context.message.author
-
-            player = Player.create(username=author.name,
-                                   uuid=author.id,
-                                   guild=guild,
-                                   on_island=guild.get_island(),
-                                   inventory=Inventory.create())
-
-            return await self.bot.say(f'The machine has created {player.username} for {guild.name}.')
+            # invoke the 'create' command, instead of rewriting functionality
+            return await self.bot.commands.get('create').invoke(context)
 
         await self.bot.say(player.join_guild(guild))
 
