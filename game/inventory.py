@@ -69,29 +69,29 @@ class Inventory(BaseModel):
         return True
 
     def to_message(self, harvested=False, crafted=False):
-        output = '```'
-        output += '\nInventory'
-        output += '\n---------'
-
-        if not harvested and not crafted:
-            output += f'\nharvested max amount : {str(self.max_harvested_items).zfill(3)}'
-            output += f'\ncrafted max amount   : no limit'
+        output = 'Inventory'
+        output += '\n```'
 
         if harvested:
+            output += '\nHarvested'
             output += '\nitem       : amount'
             for item, amount in self.harvested_items.items():
                 output += f'\n{item.ljust(10)} : {str(amount).zfill(3)}'
 
         if harvested and crafted:
-            # add a little separator :D
             output += '\n'
 
         if crafted:
+            output += '\nCrafted'
             output += '\nitem       : durability'
             for item in self.crafted_items:
                 item_name = item['name'].replace('_', ' ')
                 item_durability = item['durability']
                 output += f'\n{item_name.ljust(10)} : {str(item_durability).zfill(3)}'
+
+        if not harvested and not crafted:
+            output += f'\nharvested max amount : {str(self.max_harvested_items).zfill(3)}'
+            output += f'\ncrafted max amount   : no limit'
 
         output += '\n```'
         return output
