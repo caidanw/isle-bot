@@ -3,8 +3,6 @@
 
 *.pyc
 
-game/ref/
-
 *.p
 
 data/config\.json
