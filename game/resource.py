@@ -6,7 +6,8 @@ from playhouse.sqlite_ext import JSONField
 
 from game.base_model import BaseModel
 from game.island import Island
-from game.items.item import ItemLookup
+from game.items import items
+from game.items.items import ItemLookup
 from utils.cache import Cache
 
 
@@ -47,7 +48,7 @@ class Resource(BaseModel):
     def average_item_harvest_time(self):
         total_time = 0
         for item_name in self.gives_items:
-            total_time += ItemLookup[item_name].value.harvest_time
+            total_time += items.get_by_name(item_name).harvest_time
         return total_time // len(self.gives_items)
 
     async def harvest(self, amount):
@@ -66,7 +67,7 @@ class Resource(BaseModel):
             item_name = random.choice(self.gives_items)
 
             # have the program wait until the player has finished harvesting one item
-            await asyncio.sleep(ItemLookup[item_name].value.harvest_time)
+            await asyncio.sleep(items.get_by_name(item_name).harvest_time)
 
             if harvested_items.get(item_name) is None:
                 harvested_items[item_name] = 1

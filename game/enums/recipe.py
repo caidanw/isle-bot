@@ -1,6 +1,6 @@
 from enum import Enum
 
-from game.items.item import ItemLookup
+from game.items.items import ItemLookup
 
 
 class Recipe(Enum):

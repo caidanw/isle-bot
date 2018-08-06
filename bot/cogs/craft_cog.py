@@ -5,6 +5,8 @@ from discord.ext import commands
 from game.enums.craftable_item import CraftableItem
 from game.enums.recipe import Recipe
 from game.game import Game
+from game.items import items
+from game.items.items import ItemLookup
 from utils.clock import format_time
 
 
@@ -21,18 +23,18 @@ class CraftCog:
         author = context.message.author
         inventory = Game.get_player(author).inventory
 
-        recipe_name = '_'.join(item_to_craft)
+        recipe_name = '_'.join(item_to_craft).upper()
         display_name = ' '.join(item_to_craft)
 
-        if not Recipe[recipe_name]:
+        try:
+            recipe = Recipe[recipe_name].needs_items()
+        except KeyError:
             return await self.bot.say(f'Could not find the recipe for "{recipe_name}".')
-
-        recipe = Recipe[recipe_name].needs_items()
 
         if not inventory.enough_to_craft(recipe):
             return await self.bot.say(f'You do not have enough harvested items to craft this item.')
 
-        time_to_craft = sum([item.value * recipe.get(item) for item in recipe])
+        time_to_craft = sum([items.get_by_name(item.name).harvest_time * recipe.get(item) for item in recipe])
         message = await self.bot.say(f'Crafting {display_name}, time to craft {format_time(time_to_craft)}')
         await asyncio.sleep(time_to_craft)
 
@@ -60,7 +62,7 @@ class CraftCog:
 
         try:
             recipe = Recipe[recipe_name]
-        except Exception:
+        except KeyError:
             return await self.bot.say(f'Could not find the recipe for "{input_name}".')
 
         await self.bot.say(recipe.to_extended_string())

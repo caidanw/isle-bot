@@ -6,7 +6,8 @@ from discord.ext import commands
 from game.game import Game
 from game.enums.action import Action
 from game.island import Island
-from game.items.item import ItemLookup
+from game.items import items
+from game.items.items import ItemLookup
 from utils.clock import format_time
 
 
@@ -95,7 +96,7 @@ class InfoCog:
                     msg += '\n\titem name : harvest time'
                     msg += '\n\t------------------------'
                     for item_name in res.gives_items:
-                        item = ItemLookup[item_name]
+                        item = items.get_by_name(item_name)
                         msg += f'\n\t{item.name.ljust(10)}: {format_time(item.harvest_time())}'
                     msg += '\n'
 
