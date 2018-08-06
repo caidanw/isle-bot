@@ -74,7 +74,7 @@ class Inventory(BaseModel):
 
         if harvested:
             output += '\nHarvested'
-            output += '\nitem       : amount'
+            output += '\n[item]     : [amount]'
             for item, amount in self.harvested_items.items():
                 output += f'\n{item.ljust(10)} : {str(amount).zfill(3)}'
 
@@ -83,7 +83,7 @@ class Inventory(BaseModel):
 
         if crafted:
             output += '\nCrafted'
-            output += '\nitem       : durability'
+            output += '\n[item]     : [durability]'
             for item in self.crafted_items:
                 item_name = item['name'].replace('_', ' ')
                 item_durability = item['durability']
