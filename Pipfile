@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 peewee = "*"
-"discord.py" = {git = "https://github.com/Rapptz/discord.py.git", ref = "rewrite"}
+"discord.py" = {ref = "rewrite", git = "https://github.com/Rapptz/discord.py.git"}
 
 [dev-packages]
 
