@@ -12,14 +12,14 @@ class Player(BaseModel):
 
     username = CharField()
     uuid = IntegerField()
-    action = IntegerField(default=Action.idle.value)  # every action maps to an integer value
+    action = IntegerField(default=Action.IDLE.value)  # every action maps to an integer value
     union = ForeignKeyField(Union, backref='members', null=True)
     on_island = ForeignKeyField(Island, backref='residents', null=True)
     inventory = ForeignKeyField(Inventory)
 
     @property
     def is_idle(self):
-        return self.action is Action.idle.value
+        return self.action is Action.IDLE.value
 
     @property
     def get_location(self):

@@ -2,6 +2,7 @@ import asyncio
 from operator import attrgetter
 
 import discord
+from discord.abc import PrivateChannel
 from discord.ext import commands
 from discord.ext.commands.bot import _default_help_command
 
@@ -43,7 +44,7 @@ class InfoCog:
                 await message.add_reaction(Reaction.MAILBOX.value)
             except (discord.HTTPException, discord.Forbidden, discord.NotFound, discord.InvalidArgument) as e:
                 # if the reaction failed, then send a basic message
-                logger.log(f'Could not add reaction, {e}')
+                logger.log(f'Could not add :mailbox: reaction, {e}')
                 await channel.send(f"Sent you a list of the commands, {author.name}")
 
     @commands.group()
@@ -56,23 +57,26 @@ class InfoCog:
             msg = '```'
 
             if player.union:
-                msg += f'\nUnion  : {player.union.name}'
+                msg += f'\nUNION  : {player.union.name}'
             else:
-                msg += f'\nUnion  : None'
+                msg += f'\nUNION  : NONE'
 
             if player.on_island:
-                msg += f'\nIsland : {player.on_island.name}'
+                msg += f'\nISLAND : {player.on_island.name}'
             else:
-                msg += f'\nIsland : None'
+                msg += f'\nISLAND : NONE'
 
-            msg += f'\nAction : {str(Action(player.action))}'
+            msg += f'\nACTION : {Action(player.action).name}'
             msg += '```'
 
             to_delete = await channel.send(msg)
-            await asyncio.sleep(60)
-            # # delete the bot and user after a minute so chat doesn't get clogged
-            await context.message.delete()
-            await to_delete.delete()
+
+            if not isinstance(channel, PrivateChannel):
+                # we can't delete the other user's direct message, so we save the sleep call
+                await asyncio.sleep(60)
+                # # delete the bot and user after a minute so chat doesn't get clogged
+                await context.message.delete()
+                await to_delete.delete()
 
     @info.command(aliases=['loc', 'island', 'isle'])
     async def location(self, context):
@@ -80,17 +84,17 @@ class InfoCog:
         location = player.get_location
 
         msg = '```'
-        msg += '\nLocation'
+        msg += '\nLOCATION'
         msg += '\n--------'
 
         if location:
-            msg += f'\nType  : {type(location).__name__}'
+            msg += f'\nTYPE  : {type(location).__name__}'
         if location.name:
             msg += f'\nName  : {location.name}'
         if location.owner:
-            msg += f'\nOwner : {location.owner}'
+            msg += f'\nOWNER : {location.owner}'
         if location.size:
-            msg += f'\nSize  : {location.size}'
+            msg += f'\nSIZE  : {location.size}'
 
         msg += '```'
         await context.message.channel.send(msg)  # should use 'delete_after=60' param eventually
@@ -110,7 +114,7 @@ class InfoCog:
 
         if name is None:
             if island.resources:
-                header = f'{"Resource".ljust(10)} : Items'
+                header = f'{"RESOURCE".ljust(10)} : ITEMS'
                 msg += '\n' + header
                 msg += '\n' + '-' * len(header)
                 for resource in sorted(island.resources, key=attrgetter('name', 'number')):
@@ -128,7 +132,7 @@ class InfoCog:
 
                 if res.name == name:
                     msg += f'\n{res.name.title()}#{res.number} has {str(res.item_amount).zfill(3)} items left'
-                    msg += '\n\titem name : harvest time'
+                    msg += '\n\tITEM NAME : HARVEST TIME'
                     msg += '\n\t------------------------'
                     for item_name in res.gives_items:
                         item = items.get_by_name(item_name)
