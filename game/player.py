@@ -1,7 +1,7 @@
 from peewee import *
 
 from game.base_model import BaseModel
-from game.guild import Guild
+from game.union import Union
 from game.inventory import Inventory
 from game.island import Island
 from game.enums.action import Action
@@ -13,7 +13,7 @@ class Player(BaseModel):
     username = CharField()
     uuid = IntegerField()
     action = IntegerField(default=Action.idle.value)  # every action maps to an integer value
-    guild = ForeignKeyField(Guild, backref='members', null=True)
+    union = ForeignKeyField(Union, backref='members', null=True)
     on_island = ForeignKeyField(Island, backref='residents', null=True)
     inventory = ForeignKeyField(Inventory)
 
@@ -31,33 +31,33 @@ class Player(BaseModel):
         self.on_island = island
         self.save()
 
-    def join_guild(self, guild):
-        """ Join the desired Guild, first check that the Player does not belong
-        to the desired Guild.
+    def join_union(self, union):
+        """ Join the desired Union, first check that the Player does not belong
+        to the desired Union.
 
-        :param guild: to join
+        :param union: to join
         :return: a string declaring whether or not the player joined
         """
-        if not guild.has_member(self):
-            self.guild = guild
+        if not union.has_member(self):
+            self.union = union
             if self.on_island is None:
-                self.on_island = guild.get_island()
+                self.on_island = union.get_island()
             self.save()
-            return f'{self.username} has joined {guild.name}'
+            return f'{self.username} has joined {union.name}'
         else:
-            return f'{self.username} is already a member of {guild.name}'
+            return f'{self.username} is already a member of {union.name}'
 
-    def leave_guild(self):
-        """ Leave the current Guild, check if the Player does not have a guild.
-        Otherwise remove them from their current Guild.
+    def leave_union(self):
+        """ Leave the current Union, check if the Player does not have a Union.
+        Otherwise remove them from their current Union.
 
         :return: a string declaring whether or not the player was removed
         """
-        if self.guild is None:
+        if self.union is None:
             return f'{self.username} is not a member of any guild'
 
-        if self.guild.has_member(self):
-            guild_name = self.guild.name
-            self.guild = None
+        if self.union.has_member(self):
+            union_name = self.union.name
+            self.union = None
             self.save()
-            return f'{self.username} has been removed from {guild_name}'
+            return f'{self.username} has been removed from {union_name}'

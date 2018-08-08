@@ -8,17 +8,17 @@ class TestCog:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(pass_context=True, aliases=['hi'])
+    @commands.command(aliases=['hi'])
     async def hello(self, context):
         """ Replies with a nice comment. """
-        await self.bot.say(f'Hello {context.message.author.name}, you looking dashing today.')
+        await context.message.channel.send(f'Hello {context.message.author.name}, you looking dashing today.')
 
-    @commands.command(pass_context=True)
+    @commands.command()
     async def smile(self, context):
         """ Adds a smile reaction to your message. """
         await self.bot.add_reaction(context.message, emoji='😊')
 
-    @commands.command(pass_context=True, aliases=['react'])
+    @commands.command(aliases=['react'])
     async def reactions(self, context):
         """ Test out the reactions GUI. """
         reaction_message = ReactionMessage(self.bot, context.message.channel,

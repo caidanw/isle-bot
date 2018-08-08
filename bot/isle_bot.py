@@ -3,12 +3,14 @@ import sys
 import traceback
 
 import discord
+from discord.abc import PrivateChannel
 from discord.ext import commands
 from discord.ext.commands import Bot
 
 from game.game import Game
-from utils import manage, logger, check
+from utils import manage, logger
 from utils.cache import Cache
+from utils.manage import find_open_channel
 
 DEBUGGING = True
 TOKEN = Cache.get_from_json('data/config.json')['token']
@@ -16,6 +18,7 @@ PREFIXES = ('!', '?', '.', '~')
 COGS_DIR = "bot.cogs."  # this specifies the directory of extensions to load when the bot starts up ('.' replaces '/')
 
 bot = Bot(PREFIXES)
+bot.remove_command('help')  # I have my own custom help command, I don't use any of the pre-made filth
 
 
 @bot.event
@@ -28,27 +31,27 @@ async def on_ready():
 
 
 @bot.event
-async def on_server_join(server):
-    """ When the bot is added to a server, ask them to join the game. If they refuse, then leave the server. """
-    if not game.check_guild_exists(server):
-        await manage.ask_server_to_join_game(game, bot, server)
+async def on_guild_join(guild):
+    """ When the bot is added to a guild, ask them to join the game. If they refuse, then leave the guild. """
+    if not game.check_union_exists(guild):
+        await manage.ask_guild_to_join_game(game, bot, guild)
     else:
-        await bot.send_message(server, 'Ah, I am glad to see you have rejoined the game. '
-                                       'Welcome back, we are happy to have you.')
+        channel = find_open_channel(guild)
+        await channel.send('Ah, I am glad to see you have rejoined the game. Welcome back, we are happy to have you.')
 
 
 @bot.event
-async def on_server_update(before, after):
-    """ When a server updates, we want to update it's corresponding guild. """
-    # check to see if there is a guild within the database already
-    if game.check_guild_exists(before):
-        prev = game.get_guild(before)
+async def on_guild_update(before, after):
+    """ When a guild updates, we want to update it's corresponding union. """
+    # check to see if there is a union within the database already
+    if game.check_union_exists(before):
+        prev = game.get_union(before)
         prev.name = after.name
         prev.save()
-        logger.log(f'Updated the guild "{before.name}" to be "{after.name}"')
+        logger.log(f'Updated the union "{before.name}" to be "{after.name}"')
     else:
-        # theoretically there can't be a case where a guild is updated before it's created... except in testing
-        await manage.ask_server_to_join_game(game, bot, after)
+        # theoretically there can't be a case where a union is updated before it's created... except in testing
+        await manage.ask_guild_to_join_game(game, bot, after)
 
 
 @bot.event
@@ -57,62 +60,61 @@ async def on_message(message):
     if not message.content.startswith(PREFIXES):
         return
 
-    message.content = message.content.lower()
+    content = message.content.lower()
+    channel = message.channel
 
     logger.log_command(message.author, message.content.strip())
 
     player = game.get_player(message.author)
     if player is None:
-        if 'create' not in message.content and 'join' not in message.content:
-            return await bot.send_message(message.channel, 'You are not registered as a part of this game.')
+        if 'create' not in content and 'join' not in content:
+            return await channel.send('You are not registered as a part of this game. Try "?create"')
 
-    if not check.is_private(message):
-        guild = game.get_guild(message.server)
-        if guild is None:
-            await bot.send_message(message.channel, 'This discord server is not registered as a guild.')
-            return await manage.ask_server_to_join_game(game, bot, message.server, message.channel)
+    if not isinstance(channel, PrivateChannel):
+        union = game.get_union(message.guild)
+        if union is None:
+            await channel.send('This discord guild is not registered as a union.')
+            return await manage.ask_guild_to_join_game(game, bot, message.guild, channel)
 
     await bot.process_commands(message)
 
 
 @bot.event
 async def on_member_remove(member):
-    """ Remove the banned player from the guild, do nothing if the player wasn't a member of the guild. """
+    """ Remove the banned player from the union, do nothing if the player wasn't a member of the union. """
     player = Game.get_player(member)
-    guild = Game.get_guild(member.server)
+    union = Game.get_union(member.guild)
 
-    if player is None or guild is None:
+    if player is None or union is None:
         return
 
-    if player in guild.members:
-        message = player.leave_guild()
-        return await bot.send_message(member.server, message)
+    if player in union.members:
+        message = player.leave_union()
+        return await bot.send_message(member.guild, message)
 
 
 @bot.event
-async def on_command_error(exception, context):
+async def on_command_error(context, exception):
     """ Handle errors that are given from the bot. """
     if DEBUGGING:
         logger.log(exception)
         traceback.print_exception(type(exception), exception, exception.__traceback__, file=sys.stderr)
 
     cmd = context.invoked_with
+    channel = context.message.channel
 
     if isinstance(exception, commands.CommandNotFound):
-        return await bot.send_message(context.message.channel, f'Command "{cmd}" unknown. Try "?help"')
+        return await channel.send(f'Command "{cmd}" unknown. Try "?help"')
 
     elif isinstance(exception, discord.InvalidArgument):
-        return await bot.send_message(context.message.channel,
-                                      f'Invalid argument for command "{cmd}". Try "?help {cmd}"')
+        return await channel.send(f'Invalid argument for command "{cmd}". Try "?help {cmd}"')
 
     elif isinstance(exception, commands.MissingRequiredArgument):
-        return await bot.send_message(context.message.channel,
-                                      f'Missing argument for command "{cmd}". Try "?help {cmd}"')
+        return await channel.send(f'Missing argument for command "{cmd}". Try "?help {cmd}"')
 
     elif isinstance(exception, commands.CommandInvokeError):
-        return await bot.send_message(context.message.channel,
-                                      'Oops, looks like something on the back end broke. '
-                                      'Please contact the admin or developer.')
+        return await channel.send('Oops, looks like something on the back end broke. '
+                                  'Please contact the admin or developer.')
 
 
 if __name__ == "__main__":

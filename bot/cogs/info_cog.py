@@ -1,13 +1,16 @@
 import asyncio
 from operator import attrgetter
 
+import discord
 from discord.ext import commands
+from discord.ext.commands.bot import _default_help_command
 
 from game.game import Game
 from game.enums.action import Action
 from game.island import Island
 from game.items import items
-from game.items.items import ItemLookup
+from ui.reaction import Reaction
+from utils import logger
 from utils.clock import format_time
 
 
@@ -15,32 +18,63 @@ class InfoCog:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.group(pass_context=True)
+    @commands.command(name='help')
+    async def _help(self, context, *extra_commands):
+        author = context.message.author
+        channel = context.message.channel
+        dm_channel = author.dm_channel
+        message = context.message
+
+        if not dm_channel:
+            dm_channel = await author.create_dm()
+
+        # hacky way to force the standard help into a dm
+        context.message.channel = dm_channel
+        if len(extra_commands) != 0:
+            await _default_help_command(context, *extra_commands)
+        else:
+            await _default_help_command(context)
+        # undo the hacks
+        context.message.channel = channel
+
+        if context.guild:
+            try:
+                # try to add a :mailbox: reaction
+                await message.add_reaction(Reaction.MAILBOX.value)
+            except (discord.HTTPException, discord.Forbidden, discord.NotFound, discord.InvalidArgument) as e:
+                # if the reaction failed, then send a basic message
+                logger.log(f'Could not add reaction, {e}')
+                await channel.send(f"Sent you a list of the commands, {author.name}")
+
+    @commands.group()
     async def info(self, context):
         """ Display info about yourself. """
         if context.invoked_subcommand is None:
+            channel = context.message.channel
             player = Game.get_player(context.message.author)
+
             msg = '```'
 
-            if player.guild:
-                msg += f'\nGuild  : {player.guild.name}'
+            if player.union:
+                msg += f'\nUnion  : {player.union.name}'
             else:
-                msg += f'\nGuild  : None'
+                msg += f'\nUnion  : None'
 
             if player.on_island:
                 msg += f'\nIsland : {player.on_island.name}'
             else:
                 msg += f'\nIsland : None'
 
-            msg += f'\nAction : {Action(player.action)}'
+            msg += f'\nAction : {str(Action(player.action))}'
             msg += '```'
 
-            await self.bot.say(msg, delete_after=60)  # delete the message after a minute so chat doesn't get clogged
-            # delete user message for same reason
+            to_delete = await channel.send(msg)
             await asyncio.sleep(60)
-            await self.bot.delete_message(context.message)
+            # # delete the bot and user after a minute so chat doesn't get clogged
+            await context.message.delete()
+            await to_delete.delete()
 
-    @info.command(pass_context=True, aliases=['loc', 'island', 'isle'])
+    @info.command(aliases=['loc', 'island', 'isle'])
     async def location(self, context):
         player = Game.get_player(context.message.author)
         location = player.get_location
@@ -59,17 +93,18 @@ class InfoCog:
             msg += f'\nSize  : {location.size}'
 
         msg += '```'
-        await self.bot.say(msg)  # should use 'delete_after=60' param eventually
+        await context.message.channel.send(msg)  # should use 'delete_after=60' param eventually
 
-    @info.command(pass_context=True, aliases=['res'])
+    @info.command(aliases=['res'])
     async def resources(self, context, name=None):
+        channel = context.message.channel
         island = Game.get_player(context.message.author).get_location
 
         if not isinstance(island, Island):
-            return await self.bot.say('You are currently not on an island.')
+            return await channel.send('You are currently not on an island.')
 
         if not island.resources:
-            return await self.bot.say('This island does not have any resources.')
+            return await channel.send('This island does not have any resources.')
 
         msg = '```'
 
@@ -106,7 +141,7 @@ class InfoCog:
         else:
             msg += '\n```'
 
-        await self.bot.say(msg)
+        await channel.send(msg)
 
 
 def setup(bot):

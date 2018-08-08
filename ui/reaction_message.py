@@ -1,10 +1,11 @@
-from discord import Client, Channel, User
+import asyncio
+
+from discord import Client, User, TextChannel
 
 
 class ReactionMessage:
-    TIMEOUT = 60
 
-    def __init__(self, client: Client, channel: Channel, messages: list, reactions: list):
+    def __init__(self, client: Client, channel: TextChannel, messages: list, reactions: list):
         self.client = client
         self.channel = channel
         self.message_literal = None
@@ -20,9 +21,9 @@ class ReactionMessage:
                              'Minus the first index in messages, as that is used as the initial message.')
 
     async def send(self):
-        self.message_literal = await self.client.send_message(self.channel, self.initial_message)
+        self.message_literal = await self.channel.send(self.initial_message)
         for emoji in self.reactions:
-            await self.client.add_reaction(self.message_literal, emoji)
+            await self.message_literal.add_reaction(emoji)
 
     async def wait_for_user_reaction(self, target_user: User=None):
         if self.message_literal is None:
@@ -30,12 +31,16 @@ class ReactionMessage:
 
         def check(reaction, user):
             if not user.bot:
-                if target_user:
+                if target_user and user == self.message_literal.author:
                     return str(reaction.emoji) in self.reactions and user == target_user
                 else:
                     return str(reaction.emoji) in self.reactions
-            else:
-                return False
+            return False
 
-        response = await self.client.wait_for_reaction(message=self.message_literal, check=check, timeout=self.TIMEOUT)
-        await self.client.edit_message(self.message_literal, self.reaction_messages.get(str(response.reaction.emoji)))
+        try:
+            response = await self.client.wait_for('reaction_add', check=check, timeout=self.TIMEOUT)
+        except asyncio.TimeoutError:
+            return await self.message_literal.delete()
+
+        emoji_code = str(response[0])
+        await self.message_literal.edit(content=self.reaction_messages.get(emoji_code))
