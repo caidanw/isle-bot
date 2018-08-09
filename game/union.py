@@ -47,12 +47,14 @@ class Union(BaseModel):
         :return: a boolean (True if island claimed)
         """
         if self.claimed_islands < self.max_islands:
-            island.union = self
-            island.name = f'Island #{self.claimed_islands+1} of {self.name}'
-            island.claimed = True
-            island.save()
-
             self.claimed_islands += 1
+
+            island.union = self
+            island.union_number = self.claimed_islands
+            island.name = f'Island #{island.union_number}'
+            island.claimed = True
+
+            island.save()
             self.save()
             return True
         return False
