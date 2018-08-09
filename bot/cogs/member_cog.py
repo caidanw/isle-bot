@@ -1,3 +1,5 @@
+import re
+
 from discord.abc import PrivateChannel
 from discord.ext import commands
 
@@ -121,18 +123,27 @@ class MemberCog:
         finished_message += '\n```'
         await msg.edit(content=finished_message)
 
-    @commands.command()
+    @commands.command(aliases=['t', 'trav'])
     async def travel(self, context, *destination):
         """ Travel to another island or union. """
         channel = context.message.channel
+        guild = context.message.guild
 
         if not destination:
             return await channel.send('You must enter a destination.')
 
         destination_name = " ".join(destination)
+        island_number = re.search('island#(\d+)', destination_name).group(1)
+        island_number = int(island_number)
 
         union = Game.search_unions(destination_name)
-        island = Game.search_islands(destination_name)
+
+        island = None
+        if union is None:
+            local_union = Game.search_unions_by_guild_id(guild.id)
+            island = Game.search_islands_by_number(local_union, island_number)
+        else:
+            island = Game.search_islands_by_number(union, island_number)
 
         if union is None and island is None:
             return await channel.send('There are no unions or islands under that name.')
