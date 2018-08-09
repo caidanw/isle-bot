@@ -6,6 +6,7 @@ from discord.abc import PrivateChannel
 from discord.ext import commands
 from discord.ext.commands.bot import _default_help_command
 
+import settings
 from game.game import Game
 from game.enums.action import Action
 from game.island import Island
@@ -97,7 +98,7 @@ class InfoCog:
             msg += f'\nSIZE  : {location.size}'
 
         msg += '```'
-        await context.message.channel.send(msg)  # should use 'delete_after=60' param eventually
+        await context.message.channel.send(msg, delete_after=settings.DEFAULT_DELETE_DELAY)
 
     @info.command(aliases=['res'])
     async def resources(self, context, name=None):
