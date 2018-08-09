@@ -60,13 +60,22 @@ class Game:
             return None
 
     @classmethod
-    def search_unions(cls, name):
+    def search_unions(cls, name: str):
         """ Attempt to find a union with 'name' in the database
 
         :param name: the name of the union to search for
         :return: the union if found, otherwise None
         """
         return Union.get_or_none(fn.Lower(Union.name) == name)
+
+    @classmethod
+    def search_unions_by_guild_id(cls, guild_id: int):
+        """ Attempt to find a union with 'name' in the database
+
+        :param guild_id: the unique id of the guild to search for
+        :return: the union if found, otherwise None
+        """
+        return Union.get_or_none(Union.guild_id == guild_id)
 
     @classmethod
     def get_player(cls, user: User):
@@ -78,7 +87,7 @@ class Game:
         return Player.get_or_none(Player.uuid == user.id)
 
     @classmethod
-    def create_island(cls, union: Union=None, resource_amount=5):
+    def create_island(cls, union: Union=None, resource_amount: int=5):
         """ Create a new Island with the desired amount of resources,
         and place it under the control of the desired union
         (if union is None, then it is a 'Lost Island').
@@ -86,13 +95,14 @@ class Game:
         :param union: to give control of the island
         :param resource_amount: amount of resources on the island
         """
-        island = Island()
+        if union is None:
+            return None
 
-        if union is not None:
-            union.claim_island(island)
+        island = Island.create()
+        union.claim_island(island)
 
         for i in range(resource_amount):
-            Resource.random(island)
+            Resource.random(island)  # create new resources for the island
 
         island.save()
         return island
@@ -104,15 +114,20 @@ class Game:
         :param island: to check for
         :return: a boolean
         """
-        if Island.get_or_none(Island.id == island.id) is None:
-            return False
-        return True
+        return Island.get_or_none(Island.id == island.id) is not None
 
     @classmethod
-    def search_islands(cls, name):
+    def search_islands(cls, name: str):
         """ Attempt to find a union with 'name' in the database
 
         :param name: the name of the union to search for
         :return: the union if found, otherwise None
         """
         return Island.get_or_none(fn.Lower(Island.name) == name)
+
+    @classmethod
+    def search_islands_by_number(cls, union: Union, number: int):
+        for island in union.islands:
+            if island.union_number == number:
+                return island
+        return None
