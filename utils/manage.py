@@ -1,6 +1,7 @@
 from discord import HTTPException, TextChannel
 from discord.abc import PrivateChannel
 
+from game.game import Game
 from ui.confirm_message import ConfirmMessage
 from utils import logger
 
@@ -15,7 +16,7 @@ def find_open_channel(guild):
     return channel
 
 
-async def ask_guild_to_join_game(game, bot, guild, channel=None):
+async def ask_guild_to_join_game(bot, guild, channel=None):
     if channel is None:
         channel = find_open_channel(guild)
 
@@ -30,8 +31,8 @@ async def ask_guild_to_join_game(game, bot, guild, channel=None):
 
     if confirmed:
         # create a new guild for the guild
-        guild = game.create_union(guild)
-        logger.log(f'Created a new Union under the name "{guild.name}"')
+        union = Game.create_union(guild)
+        logger.log(f'Created a new Union under the name "{union.name}"')
     else:
         await channel.send('I am leaving this guild, as I am no longer needed. '
                            'If you change your mind and would like to register this guild, just add me back.')
