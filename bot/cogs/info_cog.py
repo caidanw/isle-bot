@@ -30,7 +30,7 @@ class InfoCog:
         if not dm_channel:
             dm_channel = await author.create_dm()
 
-        # hacky way to force the standard help into a dm
+        # hacky way to force the help message into a dm instead of guild channel
         context.message.channel = dm_channel
         if len(extra_commands) != 0:
             await _default_help_command(context, *extra_commands)
@@ -79,6 +79,29 @@ class InfoCog:
                 await context.message.delete()
                 await to_delete.delete()
 
+    @info.command(aliases=['guild'])
+    async def union(self, context):
+        player = Game.get_player(context.message.author)
+        union = player.union
+
+        msg = '```'
+        msg += '\nUNION'
+        msg += '\n--------'
+
+        if union:
+            msg += f'\nID              : {union.guild_id}'
+        if union.name:
+            msg += f'\nNAME            : {union.name}'
+        if union.created_at:
+            msg += f'\nCREATED ON      : {union.created_at}'
+        if union.max_islands:
+            msg += f'\nMAX ISLANDS     : {union.max_islands}'
+        if union.claimed_islands:
+            msg += f'\nCLAIMED ISLANDS : {union.claimed_islands}'
+
+        msg += '```'
+        await context.message.channel.send(msg, delete_after=settings.DEFAULT_DELETE_DELAY)
+
     @info.command(aliases=['loc', 'island', 'isle'])
     async def location(self, context):
         player = Game.get_player(context.message.author)
@@ -91,9 +114,9 @@ class InfoCog:
         if location:
             msg += f'\nTYPE  : {type(location).__name__}'
         if location.name:
-            msg += f'\nName  : {location.name}'
+            msg += f'\nNAME  : {location.name}'
         if location.owner:
-            msg += f'\nOWNER : {location.owner}'
+            msg += f'\nOWNER : {location.owner.name}'
         if location.size:
             msg += f'\nSIZE  : {location.size}'
 
