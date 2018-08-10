@@ -114,7 +114,7 @@ async def on_command_error(context, exception):
 
     elif isinstance(exception, commands.CommandInvokeError):
         return await channel.send('Oops, looks like something on the back end broke. '
-                                  'Please contact the admin or developer.')
+                                  'Please contact contact mildmelon#5380.')
 
 
 if __name__ == "__main__":
