@@ -1,3 +1,5 @@
+import asyncio
+import random
 import re
 
 from discord.abc import PrivateChannel
@@ -128,6 +130,7 @@ class MemberCog:
         """ Travel to another island or union. """
         channel = context.message.channel
         guild = context.message.guild
+        author = context.message.author
 
         if not destination:
             return await channel.send('You must enter a destination.')
@@ -138,7 +141,7 @@ class MemberCog:
 
         union = Game.search_unions(destination_name)
 
-        island = None
+        local_union = None
         if union is None:
             local_union = Game.search_unions_by_guild_id(guild.id)
             island = Game.search_islands_by_number(local_union, island_number)
@@ -148,7 +151,7 @@ class MemberCog:
         if union is None and island is None:
             return await channel.send('There are no unions or islands under that name.')
 
-        player = Game.get_player(context.message.author)
+        player = Game.get_player(author)
 
         if union:
             if player.union.id == union.id:
@@ -161,14 +164,23 @@ class MemberCog:
             if player.get_location.id == island.id:
                 return await channel.send('You are already on this island.')
 
-            if island not in player.union.islands:
+            if island not in local_union.islands:
                 return await channel.send('That island is not a part of this union. '
                                           'You must first travel to that union\'s location.')
 
             # TODO: confirm using reactions that the player wants to travel there
 
+            # TODO: estimate the eta, based on distance
+            message = await channel.send(f'You start heading towards {island.name}. ETA: 02s')
+
+            player.action = Action.TRAVELING.value
+            player.save()
+            await asyncio.sleep(random.randint(1, 3))
+            player.action = Action.IDLE.value
+            player.save()
+
             player.set_location(island)
-            await channel.send(f'You have traveled to the island {island.name}')
+            await message.edit(content=f'{author.mention} has arrived at {island.name}')
 
 
 def setup(bot):
