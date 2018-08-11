@@ -2,18 +2,24 @@ import time
 
 
 def log_command(author, command, issued=True):
+    dt = date_time()
     if issued:
-        print(f'[{time.strftime("%X")}] {author} issued command "{command}"')
+        print(f'[{dt}] {author} issued command "{command}"')
     else:
-        print(f'[{time.strftime("%X")}] {author} finished command "{command}"')
+        print(f'[{dt}] {author} finished command "{command}"')
 
 
 def log_db(action, returned=None):
+    dt = date_time()
     if returned:
-        print(f'[{time.strftime("%X")}] {action} returned "{returned}"')
+        print(f'[{dt}] {action} returned "{returned}"')
     else:
-        print(f'[{time.strftime("%X")}] {action}')
+        print(f'[{dt}] {action}')
 
 
 def log(comment):
-    print(f'[{time.strftime("%X")}] {comment}')
+    print(f'[{date_time()}] {comment}')
+
+
+def date_time():
+    return time.strftime('%x %X')
