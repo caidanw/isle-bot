@@ -15,7 +15,7 @@ from utils.manage import find_open_channel
 DEBUGGING = True
 TOKEN = Cache.get_from_json('data/config.json')['token']
 PREFIXES = ('!', '?', '.', '~')
-COGS_DIR = "bot.cogs."  # this specifies the directory of extensions to load when the bot starts up ('.' replaces '/')
+COGS_DIR = "cogs."  # this specifies the directory of extensions to load when the bot starts up ('.' replaces '/')
 
 bot = Bot(PREFIXES)
 bot.remove_command('help')  # I have my own custom help command, I don't use any of the pre-made filth
