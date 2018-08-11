@@ -4,24 +4,25 @@ import random
 from peewee import *
 
 from game.base_model import BaseModel
-from game.guild import Guild
+from game.union import Union
 
 
 class Island(BaseModel):
     """
-    Island class used to represent an area a Guild can own,
+    Island class used to represent an area a Union can own,
     and a place for Players to harvest Resources.
     """
 
-    guild = ForeignKeyField(Guild, backref='islands', null=True)
+    union = ForeignKeyField(Union, backref='islands', null=True)
+    union_number = IntegerField(default=0)  # islands with a 0 are claimable
     name = CharField(default='Lost Island')
-    claimed = BooleanField(default=False)
     size = IntegerField(default=random.randint(300, 800))
+    claimed = BooleanField(default=False)
     claimed_at = DateTimeField(default=datetime.now())
 
     @property
     def owner(self):
-        return self.guild.name
+        return self.union
 
     def get_amount_of_resources(self, name):
         from game.resource import Resource

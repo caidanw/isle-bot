@@ -1,10 +1,10 @@
-from discord import Server, User
+from discord import Guild, User
 from peewee import fn
 
 from game.player import Player
 from game.resource import Resource
 from utils import database
-from game.guild import Guild
+from game.union import Union
 from game.island import Island
 from utils.logger import log_db
 
@@ -18,55 +18,64 @@ class Game:
         database.connect()
 
     @classmethod
-    def create_guild(cls, server: Server):
-        """ Return an existing guild if there is one linked to the discord server,
-        other wise create a new guild using the discord server.
+    def create_union(cls, guild: Guild):
+        """ Return an existing union if there is one linked to the discord guild,
+        other wise create a new union using the discord guild.
 
-        :param server: the discord server that the bot currently resides
-        :return: a guild
+        :param guild: the discord guild that the bot currently resides
+        :return: a union
         """
-        if cls.check_guild_exists(server):
-            return cls.get_guild(server)
+        if cls.check_union_exists(guild):
+            return cls.get_union(guild)
 
-        # create and return a new guild
-        guild = Guild.create(server_id=server.id, name=server.name)
-        island = Game.create_island(guild)
-        guild.claim_island(island)
-        guild.save()
-        return guild
+        # create and return a new union
+        union = Union.create(guild_id=guild.id, name=guild.name)
+        island = Game.create_island(union)
+        union.claim_island(island)
+        union.save()
+        return union
 
     @classmethod
-    def check_guild_exists(cls, server: Server):
-        """ Check to see if a guild exists within the database
+    def check_union_exists(cls, guild: Guild):
+        """ Check to see if a union exists within the database
 
-        :param server: to check for
+        :param guild: to check for
         :return: a boolean
         """
-        if Guild.get_or_none(Guild.server_id == server.id) is None:
+        if Union.get_or_none(Union.guild_id == guild.id) is None:
             return False
         return True
 
     @classmethod
-    def get_guild(cls, server: Server):
-        """ Search for an existing guild from the desired server
+    def get_union(cls, guild: Guild):
+        """ Search for an existing union from the desired guild
 
-        :param server: to search for
-        :return: a guild if found
+        :param guild: to search for
+        :return: a union if found
         """
         try:
-            return Guild.get(Guild.server_id == server.id)
+            return Union.get(Union.guild_id == guild.id)
         except Exception:
-            log_db(f'Server "{server.name}" [id:{server.id}] is not registered as a guild.')
+            log_db(f'Guild "{guild.name}" [id:{guild.id}] is not registered as a union.')
             return None
 
     @classmethod
-    def search_guilds(cls, name):
-        """ Attempt to find a guild with 'name' in the database
+    def search_unions(cls, name: str):
+        """ Attempt to find a union with 'name' in the database
 
-        :param name: the name of the guild to search for
-        :return: the guild if found, otherwise None
+        :param name: the name of the union to search for
+        :return: the union if found, otherwise None
         """
-        return Guild.get_or_none(fn.Lower(Guild.name) == name)
+        return Union.get_or_none(fn.Lower(Union.name) == name)
+
+    @classmethod
+    def search_unions_by_guild_id(cls, guild_id: int):
+        """ Attempt to find a union with 'name' in the database
+
+        :param guild_id: the unique id of the guild to search for
+        :return: the union if found, otherwise None
+        """
+        return Union.get_or_none(Union.guild_id == guild_id)
 
     @classmethod
     def get_player(cls, user: User):
@@ -78,21 +87,22 @@ class Game:
         return Player.get_or_none(Player.uuid == user.id)
 
     @classmethod
-    def create_island(cls, guild: Guild=None, resource_amount=5):
+    def create_island(cls, union: Union=None, resource_amount: int=5):
         """ Create a new Island with the desired amount of resources,
-        and place it under the control of the desired guild
-        (if guild is None, then it is a 'Lost Island').
+        and place it under the control of the desired union
+        (if union is None, then it is a 'Lost Island').
 
-        :param guild: to give control of the island
+        :param union: to give control of the island
         :param resource_amount: amount of resources on the island
         """
-        island = Island()
+        if union is None:
+            return None
 
-        if guild is not None:
-            guild.claim_island(island)
+        island = Island.create()
+        union.claim_island(island)
 
         for i in range(resource_amount):
-            Resource.random(island)
+            Resource.random(island)  # create new resources for the island
 
         island.save()
         return island
@@ -104,15 +114,20 @@ class Game:
         :param island: to check for
         :return: a boolean
         """
-        if Island.get_or_none(Island.id == island.id) is None:
-            return False
-        return True
+        return Island.get_or_none(Island.id == island.id) is not None
 
     @classmethod
-    def search_islands(cls, name):
-        """ Attempt to find a guild with 'name' in the database
+    def search_islands(cls, name: str):
+        """ Attempt to find a union with 'name' in the database
 
-        :param name: the name of the guild to search for
-        :return: the guild if found, otherwise None
+        :param name: the name of the union to search for
+        :return: the union if found, otherwise None
         """
         return Island.get_or_none(fn.Lower(Island.name) == name)
+
+    @classmethod
+    def search_islands_by_number(cls, union: Union, number: int):
+        for island in union.islands:
+            if island.union_number == number:
+                return island
+        return None

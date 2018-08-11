@@ -36,10 +36,11 @@ class Recipe(Enum):
     def to_extended_string(self):
         output = '```\n'
 
-        header = self.name.replace('_', ' ') + ' Recipe'
+        header = self.name.replace('_', ' ') + ' RECIPE'
         output += header
 
         output += '\n' + '-' * len(header)
+
         for item, amt in self.value.items():
             name = str(item).ljust(10)
             amt = str(amt).zfill(3)
