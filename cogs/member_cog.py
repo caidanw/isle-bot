@@ -108,14 +108,14 @@ class MemberCog:
         msg = await channel.send(f'Harvesting {desired_amount} items from {resource_name}, '
                                  f'estimated time to finish {time_to_finish}')
 
-        player.action = Action.harvesting.value
+        player.action = Action.HARVESTING.value
         player.save()
 
         harvested_items = await resource.harvest(desired_amount)
         for item_name, item_amt in harvested_items.items():
             player_inv.add_item(item=item_name, amount=item_amt)
 
-        player.action = Action.idle.value
+        player.action = Action.IDLE.value
         player.save()
 
         finished_message = f'{context.message.author.mention} has finished harvesting.'
