@@ -16,7 +16,7 @@ class TestCog:
     @commands.command()
     async def smile(self, context):
         """ Adds a smile reaction to your message. """
-        await self.bot.add_reaction(context.message, emoji='😊')
+        await context.message.add_reaction('😊')
 
     @commands.command(aliases=['react'])
     async def reactions(self, context):

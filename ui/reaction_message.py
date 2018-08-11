@@ -2,6 +2,8 @@ import asyncio
 
 from discord import Client, User, TextChannel
 
+import settings
+
 
 class ReactionMessage:
 
@@ -38,7 +40,7 @@ class ReactionMessage:
             return False
 
         try:
-            response = await self.client.wait_for('reaction_add', check=check, timeout=self.TIMEOUT)
+            response = await self.client.wait_for('reaction_add', check=check, timeout=settings.DEFAULT_TIMEOUT)
         except asyncio.TimeoutError:
             return await self.message_literal.delete()
 
