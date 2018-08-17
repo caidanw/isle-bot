@@ -7,7 +7,7 @@ from game.base_model import BaseModel
 class Inventory(BaseModel):
     """ Inventory class used to manage a Player's items. """
 
-    max_harvested_items = IntegerField(default=50)
+    max_harvested_items = IntegerField(default=1000)
     harvested_items = JSONField(default={})
     crafted_items = JSONField(default=[])
 
@@ -74,20 +74,27 @@ class Inventory(BaseModel):
 
         if harvested:
             output += '\nHarvested'
-            output += '\n[item]     : [amount]'
-            for item, amount in self.harvested_items.items():
-                output += f'\n{item.ljust(10)} : {str(amount).zfill(3)}'
+            if len(self.harvested_items) > 0:
+                output += '\n[item]     : [amount]'
+                for item, amount in self.harvested_items.items():
+                    output += f'\n{item.ljust(10)} : {str(amount).zfill(3)}'
+            else:
+                output += '\nYou do not have any harvested items.'
 
+        # add a divider so the text isn't smashed together
         if harvested and crafted:
             output += '\n'
 
         if crafted:
             output += '\nCrafted'
-            output += '\n[item]     : [durability]'
-            for item in self.crafted_items:
-                item_name = item['name'].replace('_', ' ')
-                item_durability = item['durability']
-                output += f'\n{item_name.ljust(10)} : {str(item_durability).zfill(3)}'
+            if len(self.crafted_items) > 0:
+                output += '\n[item]     : [durability]'
+                for item in self.crafted_items:
+                    item_name = item['name'].replace('_', ' ')
+                    item_durability = item['durability']
+                    output += f'\n{item_name.ljust(10)} : {str(item_durability).zfill(3)}'
+            else:
+                output += '\nYou do not have any crafted items.'
 
         if not harvested and not crafted:
             output += f'\nharvested max amount : {str(self.max_harvested_items).zfill(3)}'
