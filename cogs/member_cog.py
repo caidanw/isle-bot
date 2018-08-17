@@ -77,11 +77,10 @@ class MemberCog:
 
         if not player.is_idle:
             return await channel.send('You can not do any more actions until you have finished '
-                                                      f'{Action(player.action).name}.')
+                                      f'{Action(player.action).name}.')
 
-        at_union = Game.get_union(context.message.guild)
-        if at_union and not at_union.get_island(player.get_location.name):
-            return await channel.send('You can not harvest here, you are currently not on this island.')
+        if not isinstance(player.get_location, Island):
+            return await channel.send('You can not harvest here, you are currently not on an island.')
 
         island = player.get_location
         if not isinstance(island, Island):
