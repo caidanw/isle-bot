@@ -12,7 +12,7 @@ from utils import manage, logger
 from utils.cache import Cache
 from utils.manage import find_open_channel
 
-DEBUGGING = True
+DEBUGGING = Cache.get_from_json('data/config.json')['debugging']
 TOKEN = Cache.get_from_json('data/config.json')['token']
 PREFIXES = ('!', '?', '.', '~')
 COGS_DIR = "cogs."  # this specifies the directory of extensions to load when the bot starts up ('.' replaces '/')
