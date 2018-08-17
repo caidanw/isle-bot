@@ -27,7 +27,7 @@ async def on_ready():
     print('Logged in as')
     print('[name]:', bot.user.name)
     print('[  id]:', bot.user.id)
-    print('------')
+    print('-------')
 
 
 @bot.event
