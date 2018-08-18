@@ -22,6 +22,7 @@ class InfoCog:
 
     @commands.command(name='help')
     async def _help(self, context, *extra_commands):
+        """ Get this message from the bot, and add a mailbox emoji to your help command. """
         author = context.message.author
         channel = context.message.channel
         dm_channel = author.dm_channel

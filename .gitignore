@@ -12,3 +12,5 @@ data/universe\.db
 data/universe\.db-shm
 
 data/universe\.db-wal
+
+*.db

@@ -66,7 +66,7 @@ class MemberCog:
         player = Game.get_player(context.message.author)
         await context.message.channel.send(player.inventory.to_message(crafted=True))
 
-    @commands.command()
+    @commands.command(aliases=['h', 'harv'])
     async def harvest(self, context, resource_name, desired_amount=5):
         """ Harvest items from the resource.
 
