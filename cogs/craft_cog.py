@@ -30,7 +30,7 @@ class CraftCog:
         try:
             recipe = Recipe[recipe_name].needs_items()
         except KeyError:
-            return await channel.send(f'Could not find the recipe for "{recipe_name}".')
+            return await channel.send(f'Could not find the recipe for "{display_name}".')
 
         if not inventory.enough_to_craft(recipe):
             return await channel.send(f'You do not have enough harvested items to craft this item.')
