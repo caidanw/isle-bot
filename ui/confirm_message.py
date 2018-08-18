@@ -3,10 +3,12 @@ from discord import Client, User, TextChannel
 from ui.reaction import Reaction
 from ui.reaction_message import ReactionMessage
 
+REACTIONS = [Reaction.DISMISS.value, Reaction.CONFIRM.value]
+
 
 class ConfirmMessage(ReactionMessage):
     def __init__(self, client: Client, channel: TextChannel, messages: list):
-        super().__init__(client, channel, messages, [Reaction.DISMISS.value, Reaction.CONFIRM.value])
+        super().__init__(client, channel, messages, REACTIONS)
 
     async def wait_for_user_reaction(self, target_user: User=None):
         if self.message_literal is None:
