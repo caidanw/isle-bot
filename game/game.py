@@ -87,6 +87,15 @@ class Game:
         return Player.get_or_none(Player.uuid == user.id)
 
     @classmethod
+    def get_player_by_name(cls, name: str):
+        """ Retrieve the Player from the database with the desired name.
+
+        :param name: to search for in the database
+        :return: [Player | None] object
+        """
+        return Player.get_or_none(Player.username == name)
+
+    @classmethod
     def create_island(cls, union: Union=None, resource_amount: int=5):
         """ Create a new Island with the desired amount of resources,
         and place it under the control of the desired union
