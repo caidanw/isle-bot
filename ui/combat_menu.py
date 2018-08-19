@@ -6,20 +6,27 @@ from ui.reaction import Reaction
 from ui.reaction_menu import ReactionMenu
 
 MESSAGES = ['Choose an action...',
-            'You chose to attack.',  # attack
-            'You chose to defend.',  # defend
-            'You chose to use an item.',  # use item
-            'You chose to surrender.']  # surrender
-REACTIONS = [Reaction.CROSSED_SWORDS.value, Reaction.SHIELD.value, Reaction.PACKAGE.value, Reaction.WHITE_FLAG.value]
+            'You chose to attack.',
+            'You chose to defend.',
+            'You chose to use an item.',
+            'You chose to pass this turn.',
+            'You chose to surrender.']
+
+REACTIONS = [Reaction.CROSSED_SWORDS.value,     # attack
+             Reaction.SHIELD.value,             # defend
+             Reaction.PACKAGE.value,            # use item
+             Reaction.NO_ENTRY_SIGN.value,      # pass
+             Reaction.WHITE_FLAG.value]         # surrender
 
 
 class CombatMenu(ReactionMenu):
     def __init__(self, client: Client, channel: TextChannel):
         super().__init__(client, channel, MESSAGES.copy(), REACTIONS)
 
-    async def reset(self):
-        await self.message_literal.delete()
-        await self.send()
+    async def send(self):
+        if self.message_literal is not None:
+            await self.message_literal.delete()
+        await super(CombatMenu, self).send()
 
     async def wait_for_user_reaction(self, target_user: User=None, timeout=10):
         if self.message_literal is None:
@@ -43,4 +50,4 @@ class CombatMenu(ReactionMenu):
             return Reaction(emoji_code)
         else:
             await self.message_literal.edit(content='You did not choose an action in time, passing turn.')
-            return None
+            return Reaction.NO_ENTRY_SIGN
