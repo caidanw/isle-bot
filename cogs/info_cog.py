@@ -124,7 +124,7 @@ class InfoCog:
         msg += '```'
         await context.message.channel.send(msg, delete_after=settings.DEFAULT_DELETE_DELAY)
 
-    @info.command(aliases=['res'])
+    @info.command(aliases=['res', 'resource'])
     async def resources(self, context, name=None):
         channel = context.message.channel
         island = Game.get_player(context.message.author).get_location
