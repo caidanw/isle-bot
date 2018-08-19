@@ -114,7 +114,7 @@ async def on_command_error(context, exception):
 
     elif isinstance(exception, commands.CommandInvokeError):
         return await channel.send('Oops, looks like something on the back end broke. '
-                                  'Please contact contact mildmelon#5380.')
+                                  'Please contact @mildmelon#5380.')
 
 
 if __name__ == "__main__":
@@ -129,6 +129,8 @@ if __name__ == "__main__":
                 bot.load_extension(extension_path)
                 logger.log(f'Loaded extension {extension}')
         except Exception as e:
+            if DEBUGGING:
+                traceback.print_exception(type(e), e, e.__traceback__, file=sys.stderr)
             exc = f'{type(e).__name__}: {e}'
             print(f'Failed to load extension {extension}:\n\t{exc}')
 
