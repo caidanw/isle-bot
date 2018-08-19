@@ -19,7 +19,10 @@ class MemberCog:
 
     @commands.command()
     async def create(self, context):
-        """  """
+        """ Be born under a new union.
+
+         The union you choose to be born at will stay with you and be visible to all players until death.
+         """
         channel = context.message.channel
         author = context.message.author
         union = context.message.guild
