@@ -3,7 +3,7 @@ from concurrent import futures
 from discord import Client, TextChannel, User
 
 from ui.reaction import Reaction
-from ui.reaction_message import ReactionMessage
+from ui.reaction_menu import ReactionMenu
 
 MESSAGES = ['Choose an action...',
             'You chose to attack.',  # attack
@@ -13,7 +13,7 @@ MESSAGES = ['Choose an action...',
 REACTIONS = [Reaction.CROSSED_SWORDS.value, Reaction.SHIELD.value, Reaction.PACKAGE.value, Reaction.WHITE_FLAG.value]
 
 
-class CombatMenu(ReactionMessage):
+class CombatMenu(ReactionMenu):
     def __init__(self, client: Client, channel: TextChannel):
         super().__init__(client, channel, MESSAGES.copy(), REACTIONS)
 

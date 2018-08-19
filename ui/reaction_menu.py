@@ -5,7 +5,7 @@ from discord import Client, User, TextChannel
 import settings
 
 
-class ReactionMessage:
+class ReactionMenu:
 
     def __init__(self, client: Client, channel: TextChannel, messages: list, reactions: list):
         self.client = client

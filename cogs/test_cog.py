@@ -1,7 +1,7 @@
 from discord.ext import commands
 
 from ui.reaction import Reaction
-from ui.reaction_message import ReactionMessage
+from ui.reaction_menu import ReactionMenu
 
 
 class TestCog:
@@ -21,9 +21,9 @@ class TestCog:
     @commands.command(aliases=['react'])
     async def reactions(self, context):
         """ Test out the reactions GUI. """
-        reaction_message = ReactionMessage(self.bot, context.message.channel,
-                                           ['Hello, continue?', 'Oh, sorry to hear that.', 'Thanks for understanding.'],
-                                           [Reaction.DISMISS.value, Reaction.CONFIRM.value])
+        reaction_message = ReactionMenu(self.bot, context.message.channel,
+                                        ['Hello, continue?', 'Oh, sorry to hear that.', 'Thanks for understanding.'],
+                                        [Reaction.DISMISS.value, Reaction.CONFIRM.value])
         await reaction_message.send()
         await reaction_message.wait_for_user_reaction()
 
