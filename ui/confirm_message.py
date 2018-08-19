@@ -1,5 +1,8 @@
+from concurrent import futures
+
 from discord import Client, User, TextChannel
 
+import settings
 from ui.reaction import Reaction
 from ui.reaction_message import ReactionMessage
 
@@ -22,7 +25,11 @@ class ConfirmMessage(ReactionMessage):
                     return str(reaction.emoji) in self.reactions
             return False
 
-        response = await self.client.wait_for('reaction_add', check=check)
+        try:
+            response = await self.client.wait_for('reaction_add', check=check, timeout=settings.DEFAULT_TIMEOUT)
+        except futures.TimeoutError:
+            await self.message_literal.delete()
+            return None
 
         if response:
             emoji_code = str(response[0])
