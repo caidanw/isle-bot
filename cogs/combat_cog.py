@@ -56,7 +56,8 @@ class CombatCog:
                     delete_after=settings.DEFAULT_DELETE_DELAY
                 )
             else:
-                await target_dm.send(f'Waiting for {player.username} to finish their turn.')
+                await author_dm.send(f'You and {target_player.username} find an open field, away from others.')
+                await target_dm.send(f'You and {player.username} find an open field, away from others.')
 
         # if all went well and the fight was accepted, then we can start a fight between the two players
         p1_dm = author.dm_channel
@@ -70,16 +71,19 @@ class CombatCog:
         await self.conduct_fight(player, p1_dm, target_player, p2_dm)
 
     async def conduct_fight(self, player_1, p1_dm, player_2, p2_dm):
+
+
         # create combat menus for both players
         p1_menu = CombatMenu(self.bot, p1_dm)
         p2_menu = CombatMenu(self.bot, p2_dm)
 
+        # find the discord users associated with the players
         p1_user = self.bot.get_user(player_1.uuid)
         p2_user = self.bot.get_user(player_2.uuid)
 
         # get both player stats TODO: replace with player's real values
-        p1_health, p1_dmg, p1_def = 3, 2, 1
-        p2_health, p2_dmg, p2_def = 3, 2, 1
+        p1_health, p1_dmg, p1_def = 5, 2, 1
+        p2_health, p2_dmg, p2_def = 5, 2, 1
         player_1.health, player_1.damage, player_1.defense = p1_health, p1_dmg, p1_def
         player_2.health, player_2.damage, player_2.defense = p2_health, p2_dmg, p2_def
 
@@ -91,20 +95,30 @@ class CombatCog:
             p1_action = None
             p2_action = None
 
-            if first_round:
-                # send the initial messages
+            if first_round:  # send the initial messages
+                # send a message to p2 to let them know they are waiting
+                await p2_dm.send(f'Waiting for {player_1.username} to choose an action.')
+                # present the first player with combat menu
                 await p1_menu.send()
                 p1_action = await p1_menu.wait_for_user_reaction(p1_user)
 
+                # send a message to p1 to let them know they are waiting
+                await p1_dm.send(f'Waiting for {player_2.username} to choose an action.')
+                # present the second player with combat menu
                 await p2_menu.send()
                 p2_action = await p2_menu.wait_for_user_reaction(p2_user)
 
                 first_round = False
-            else:
-                # reset for a new round
+            else:  # reset for a new round
+                # send a message to p2 to let them know they are waiting
+                await p2_dm.send(f'Waiting for {player_1.username} to choose an action.')
+                # delete the old combat menu and present the first player with a new combat menu
                 await p1_menu.reset()
                 p1_action = await p1_menu.wait_for_user_reaction(p1_user)
 
+                # send a message to p1 to let them know they are waiting
+                await p1_dm.send(f'Waiting for {player_2.username} to choose an action.')
+                # delete the old combat menu and present the first player with a new combat menu
                 await p2_menu.reset()
                 p2_action = await p2_menu.wait_for_user_reaction(p2_user)
 
