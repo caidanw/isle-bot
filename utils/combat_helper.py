@@ -58,12 +58,8 @@ async def handle_combat_actions(player_1, p1_action, player_2, p2_action):
     p1_desc = combat_descriptions.get(p1_action)
     p2_desc = combat_descriptions.get(p2_action)
 
-    p1_desc_values = {
-        'opponent': player_2.username
-    }
-    p2_desc_values = {
-        'opponent': player_1.username
-    }
+    p1_desc_values = {'opponent': player_2.username}
+    p2_desc_values = {'opponent': player_1.username}
 
     if p1_action == Reaction.NO_ENTRY_SIGN:
         if p2_action == Reaction.NO_ENTRY_SIGN:
@@ -157,8 +153,8 @@ async def handle_combat_actions(player_1, p1_action, player_2, p2_action):
         elif p2_action == Reaction.WHITE_FLAG:
             pass
 
-    p1_msg = p1_desc.get(p2_action).format(p1_desc_values)
-    p2_msg = p2_desc.get(p1_action).format(p2_desc_values)
+    p1_msg = p1_desc.get(p2_action).format(**p1_desc_values)
+    p2_msg = p2_desc.get(p1_action).format(**p2_desc_values)
 
     p1_msg = f'```\n{p1_msg}\n```'
     p2_msg = f'```\n{p2_msg}\n```'
