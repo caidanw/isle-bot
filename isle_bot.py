@@ -45,10 +45,8 @@ async def on_guild_update(before, after):
     """ When a guild updates, we want to update it's corresponding union. """
     # check to see if there is a union within the database already
     if game.check_union_exists(before):
-        prev = game.get_union(before)
-        prev.name = after.name
-        prev.save()
-        logger.log(f'Updated the union "{before.name}" to be "{after.name}"')
+        game.get_union(before).set_name(after.name)
+        logger.log(f'Updated the union named "{before.name}" to "{after.name}"')
     else:
         # theoretically there can't be a case where a union is updated before it's created... except in testing
         await manage.ask_guild_to_join_game(game, bot, after)

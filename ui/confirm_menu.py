@@ -4,12 +4,12 @@ from discord import Client, User, TextChannel
 
 import settings
 from ui.reaction import Reaction
-from ui.reaction_message import ReactionMessage
+from ui.reaction_menu import ReactionMenu
 
 REACTIONS = [Reaction.DISMISS.value, Reaction.CONFIRM.value]
 
 
-class ConfirmMessage(ReactionMessage):
+class ConfirmMenu(ReactionMenu):
     def __init__(self, client: Client, channel: TextChannel, messages: list):
         super().__init__(client, channel, messages, REACTIONS)
 
