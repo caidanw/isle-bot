@@ -19,6 +19,10 @@ class Union(BaseModel):
         """ Return the (int) amount of members currently in this union. """
         return len(self.members)
 
+    def set_name(self, name):
+        self.name = name
+        self.save()
+
     def has_member(self, player):
         """ Search through the list of members that belong to this union,
         find the desired player.
