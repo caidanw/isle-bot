@@ -80,7 +80,7 @@ class MemberCog:
 
         if not player.is_idle:
             return await channel.send('You can not do any more actions until you have finished '
-                                      f'{Action(player.action).name}.')
+                                      f'{str(Action(player.action))}.')
 
         if not isinstance(player.get_location, Island):
             return await channel.send('You can not harvest here, you are currently not on an island.')
@@ -110,15 +110,13 @@ class MemberCog:
         msg = await channel.send(f'Harvesting {desired_amount} items from {resource_name}, '
                                  f'estimated time to finish {time_to_finish}')
 
-        player.action = Action.HARVESTING.value
-        player.save()
+        player.set_action(Action.HARVESTING)
 
         harvested_items = await resource.harvest(desired_amount)
         for item_name, item_amt in harvested_items.items():
             player_inv.add_item(item=item_name, amount=item_amt)
 
-        player.action = Action.IDLE.value
-        player.save()
+        player.set_action(Action.IDLE)
 
         finished_message = f'{context.message.author.mention} has finished harvesting.'
         finished_message += '\n```'
@@ -175,11 +173,9 @@ class MemberCog:
             # TODO: estimate the eta, based on distance
             message = await channel.send(f'You start heading towards {island.name}. ETA: 02s')
 
-            player.action = Action.TRAVELING.value
-            player.save()
+            player.set_action(Action.TRAVELING)
             await asyncio.sleep(random.randint(1, 3))
-            player.action = Action.IDLE.value
-            player.save()
+            player.set_action(Action.IDLE)
 
             player.set_location(island)
             await message.edit(content=f'{author.mention} has arrived at {island.name}')

@@ -68,7 +68,7 @@ class InfoCog:
             else:
                 msg += f'\nISLAND : NONE'
 
-            msg += f'\nACTION : {Action(player.action).name}'
+            msg += f'\nACTION : {str(Action(player.action))}'
             msg += '```'
 
             to_delete = await channel.send(msg)

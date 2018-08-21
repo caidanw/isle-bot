@@ -31,6 +31,10 @@ class Player(BaseModel):
         self.on_island = island
         self.save()
 
+    def set_action(self, action: Action):
+        self.action = action.value
+        self.save()
+
     def join_union(self, union):
         """ Join the desired Union, first check that the Player does not belong
         to the desired Union.
