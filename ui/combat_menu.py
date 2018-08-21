@@ -23,10 +23,9 @@ class CombatMenu(ReactionMenu):
     def __init__(self, client: Client, channel: TextChannel):
         super().__init__(client, channel, MESSAGES.copy(), REACTIONS)
 
-    async def send(self):
+    async def clear(self):
         if self.message_literal is not None:
             await self.message_literal.delete()
-        await super(CombatMenu, self).send()
 
     async def wait_for_user_reaction(self, target_user: User=None, timeout=10):
         if self.message_literal is None:
