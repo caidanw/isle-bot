@@ -6,7 +6,7 @@ from game.base_model import BaseModel
 class PlayerStat(BaseModel):
     vigor = IntegerField(default=5)      # increases the base amount of max health
     strength = IntegerField(default=1)   # increases the base amount of damage dealt
-    dexterity = FloatField(default=0.5)  # increases the base chance to successfully land an attack
+    dexterity = IntegerField(default=1)  # increases the base chance to successfully land an attack
     fortitude = IntegerField(default=1)  # increases the base amount of damage blocked
 
     def set_vigor(self, amount):
