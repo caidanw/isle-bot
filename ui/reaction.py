@@ -11,3 +11,7 @@ class Reaction(Enum):
     PACKAGE = '\U0001f4e6'          # 📦
     NO_ENTRY_SIGN = '\U0001f6ab'    # 🚫
     WHITE_FLAG = '\U0001f3f3'       # 🏳️
+
+    HEART = '\u2764'                # ❤️
+    MUSCLE = '\U0001f4aa'           # 💪
+    RUNNER = '\U0001f3c3'           # 🏃
