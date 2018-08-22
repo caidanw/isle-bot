@@ -50,16 +50,16 @@ class CraftCog:
         """ Get the recipe of the desired craftable item. """
         channel = context.message.channel
 
-        for name in item_name:
-            command = self.bot.get_command('recipe').get_command(name)
-            if command:
-                return await command.invoke(context)
+        input_name = ' '.join(item_name)
 
-        if not item_name:
+        command = self.bot.get_command('recipe').get_command(input_name)
+        if command:
+            return await command.invoke(context)
+
+        if len(item_name) == 0:
             return await channel.send('A recipe name is required. Try "?help recipe"')
 
         recipe_name = '_'.join(item_name).upper()
-        input_name = ' '.join(item_name)
 
         try:
             recipe = Recipe[recipe_name]
