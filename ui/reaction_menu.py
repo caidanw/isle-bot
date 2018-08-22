@@ -1,6 +1,6 @@
 import asyncio
 
-from discord import Client, User, TextChannel
+from discord import Client, TextChannel
 
 import settings
 
@@ -27,13 +27,17 @@ class ReactionMenu:
         for emoji in self.reactions:
             await self.message_literal.add_reaction(emoji)
 
-    async def wait_for_user_reaction(self, target_user: User=None):
+    async def clear(self):
+        if self.message_literal is not None:
+            await self.message_literal.delete()
+
+    async def wait_for_user_reaction(self, target_user):
         if self.message_literal is None:
             raise ValueError('Message has not been sent yet, send a message before waiting for the response.')
 
         def check(reaction, user):
             if not user.bot:
-                if target_user and user == self.message_literal.author:
+                if target_user is not None:
                     return str(reaction.emoji) in self.reactions and user == target_user
                 else:
                     return str(reaction.emoji) in self.reactions
