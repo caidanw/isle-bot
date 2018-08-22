@@ -44,6 +44,13 @@ class MemberCog:
 
         await channel.send(f'The machine has created {player.username} for {union.name}.')
 
+    @commands.command(aliases=['consume'])
+    async def eat(self):
+        """ Eat an item or material.
+
+         This can be used to restore health, and increase a stat level.
+         """
+
     @commands.group(aliases=['inv'])
     async def inventory(self, context):
         """ Display every item in your inventory.
