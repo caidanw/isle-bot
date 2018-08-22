@@ -7,7 +7,7 @@ from game.base_model import BaseModel
 class Inventory(BaseModel):
     """ Inventory class used to manage a Player's items. """
 
-    max_harvested_items = IntegerField(default=1000)
+    max_harvested_items = IntegerField(default=200)
     harvested_items = JSONField(default={})
     crafted_items = JSONField(default=[])
 
