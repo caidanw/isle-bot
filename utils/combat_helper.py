@@ -10,7 +10,7 @@ combat_descriptions = {
         Reaction.WHITE_FLAG: 'You stare, and {opponent} surrenders. Your stare was very effective.'
     },
     Reaction.CROSSED_SWORDS: {
-        Reaction.NO_ENTRY_SIGN: 'You attack, and {opponent} does nothing.'
+        Reaction.NO_ENTRY_SIGN: 'You attack, and {opponent} does nothing. '
                                 'You landed a critical attack worth {dealt_dmg} damage.',
         Reaction.CROSSED_SWORDS: 'You attack, and {opponent} attacks. '
                                  'You dealt {dealt_dmg} damage, and took {received_dmg} damage',
