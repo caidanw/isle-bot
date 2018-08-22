@@ -60,9 +60,14 @@ class Inventory(BaseModel):
             return True
         return False
 
+    def has_item(self, name):
+        if name in self.harvested_items:
+            return True
+        return False
+
     def enough_to_craft(self, recipe):
         for item, amount in recipe.items():
-            if item.name not in self.harvested_items:
+            if self.has_item(item.name):
                 return False
             elif self.harvested_items[item.name] < amount:
                 return False
