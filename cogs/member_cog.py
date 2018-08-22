@@ -62,6 +62,9 @@ class MemberCog:
 
         player = Game.get_player(context.message.author)
 
+        if not player.is_idle:
+            return await channel.send('C\'mon man, do one thing at a time.')
+
         input_name = ' '.join(item_name)
         item_name = '_'.join(item_name).upper()
         item = items.get_by_name(item_name)

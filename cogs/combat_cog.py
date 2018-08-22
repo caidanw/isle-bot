@@ -22,7 +22,7 @@ class CombatCog:
         user = context.message.author
         player = Game.get_player(user)
 
-        if player.action != Action.IDLE.value:
+        if not player.is_idle:
             return await channel.send('You are already fighting. Please refrain from going on murder sprees.')
 
         target_player_name = ' '.join(target_player_name)
@@ -32,7 +32,7 @@ class CombatCog:
         target_player = Game.get_player_by_name(target_player_name)
         if target_player is None:
             return await channel.send(f'The player "{target_player_name}" does not exist, are they using an alias?')
-        elif target_player.action != Action.IDLE.value:
+        elif not target_player.is_idle:
             return await channel.send(f'{target_player.username} is currently '
                                       f'{str(Action(target_player.action)).lower()}, '
                                       f'the recipient is unable to fight now.')
