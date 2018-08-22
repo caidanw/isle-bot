@@ -81,7 +81,11 @@ class MemberCog:
             return await channel.send(f'You can not consume "{item.name.lower()}"',
                                       delete_after=settings.DEFAULT_DELETE_DELAY)
         else:
-            await item.consume(self.bot, author)
+            player.set_action(Action.EATING)
+            succeeded = await item.consume(self.bot, author)
+            if succeeded:
+                player.inventory.remove_item(item.name)
+            player.set_action(Action.IDLE)
 
     @commands.group(aliases=['inv'])
     async def inventory(self, context):

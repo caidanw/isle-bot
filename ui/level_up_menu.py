@@ -37,7 +37,8 @@ class LevelUpMenu(ReactionMenu):
             response = await self.client.wait_for('reaction_add', check=check, timeout=settings.DEFAULT_TIMEOUT)
         except asyncio.TimeoutError:
             await self.message_literal.delete()
-            return await self.channel.send('You waited to long, try again.')
+            await self.channel.send('You waited to long, try again.')
+            return False
 
         emoji_code = str(response[0])
         await self.message_literal.edit(content=self.reaction_messages.get(emoji_code))
@@ -59,3 +60,4 @@ class LevelUpMenu(ReactionMenu):
             stat = 'fortitude'
 
         await self.channel.send(f'You have leveled up your {stat}.')
+        return True

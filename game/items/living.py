@@ -15,6 +15,7 @@ class Fairy(Item):
 
         lum = LevelUpMenu(client, dm_channel, user, level_amt=2)
         await lum.send()
-        await lum.wait_for_user_reaction(user)
+        succeeded = await lum.wait_for_user_reaction(user)
         await lum.clear()
+        return succeeded
 
