@@ -9,7 +9,7 @@ from discord.ext.commands.bot import _default_help_command
 import settings
 from game.game import Game
 from game.enums.action import Action
-from game.island import Island
+from game.tables.island import Island
 from game.items import items
 from ui.reaction import Reaction
 from utils import logger
@@ -79,6 +79,23 @@ class InfoCog:
                 # # delete the bot and user after a minute so chat doesn't get clogged
                 await context.message.delete()
                 await to_delete.delete()
+
+    @info.command(aliases=['self'])
+    async def me(self, context):
+        player = Game.get_player(context.message.author)
+        stats = player.stats
+
+        msg = '```'
+        msg += f'\n{player.username}'
+        msg += f'\n---------------'
+
+        msg += f'\nVIGOR     : {str(stats.vigor).zfill(3)}'
+        msg += f'\nSTRENGTH  : {str(stats.strength).zfill(3)}'
+        msg += f'\nDEXTERITY : {str(stats.dexterity).zfill(3)}'
+        msg += f'\nFORTITUDE : {str(stats.fortitude).zfill(3)}'
+
+        msg += '```'
+        await context.message.channel.send(msg, delete_after=settings.DEFAULT_DELETE_DELAY)
 
     @info.command(aliases=['guild'])
     async def union(self, context):
