@@ -14,3 +14,5 @@ data/universe\.db-shm
 data/universe\.db-wal
 
 *.db
+
+aws-isle-bot\.pem
