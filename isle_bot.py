@@ -13,8 +13,8 @@ from utils.cache import Cache
 from utils.manage import find_open_channel
 
 DEBUGGING = Cache.get_from_json('data/config.json')['debugging']
-TOKEN = Cache.get_from_json('data/config.json')['token']
 PREFIXES = ('!', '?', '.', '~')
+CONFIG_DIR = 'data/config.json'
 COGS_DIR = "cogs."  # this specifies the directory of extensions to load when the bot starts up ('.' replaces '/')
 
 bot = Bot(PREFIXES)
@@ -132,5 +132,22 @@ if __name__ == "__main__":
             exc = f'{type(e).__name__}: {e}'
             print(f'Failed to load extension {extension}:\n\t{exc}')
 
-    # run the bot with the token from the config file
-    bot.run(TOKEN)
+    def get_token(dev=False):
+        if dev:
+            token = Cache.get_from_json(CONFIG_DIR)['dev_token']
+        else:
+            token = Cache.get_from_json(CONFIG_DIR)['token']
+
+        if token is None:
+            if dev:
+                raise ValueError(f'IsleBot dev_token not found in {CONFIG_DIR}')
+            else:
+                raise ValueError(f'IsleBot token not found in {CONFIG_DIR}')
+
+        return token
+
+    # determine the login to use
+    if DEBUGGING:
+        bot.run(get_token(dev=True))
+    else:
+        bot.run(get_token())
