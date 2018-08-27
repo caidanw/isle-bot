@@ -1,4 +1,4 @@
-from peewee import IntegerField, FloatField
+from peewee import IntegerField
 
 from game.base_model import BaseModel
 
