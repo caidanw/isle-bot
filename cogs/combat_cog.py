@@ -100,11 +100,9 @@ class CombatCog:
         p1_user = self.bot.get_user(player_1.uuid)
         p2_user = self.bot.get_user(player_2.uuid)
 
-        # get both player stats TODO: replace with player's real values
-        p1_health, p1_dmg, p1_def = 5, 2, 1
-        p2_health, p2_dmg, p2_def = 5, 2, 1
-        player_1.health, player_1.damage, player_1.defense = p1_health, p1_dmg, p1_def
-        player_2.health, player_2.damage, player_2.defense = p2_health, p2_dmg, p2_def
+        # get both player stats
+        combat_helper.set_battle_stats(player_1)
+        combat_helper.set_battle_stats(player_2)
 
         fighting = True
         while fighting:

@@ -160,3 +160,17 @@ async def handle_combat_actions(player_1, p1_action, player_2, p2_action):
     p2_msg = f'```\n{p2_msg}\n```'
 
     return p1_msg, p2_msg
+
+
+def set_battle_stats(player):
+    stats = player.stats
+
+    # set all to 0 so we don't do anything dumb
+    player.health = 0
+    player.damage = 0
+    player.defense = 0
+
+    player.health = stats.vigor
+    # Todo: add equipped weapons damage, for now it's just strength
+    player.damage = stats.strength
+    player.defense = stats.fortitude
