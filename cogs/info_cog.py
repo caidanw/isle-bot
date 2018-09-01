@@ -82,6 +82,7 @@ class InfoCog:
 
     @info.command(aliases=['self'])
     async def me(self, context):
+        """ Display information about your current stats. """
         player = Game.get_player(context.message.author)
         stats = player.stats
 
@@ -99,6 +100,7 @@ class InfoCog:
 
     @info.command(aliases=['guild'])
     async def union(self, context):
+        """ Display information about your union. """
         player = Game.get_player(context.message.author)
         union = player.union
 
@@ -122,6 +124,7 @@ class InfoCog:
 
     @info.command(aliases=['loc', 'island', 'isle'])
     async def location(self, context):
+        """ Display information about your location. """
         player = Game.get_player(context.message.author)
         location = player.get_location
 
@@ -143,6 +146,7 @@ class InfoCog:
 
     @info.command(aliases=['res', 'resource'])
     async def resources(self, context, name=None):
+        """ Display information about the resources on the current island. """
         channel = context.message.channel
         island = Game.get_player(context.message.author).get_location
 
