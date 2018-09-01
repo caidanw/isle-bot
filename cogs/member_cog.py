@@ -5,10 +5,13 @@ import re
 from discord.abc import PrivateChannel
 from discord.ext import commands
 
+import settings
 from game.game import Game
-from game.inventory import Inventory
-from game.island import Island
-from game.player import Player
+from game.items import items
+from game.tables.inventory import Inventory
+from game.tables.island import Island
+from game.tables.player import Player
+from game.tables.player_stat import PlayerStat
 from utils.clock import format_time
 from game.enums.action import Action
 
@@ -40,9 +43,49 @@ class MemberCog:
                                uuid=author.id,
                                union=union,
                                on_island=union.get_island(),
-                               inventory=Inventory.create())
+                               inventory=Inventory.create(),
+                               stats=PlayerStat.create())
 
         await channel.send(f'The machine has created {player.username} for {union.name}.')
+
+    @commands.command(aliases=['consume'])
+    async def eat(self, context, *item_name):
+        """ Eat an item or material.
+
+         This can be used to restore health, or increase a stat level.
+         """
+        channel = context.message.channel
+        author = context.message.author
+
+        if len(item_name) == 0:
+            return await channel.send('An item name is required. Try "?help eat"')
+
+        player = Game.get_player(context.message.author)
+
+        if not player.is_idle:
+            return await channel.send('C\'mon man, do one thing at a time.')
+
+        input_name = ' '.join(item_name)
+        item_name = '_'.join(item_name).upper()
+        item = items.get_by_name(item_name)
+
+        if item is None:
+            return await channel.send(f'The item "{input_name}" does not exist.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
+
+        if not player.inventory.has_item(item_name):
+            return await channel.send(f'You do not have the item "{input_name}"',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
+
+        if not item.can_consume:
+            return await channel.send(f'You can not consume "{item.name.lower()}"',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
+        else:
+            player.set_action(Action.EATING)
+            succeeded = await item.consume(self.bot, author)
+            if succeeded:
+                player.inventory.remove_item(item.name)
+            player.set_action(Action.IDLE)
 
     @commands.group(aliases=['inv'])
     async def inventory(self, context):

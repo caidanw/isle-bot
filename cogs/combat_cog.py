@@ -22,8 +22,13 @@ class CombatCog:
         user = context.message.author
         player = Game.get_player(user)
 
-        if player.action != Action.IDLE.value:
-            return await channel.send('You are already fighting. Please refrain from going on murder sprees.')
+        if not player.is_idle:
+            msg = f'You are already {str(Action(player.action))}. '
+            if player.action == Action.FIGHTING.value:
+                msg += 'Please refrain from going on murder sprees.'
+            else:
+                msg += 'You can not do another action now.'
+            return await channel.send(msg)
 
         target_player_name = ' '.join(target_player_name)
         if target_player_name == '':
@@ -32,7 +37,7 @@ class CombatCog:
         target_player = Game.get_player_by_name(target_player_name)
         if target_player is None:
             return await channel.send(f'The player "{target_player_name}" does not exist, are they using an alias?')
-        elif target_player.action != Action.IDLE.value:
+        elif not target_player.is_idle:
             return await channel.send(f'{target_player.username} is currently '
                                       f'{str(Action(target_player.action)).lower()}, '
                                       f'the recipient is unable to fight now.')
@@ -100,11 +105,9 @@ class CombatCog:
         p1_user = self.bot.get_user(player_1.uuid)
         p2_user = self.bot.get_user(player_2.uuid)
 
-        # get both player stats TODO: replace with player's real values
-        p1_health, p1_dmg, p1_def = 5, 2, 1
-        p2_health, p2_dmg, p2_def = 5, 2, 1
-        player_1.health, player_1.damage, player_1.defense = p1_health, p1_dmg, p1_def
-        player_2.health, player_2.damage, player_2.defense = p2_health, p2_dmg, p2_def
+        # get both player stats
+        combat_helper.set_battle_stats(player_1)
+        combat_helper.set_battle_stats(player_2)
 
         fighting = True
         while fighting:

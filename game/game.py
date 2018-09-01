@@ -1,11 +1,11 @@
 from discord import Guild, User
 from peewee import fn
 
-from game.player import Player
-from game.resource import Resource
+from game.tables.player import Player
+from game.tables.resource import Resource
 from utils import database
-from game.union import Union
-from game.island import Island
+from game.tables.union import Union
+from game.tables.island import Island
 from utils.logger import log_db
 
 
@@ -13,7 +13,7 @@ class Game:
     """Main game class."""
 
     def __init__(self):
-        """"Initialize main game system."""
+        """" Initialize main game system. """
         # connect to the database
         database.connect()
 

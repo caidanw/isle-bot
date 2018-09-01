@@ -9,7 +9,7 @@ from discord.ext.commands.bot import _default_help_command
 import settings
 from game.game import Game
 from game.enums.action import Action
-from game.island import Island
+from game.tables.island import Island
 from game.items import items
 from ui.reaction import Reaction
 from utils import logger
@@ -80,8 +80,27 @@ class InfoCog:
                 await context.message.delete()
                 await to_delete.delete()
 
+    @info.command(aliases=['self'])
+    async def me(self, context):
+        """ Display information about your current stats. """
+        player = Game.get_player(context.message.author)
+        stats = player.stats
+
+        msg = '```'
+        msg += f'\n{player.username}'
+        msg += f'\n---------------'
+
+        msg += f'\nVIGOR     : {str(stats.vigor).zfill(3)}'
+        msg += f'\nSTRENGTH  : {str(stats.strength).zfill(3)}'
+        msg += f'\nDEXTERITY : {str(stats.dexterity).zfill(3)}'
+        msg += f'\nFORTITUDE : {str(stats.fortitude).zfill(3)}'
+
+        msg += '```'
+        await context.message.channel.send(msg, delete_after=settings.DEFAULT_DELETE_DELAY)
+
     @info.command(aliases=['guild'])
     async def union(self, context):
+        """ Display information about your union. """
         player = Game.get_player(context.message.author)
         union = player.union
 
@@ -105,6 +124,7 @@ class InfoCog:
 
     @info.command(aliases=['loc', 'island', 'isle'])
     async def location(self, context):
+        """ Display information about your location. """
         player = Game.get_player(context.message.author)
         location = player.get_location
 
@@ -126,6 +146,7 @@ class InfoCog:
 
     @info.command(aliases=['res', 'resource'])
     async def resources(self, context, name=None):
+        """ Display information about the resources on the current island. """
         channel = context.message.channel
         island = Game.get_player(context.message.author).get_location
 

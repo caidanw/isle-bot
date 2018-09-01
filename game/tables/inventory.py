@@ -7,7 +7,7 @@ from game.base_model import BaseModel
 class Inventory(BaseModel):
     """ Inventory class used to manage a Player's items. """
 
-    max_harvested_items = IntegerField(default=1000)
+    max_harvested_items = IntegerField(default=200)
     harvested_items = JSONField(default={})
     crafted_items = JSONField(default=[])
 
@@ -49,8 +49,11 @@ class Inventory(BaseModel):
         """
         if self.harvested_items[item] >= amount:
             self.harvested_items[item] -= amount
-            return True
-        return False
+
+        if self.harvested_items[item] <= 0:
+            del self.harvested_items[item]
+
+        self.save()
 
     def add_craftable(self, item, amount=1):
         if amount > 0:
@@ -60,9 +63,14 @@ class Inventory(BaseModel):
             return True
         return False
 
+    def has_item(self, name):
+        if name in self.harvested_items:
+            return True
+        return False
+
     def enough_to_craft(self, recipe):
         for item, amount in recipe.items():
-            if item.name not in self.harvested_items:
+            if not self.has_item(item.name):
                 return False
             elif self.harvested_items[item.name] < amount:
                 return False

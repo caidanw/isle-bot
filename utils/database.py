@@ -1,12 +1,13 @@
 from sqlite3 import OperationalError
 
-from utils.cache import db
-from game.union import Union
-from game.inventory import Inventory
-from game.island import Island
-from game.player import Player
-from game.resource import Resource
+from game.tables.inventory import Inventory
+from game.tables.island import Island
+from game.tables.player import Player
+from game.tables.player_stat import PlayerStat
+from game.tables.resource import Resource
+from game.tables.union import Union
 from utils import logger
+from utils.cache import db
 
 
 def connect():
@@ -18,7 +19,7 @@ def connect():
         has_connected = db.connect()
         logger.log_db('Connecting to database', has_connected)
 
-        object_tables = [Union, Island, Resource, Inventory, Player]
+        object_tables = [Union, Island, Resource, Player, PlayerStat, Inventory]
         db_tables = db.get_tables()
 
         # create the proper tables if there aren't any

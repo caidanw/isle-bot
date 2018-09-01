@@ -10,7 +10,7 @@ combat_descriptions = {
         Reaction.WHITE_FLAG: 'You stare, and {opponent} surrenders. Your stare was very effective.'
     },
     Reaction.CROSSED_SWORDS: {
-        Reaction.NO_ENTRY_SIGN: 'You attack, and {opponent} does nothing.'
+        Reaction.NO_ENTRY_SIGN: 'You attack, and {opponent} does nothing. '
                                 'You landed a critical attack worth {dealt_dmg} damage.',
         Reaction.CROSSED_SWORDS: 'You attack, and {opponent} attacks. '
                                  'You dealt {dealt_dmg} damage, and took {received_dmg} damage',
@@ -160,3 +160,17 @@ async def handle_combat_actions(player_1, p1_action, player_2, p2_action):
     p2_msg = f'```\n{p2_msg}\n```'
 
     return p1_msg, p2_msg
+
+
+def set_battle_stats(player):
+    stats = player.stats
+
+    # set all to 0 so we don't do anything dumb
+    player.health = 0
+    player.damage = 0
+    player.defense = 0
+
+    player.health = stats.vigor
+    # Todo: add equipped weapons damage, for now it's just strength
+    player.damage = stats.strength
+    player.defense = stats.fortitude
