@@ -1,7 +1,8 @@
+#!/usr/bin/env bash
 BOTID=`cat .bot_pid`
 HEADER="-----------------------------------------------------------"
 
-kill $BOTID
+kill ${BOTID}
 printf "Shutting down Isle-Bot\n\tPID: $BOTID\n"
 
 printf "\n$HEADER\n" >> logs.txt
