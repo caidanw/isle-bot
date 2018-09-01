@@ -23,7 +23,12 @@ class CombatCog:
         player = Game.get_player(user)
 
         if not player.is_idle:
-            return await channel.send('You are already fighting. Please refrain from going on murder sprees.')
+            msg = f'You are already {str(Action(player.action))}. '
+            if player.action == Action.FIGHTING.value:
+                msg += 'Please refrain from going on murder sprees.'
+            else:
+                msg += 'You can not do another action now.'
+            return await channel.send(msg)
 
         target_player_name = ' '.join(target_player_name)
         if target_player_name == '':
