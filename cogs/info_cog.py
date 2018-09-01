@@ -9,7 +9,7 @@ from discord.ext.commands.bot import _default_help_command
 import settings
 from game.game import Game
 from game.enums.action import Action
-from game.tables.island import Island
+from game.objects.island import Island
 from game.items import items
 from ui.reaction import Reaction
 from utils import logger

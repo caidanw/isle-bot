@@ -1,11 +1,11 @@
 from discord import Guild, User
 from peewee import fn
 
-from game.tables.player import Player
-from game.tables.resource import Resource
+from game.objects.player import Player
+from game.objects.resource import Resource
 from utils import database
-from game.tables.union import Union
-from game.tables.island import Island
+from game.objects.union import Union
+from game.objects.island import Island
 from utils.logger import log_db
 
 

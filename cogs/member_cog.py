@@ -8,10 +8,10 @@ from discord.ext import commands
 import settings
 from game.game import Game
 from game.items import items
-from game.tables.inventory import Inventory
-from game.tables.island import Island
-from game.tables.player import Player
-from game.tables.player_stat import PlayerStat
+from game.objects.inventory import Inventory
+from game.objects.island import Island
+from game.objects.player import Player
+from game.objects.player_stat import PlayerStat
 from utils.clock import format_time
 from game.enums.action import Action
 

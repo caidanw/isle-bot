@@ -5,7 +5,7 @@ from peewee import *
 from playhouse.sqlite_ext import JSONField
 
 from game.base_model import BaseModel
-from game.tables.island import Island
+from game.objects.island import Island
 from game.items import items
 from utils.cache import Cache
 

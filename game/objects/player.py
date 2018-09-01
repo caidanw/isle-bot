@@ -1,10 +1,10 @@
 from peewee import *
 
 from game.base_model import BaseModel
-from game.tables.player_stat import PlayerStat
-from game.tables.union import Union
-from game.tables.inventory import Inventory
-from game.tables.island import Island
+from game.objects.player_stat import PlayerStat
+from game.objects.union import Union
+from game.objects.inventory import Inventory
+from game.objects.island import Island
 from game.enums.action import Action
 
 
