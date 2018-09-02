@@ -158,38 +158,18 @@ class InfoCog:
 
         msg = '```'
 
-        if name is None:
-            if island.resources:
-                header = f'{"RESOURCE".ljust(10)} : ITEMS'
-                msg += '\n' + header
-                msg += '\n' + '-' * len(header)
-                for resource in sorted(island.resources, key=attrgetter('name', 'number')):
-                    full_name = resource.name.title() + '#' + str(resource.number)
-                    item_amount = str(resource.item_amount).zfill(3)
-                    msg += f'\n{full_name.ljust(10)} : {item_amount}'
-        else:
-            for res in island.resources:
-                if '#' in name:
-                    split_name = name.split('#')
-                    name = split_name[0]
-                    number = split_name[1]
-                    if res.number != number:
-                        continue
+        if island.resources:
+            header = f'{"RESOURCE".ljust(10)} : AMT : MAX'
+            msg += '\n' + header
+            msg += '\n' + '-' * len(header)
+            for resource in sorted(island.resources, key=attrgetter('name', 'number')):
+                full_name = resource.name.title() + '#' + str(resource.number)
+                item_amount = str(resource.item_amount).zfill(3)
+                max_item_amount = str(resource.max_item_amount).zfill(3)
+                
+                msg += f'\n{full_name.ljust(10)} : {item_amount} : {max_item_amount}'
 
-                if res.name == name:
-                    msg += f'\n{res.name.title()}#{res.number} has {str(res.item_amount).zfill(3)} items left'
-                    msg += '\n\tITEM NAME : HARVEST TIME'
-                    msg += '\n\t------------------------'
-                    for item_name in res.gives_items:
-                        item = items.get_by_name(item_name)
-                        msg += f'\n\t{item.name.ljust(10)}: {format_time(item.harvest_time())}'
-                    msg += '\n'
-
-        if msg == '```':
-            # there were no resources found
-            msg = f'No resources found for "{name}"'
-        else:
-            msg += '\n```'
+        msg += '\n```'
 
         await channel.send(msg)
 
