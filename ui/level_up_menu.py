@@ -36,7 +36,6 @@ class LevelUpMenu(ReactionMenu):
         try:
             response = await self.client.wait_for('reaction_add', check=check, timeout=settings.DEFAULT_TIMEOUT)
         except asyncio.TimeoutError:
-            await self.message_literal.delete()
             await self.channel.send('You waited to long, try again.')
             return False
 

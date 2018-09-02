@@ -30,6 +30,7 @@ class ReactionMenu:
     async def clear(self):
         if self.message_literal is not None:
             await self.message_literal.delete()
+            self.message_literal = None
 
     async def wait_for_user_reaction(self, target_user):
         if self.message_literal is None:
