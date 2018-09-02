@@ -58,18 +58,18 @@ class CombatCog:
         # get the target author's private channel, so we can send them a request
         target_dm = target_user.dm_channel if target_user.dm_channel else await target_user.create_dm()
 
-        fight_request_msg = ConfirmMenu(self.bot, target_dm,
+        fight_request_menu = ConfirmMenu(self.bot, target_dm,
                                         [f'{player.username} has requested to fight you.',
                                             'You declined the request.',
                                             'You accepted the request, waiting to fight.'])
 
-        await fight_request_msg.send()
+        await fight_request_menu.send()
 
         request_status_msg = await user_dm.send(f'Request has been delivered to {target_player.username}')
 
         player.set_action(Action.FIGHTING)
 
-        accepted_request = await fight_request_msg.wait_for_user_reaction(target_user)
+        accepted_request = await fight_request_menu.wait_for_user_reaction(target_user)
 
         if not accepted_request:
             player.set_action(Action.IDLE)
@@ -78,7 +78,7 @@ class CombatCog:
                 delete_after=settings.DEFAULT_DELETE_DELAY
             )
             await asyncio.sleep(3)
-            return await fight_request_msg.message_literal.delete()
+            return await fight_request_menu.clear()
         else:
             target_player.set_action(Action.FIGHTING)
 
