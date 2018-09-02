@@ -63,8 +63,7 @@ async def on_message(message):
 
     logger.log_command(message.author, message.content.strip())
 
-    player = game.get_player(message.author)
-    if player is None:
+    if game.check_player_exists(message.author):
         if 'create' not in message.content and 'join' not in message.content:
             return await channel.send('You are not registered as a part of this game. Try "?create"')
 

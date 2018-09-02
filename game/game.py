@@ -55,7 +55,7 @@ class Game:
         """
         try:
             return Union.get(Union.guild_id == guild.id)
-        except Exception:
+        except:
             log_db(f'Guild "{guild.name}" [id:{guild.id}] is not registered as a union.')
             return None
 
@@ -76,6 +76,12 @@ class Game:
         :return: the union if found, otherwise None
         """
         return Union.get_or_none(Union.guild_id == guild_id)
+
+    @classmethod
+    def check_player_exists(cls, user: User):
+        if cls.get_player(user) is None:
+            return False
+        return True
 
     @classmethod
     def get_player(cls, user: User):
