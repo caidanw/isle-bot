@@ -25,7 +25,7 @@ class TestCog:
                                         ['Hello, continue?', 'Oh, sorry to hear that.', 'Thanks for understanding.'],
                                         [Reaction.DISMISS.value, Reaction.CONFIRM.value])
         await reaction_message.send()
-        await reaction_message.wait_for_user_reaction()
+        await reaction_message.wait_for_user_reaction(context.message.author)
 
 
 def setup(bot):
