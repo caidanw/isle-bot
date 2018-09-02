@@ -139,9 +139,9 @@ if __name__ == "__main__":
 
         if token is None:
             if dev:
-                raise ValueError(f'IsleBot dev_token not found in {CONFIG_DIR}')
+                raise ValueError(f'IsleBot "dev_token" not found in {CONFIG_DIR}')
             else:
-                raise ValueError(f'IsleBot token not found in {CONFIG_DIR}')
+                raise ValueError(f'IsleBot "token" not found in {CONFIG_DIR}')
 
         return token
 
