@@ -23,11 +23,11 @@ async def replenish_resources(client: Client):
     logger.log(f'Running world task {replenish_resources.__name__}')
 
     while not client.is_closed():
-        # wait for the appropriate amount of time between replenishment
-        await asyncio.sleep(HOUR)
-
         # replenish the items for all resources that aren't currently full
         q = Resource.update(item_amount=Resource.max_item_amount).where(Resource.item_amount < Resource.max_item_amount)
         q.execute()
 
         logger.log('Replenished all resources')
+
+        # wait for the appropriate amount of time between replenishment
+        await asyncio.sleep(HOUR)
