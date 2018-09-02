@@ -81,9 +81,9 @@ class Inventory(BaseModel):
         output += '\n```'
 
         if harvested:
-            output += '\nHarvested'
+            output += '\nHARVESTED'
             if len(self.harvested_items) > 0:
-                output += '\n[item]     : [amount]'
+                output += '\n[ITEM]     : [AMT]'
                 for item, amount in self.harvested_items.items():
                     output += f'\n{item.ljust(10)} : {str(amount).zfill(3)}'
             else:
@@ -94,9 +94,9 @@ class Inventory(BaseModel):
             output += '\n'
 
         if crafted:
-            output += '\nCrafted'
+            output += '\nCRAFTED'
             if len(self.crafted_items) > 0:
-                output += '\n[item]     : [durability]'
+                output += '\n[ITEM]     : [DURABILITY]'
                 for item in self.crafted_items:
                     item_name = item['name'].replace('_', ' ')
                     item_durability = item['durability']
@@ -105,8 +105,12 @@ class Inventory(BaseModel):
                 output += '\nYou do not have any crafted items.'
 
         if not harvested and not crafted:
-            output += f'\nharvested max amount : {str(self.max_harvested_items).zfill(3)}'
-            output += f'\ncrafted max amount   : no limit'
+            output += f'\nHARVESTED' \
+                      f'\n\tMAX AMT : {str(self.max_harvested_items).zfill(3)}' \
+                      f'\n\tCUR AMT : {str(sum(self.harvested_items.values())).zfill(3)}' \
+                      f'\n' \
+                      f'\nCRAFTED' \
+                      f'\n\tMAX AMT : NO LIMIT'
 
         output += '\n```'
         return output
