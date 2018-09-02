@@ -145,7 +145,7 @@ class InfoCog:
         await context.message.channel.send(msg, delete_after=settings.DEFAULT_DELETE_DELAY)
 
     @info.command(aliases=['res', 'resource'])
-    async def resources(self, context, name=None):
+    async def resources(self, context):
         """ Display information about the resources on the current island. """
         channel = context.message.channel
         island = Game.get_player(context.message.author).get_location
@@ -166,7 +166,7 @@ class InfoCog:
                 full_name = resource.name.title() + '#' + str(resource.number)
                 item_amount = str(resource.item_amount).zfill(3)
                 max_item_amount = str(resource.max_item_amount).zfill(3)
-                
+
                 msg += f'\n{full_name.ljust(10)} : {item_amount} : {max_item_amount}'
 
         msg += '\n```'
