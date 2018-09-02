@@ -7,6 +7,7 @@ from discord.abc import PrivateChannel
 from discord.ext import commands
 from discord.ext.commands import Bot
 
+from game import world_tasks
 from game.game import Game
 from utils import manage, logger
 from utils.cache import Cache
@@ -130,6 +131,8 @@ if __name__ == "__main__":
                 traceback.print_exception(type(e), e, e.__traceback__, file=sys.stderr)
             exc = f'{type(e).__name__}: {e}'
             print(f'Failed to load extension {extension}:\n\t{exc}')
+
+    world_tasks.register_tasks(bot)
 
     def get_token(dev=False):
         if dev:
