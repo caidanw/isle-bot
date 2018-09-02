@@ -58,14 +58,14 @@ async def on_message(message):
     if not message.content.startswith(PREFIXES):
         return
 
-    content = message.content.lower()
+    message.content = message.content.lower()
     channel = message.channel
 
     logger.log_command(message.author, message.content.strip())
 
     player = game.get_player(message.author)
     if player is None:
-        if 'create' not in content and 'join' not in content:
+        if 'create' not in message.content and 'join' not in message.content:
             return await channel.send('You are not registered as a part of this game. Try "?create"')
 
     if not isinstance(channel, PrivateChannel):
@@ -88,7 +88,7 @@ async def on_member_remove(member):
 
     if player in union.members:
         message = player.leave_union()
-        return await bot.send_message(member.guild, message)
+        await bot.send_message(member.guild, message)
 
 
 @bot.event
