@@ -106,10 +106,11 @@ class Inventory(BaseModel):
 
         if not harvested and not crafted:
             output += f'\nHARVESTED' \
-                      f'\n\tMAX AMT : {str(self.max_harvested_items).zfill(3)}' \
                       f'\n\tCUR AMT : {str(sum(self.harvested_items.values())).zfill(3)}' \
+                      f'\n\tMAX AMT : {str(self.max_harvested_items).zfill(3)}' \
                       f'\n' \
                       f'\nCRAFTED' \
+                      f'\n\tCUR AMT : {str(sum(self.crafted_items)).zfill(3)}' \
                       f'\n\tMAX AMT : NO LIMIT'
 
         output += '\n```'
