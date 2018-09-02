@@ -95,12 +95,12 @@ class MemberCog:
         """
         if context.invoked_subcommand is None:
             player = Game.get_player(context.message.author)
-            await context.message.channel.send(player.inventory.to_message())
+            await context.message.channel.send(player.inventory.to_message(harvested=True, crafted=True))
 
-    @inventory.command(aliases=['a'])
-    async def all(self, context):
+    @inventory.command(aliases=['m'])
+    async def max(self, context):
         player = Game.get_player(context.message.author)
-        await context.message.channel.send(player.inventory.to_message(harvested=True, crafted=True))
+        await context.message.channel.send(player.inventory.to_message())
 
     @inventory.command(aliases=['h', 'harvest'])
     async def harvested(self, context):
