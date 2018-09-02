@@ -48,7 +48,7 @@ class MemberCog:
 
         await channel.send(f'The machine has created {player.username} for {union.name}.')
 
-    @commands.command(aliases=['consume'])
+    @commands.command(aliases=['e', 'consume'])
     async def eat(self, context, *item_name):
         """ Eat an item or material.
 
@@ -74,11 +74,11 @@ class MemberCog:
                                       delete_after=settings.DEFAULT_DELETE_DELAY)
 
         if not player.inventory.has_item(item_name):
-            return await channel.send(f'You do not have the item "{input_name}"',
+            return await channel.send(f'You do not have the item "{input_name}".',
                                       delete_after=settings.DEFAULT_DELETE_DELAY)
 
         if not item.can_consume:
-            return await channel.send(f'You can not consume "{item.name.lower()}"',
+            return await channel.send(f'You can not consume "{item.name.lower()}".',
                                       delete_after=settings.DEFAULT_DELETE_DELAY)
         else:
             player.set_action(Action.EATING)
