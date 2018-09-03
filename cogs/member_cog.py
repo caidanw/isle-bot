@@ -144,7 +144,7 @@ class MemberCog:
 
         player_inv = player.inventory
         if not player_inv.validate_is_room(desired_amount):
-            return await channel.send('You don"t have enough room in your inventory.')
+            return await channel.send('You don\'t have enough room in your inventory.')
 
         time_to_finish = format_time(resource.average_item_harvest_time * desired_amount)
         if '#' not in resource_name:

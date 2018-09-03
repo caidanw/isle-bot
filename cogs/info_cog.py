@@ -57,7 +57,6 @@ class InfoCog:
             player = Game.get_player(context.message.author)
 
             msg = '```'
-
             if player.union:
                 msg += f'\nUNION  : {player.union.name}'
             else:
