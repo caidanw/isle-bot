@@ -20,18 +20,35 @@ class Resource(BaseModel):
     material_amount = IntegerField(default=100)
     island = ForeignKeyField(Island, backref='resources')
 
+    @property
+    def average_harvest_time(self):
+        total_time = 0
+        for item_name in self.gives_materials:
+            total_time += items.get_by_name(item_name).harvest_time
+        return total_time // len(self.gives_materials)
+
+    @property
+    def f_name(self):
+        return f'{self.name.title()}#{self.number}'
+
     @classmethod
-    def random(cls, island, min_amt=50, max_amt=500):
+    def random(cls, island, name=None, min_amt=50, max_amt=500):
         """ Create a random Resource from the resources.json file with a little help
         from the parameters.
 
         :param island: to to place the resource on
+        :param name: optional predefined name/type
         :param min_amt: of items to give
         :param max_amt: of items to give
         :return: a new instance of the Resource class
         """
         resource = get_random_resource()  # get a random resource from our json data
-        name = resource['name']
+
+        if name is None:
+            name = resource['name']
+        elif not cls.is_valid_type(name):
+            raise ValueError('Not a valid resource type')
+
         resource_num = island.get_amount_of_resources(name) + 1
         materials = resource['gives_materials']
         amount = random.randint(min_amt, max_amt)
@@ -42,13 +59,6 @@ class Resource(BaseModel):
                                max_material_amount=amount,
                                material_amount=amount,
                                island=island)
-
-    @property
-    def average_harvest_time(self):
-        total_time = 0
-        for item_name in self.gives_materials:
-            total_time += items.get_by_name(item_name).harvest_time
-        return total_time // len(self.gives_materials)
 
     async def harvest(self, amount):
         """ Remove the amount of materials within this resource,
@@ -74,6 +84,10 @@ class Resource(BaseModel):
                 harvested_materials[item_name] += 1
 
         return harvested_materials
+
+    @classmethod
+    def is_valid_type(cls, name):
+        return name.lower() in ['forest', 'quarry', 'swamp', 'field']
 
 
 def get_random_resource():
