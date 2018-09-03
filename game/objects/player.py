@@ -24,6 +24,14 @@ class Player(BaseModel):
         return self.action is Action.IDLE.value
 
     @property
+    def get_action(self):
+        return Action(self.action)
+
+    @property
+    def f_action(self):
+        return f'`{str(self.get_action)}`'
+
+    @property
     def get_location(self):
         if self.on_island is not None:
             return Island.get_or_none(Island.id == self.on_island)

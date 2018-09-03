@@ -23,8 +23,8 @@ class CombatCog:
         player = Game.get_player(user)
 
         if not player.is_idle:
-            msg = f'You are already {str(Action(player.action))}. '
-            if player.action == Action.FIGHTING.value:
+            msg = f'You are already {player.f_action} '
+            if player.get_action == Action.FIGHTING:
                 msg += 'Please refrain from going on murder sprees.'
             else:
                 msg += 'You can not do another action now.'
@@ -38,8 +38,7 @@ class CombatCog:
         if target_player is None:
             return await channel.send(f'The player "{target_player_name}" does not exist, are they using an alias?')
         elif not target_player.is_idle:
-            return await channel.send(f'{target_player.username} is currently '
-                                      f'{str(Action(target_player.action)).lower()}, '
+            return await channel.send(f'{target_player.username} is currently {player.f_action}, '
                                       f'the recipient is unable to fight now.')
 
         target_user = self.bot.get_user(target_player.uuid)

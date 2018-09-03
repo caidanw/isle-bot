@@ -63,7 +63,7 @@ class MemberCog:
         player = Game.get_player(context.message.author)
 
         if not player.is_idle:
-            return await channel.send('C\'mon man, do one thing at a time.')
+            return await channel.send(f'You can not do anymore actions until you have finished {player.f_action}')
 
         input_name = ' '.join(item_name)
         item_name = '_'.join(item_name).upper()
@@ -122,8 +122,7 @@ class MemberCog:
         channel = context.message.channel
 
         if not player.is_idle:
-            return await channel.send('You can not do any more actions until you have finished '
-                                      f'{str(Action(player.action))}.')
+            return await channel.send(f'You can not do any more actions until you have finished {player.f_action}')
 
         if not isinstance(player.get_location, Island):
             return await channel.send('You can not harvest here, you are currently not on an island.')

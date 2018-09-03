@@ -10,4 +10,4 @@ class Action(Enum):
     EATING = 5
 
     def __str__(self):
-        return self.name
+        return f'`{self.name}`'
