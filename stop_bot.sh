@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
-BOTID=`cat .bot_pid`
-HEADER="-----------------------------------------------------------"
-
-kill ${BOTID}
-printf "Shutting down Isle-Bot\n\tPID: $BOTID\n"
-
-printf "\n$HEADER\n" >> logs.txt
-echo "Appended new lines to logs.txt"
-
-rm .bot_pid
-echo "Removed .bot_pid"
+if [ "$1" == "-d" ]; then
+    echo "Logging out Isle-Bot | dev-build"
+    bash discord.sh --webhook-url `cat dev_webhook_url` --text "?logout"
+    echo "Logged out Isle-Bot | dev-build"
+else
+    echo "Logging out Isle-Bot"
+    bash discord.sh --webhook-url `cat webhook_url` --text "?logout"
+    echo "Logged out Isle-Bot"
+fi
