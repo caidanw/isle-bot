@@ -16,3 +16,5 @@ data/universe\.db-wal
 *.db
 
 aws-isle-bot\.pem
+
+data/logs\.txt
