@@ -1,20 +1,19 @@
-from game.items.items import Item
-
+from game.items.items import Material
 
 """ Forest """
 
 
-class Wood(Item):
+class Wood(Material):
     def __init__(self):
         super().__init__('wood', 5)
 
 
-class Mushroom(Item):
+class Mushroom(Material):
     def __init__(self):
-        super().__init__('mushroom', 4)
+        super().__init__('mushroom', 4, consumable=True)
 
 
-class Leaf(Item):
+class Leaf(Material):
     def __init__(self):
         super().__init__('leaf', 2)
 
@@ -22,12 +21,12 @@ class Leaf(Item):
 """ Quarry """
 
 
-class Stone(Item):
+class Stone(Material):
     def __init__(self):
         super().__init__('stone', 6)
 
 
-class Iron(Item):
+class Iron(Material):
     def __init__(self):
         super().__init__('iron', 12)
 
@@ -35,12 +34,12 @@ class Iron(Item):
 """ Swamp"""
 
 
-class Clay(Item):
+class Clay(Material):
     def __init__(self):
         super().__init__('clay', 6)
 
 
-class Vine(Item):
+class Vine(Material):
     def __init__(self):
         super().__init__('vine', 3)
 
@@ -48,11 +47,11 @@ class Vine(Item):
 """ Field """
 
 
-class Grass(Item):
+class Grass(Material):
     def __init__(self):
         super().__init__('grass', 2)
 
 
-class Wheat(Item):
+class Wheat(Material):
     def __init__(self):
-        super().__init__('wheat', 6)
+        super().__init__('wheat', 6, consumable=True)
