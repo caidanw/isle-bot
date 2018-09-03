@@ -13,7 +13,8 @@ class AdminCog:
     async def logout(self, context):
         is_admin(context.author)
 
-        logger.log('Logging out...', force_write=True)
+        logger.log('Logging out...')
+        logger.write_logs(logout=True)
         await context.send('Logging out...')
         await self.bot.logout()
 

@@ -24,10 +24,8 @@ def log_db(action, returned=None):
         say_and_keep(f'{dt} {action}')
 
 
-def log(comment, force_write=False):
+def log(comment):
     say_and_keep(f'{date_time()} {comment}')
-    if force_write:
-        write_logs(LOG_FILE_NAME)
 
 
 def date_time():
@@ -40,17 +38,21 @@ def say_and_keep(message):
 
     # check if the log delay has been passed since last file write_logs
     if datetime.datetime.utcnow() - LAST_WRITE >= datetime.timedelta(minutes=settings.LOG_DELAY):
-        write_logs(LOG_FILE_NAME)
+        write_logs()
 
 
-def write_logs(filename):
-    if len(LOG_KEEP) == 0:
+def write_logs(filename=LOG_FILE_NAME, logout=False):
+    if len(LOG_KEEP) == 0 and not logout:
         return
 
     global LAST_WRITE
     LAST_WRITE = datetime.datetime.utcnow()
 
     with open(filename, 'a') as f:
-        print(f'{date_time()} Writing logs to {filename}\n\n')
+        print(f'{date_time()} Writing logs to {filename}')
+        
+        if logout:
+            LOG_KEEP.append('\n\n')
+
         f.write('\n'.join(LOG_KEEP))
         LOG_KEEP.clear()
