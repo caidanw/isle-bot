@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 import traceback
@@ -25,10 +26,10 @@ bot.remove_command('help')  # I have my own custom help command, I don't use any
 @bot.event
 async def on_ready():
     """ Runs after the bot logs in and before any commands are taken. """
-    print('Logged in as')
-    print('[name]:', bot.user.name)
-    print('[  id]:', bot.user.id)
-    print('-------')
+    logger.log('Logged in as')
+    logger.log(f'[name]: {bot.user.name}')
+    logger.log(f'[  id]: {bot.user.id}')
+    logger.log('-------')
 
 
 @bot.event
@@ -150,6 +151,7 @@ if __name__ == "__main__":
 
     # determine the login to use
     if DEBUGGING:
+        # logging.basicConfig(level=logging.DEBUG)
         bot.run(get_token(dev=True))
     else:
         bot.run(get_token())

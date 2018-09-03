@@ -1,25 +1,56 @@
+import datetime
 import time
+
+import settings
+
+LOG_FILE_NAME = 'data/logs.txt'
+LOG_KEEP = []
+LAST_WRITE = datetime.datetime.utcnow()
 
 
 def log_command(author, command, issued=True):
     dt = date_time()
     if issued:
-        print(f'[{dt}] {author} issued command "{command}"')
+        say_and_keep(f'{dt} {author} issued command "{command}"')
     else:
-        print(f'[{dt}] {author} finished command "{command}"')
+        say_and_keep(f'{dt} {author} finished command "{command}"')
 
 
 def log_db(action, returned=None):
     dt = date_time()
     if returned:
-        print(f'[{dt}] {action} returned "{returned}"')
+        say_and_keep(f'{dt} {action} returned "{returned}"')
     else:
-        print(f'[{dt}] {action}')
+        say_and_keep(f'{dt} {action}')
 
 
-def log(comment):
-    print(f'[{date_time()}] {comment}')
+def log(comment, force_write=False):
+    say_and_keep(f'{date_time()} {comment}')
+    if force_write:
+        write_logs(LOG_FILE_NAME)
 
 
 def date_time():
-    return time.strftime('%x %X')
+    return f'[{time.strftime("%x %X")}]'
+
+
+def say_and_keep(message):
+    print(message)  # output to console
+    LOG_KEEP.append(message)  # keep the message for now
+
+    # check if the log delay has been passed since last file write_logs
+    if datetime.datetime.utcnow() - LAST_WRITE >= datetime.timedelta(minutes=settings.LOG_DELAY):
+        write_logs(LOG_FILE_NAME)
+
+
+def write_logs(filename):
+    if len(LOG_KEEP) == 0:
+        return
+
+    global LAST_WRITE
+    LAST_WRITE = datetime.datetime.utcnow()
+
+    with open(filename, 'a') as f:
+        print(f'{date_time()} Writing logs to {filename}\n\n')
+        f.write('\n'.join(LOG_KEEP))
+        LOG_KEEP.clear()
