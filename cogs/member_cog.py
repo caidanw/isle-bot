@@ -73,7 +73,7 @@ class MemberCog:
             return await channel.send(f'The item "{input_name}" does not exist.',
                                       delete_after=settings.DEFAULT_DELETE_DELAY)
 
-        if not player.inventory.has_item(item_name):
+        if not player.inventory.has_material(item_name):
             return await channel.send(f'You do not have the item "{input_name}".',
                                       delete_after=settings.DEFAULT_DELETE_DELAY)
 
@@ -84,14 +84,14 @@ class MemberCog:
             player.set_action(Action.EATING)
             succeeded = await item.consume(self.bot, author)
             if succeeded:
-                player.inventory.remove_item(item.name)
+                player.inventory.remove_material(item.name)
             player.set_action(Action.IDLE)
 
     @commands.group(aliases=['inv'])
     async def inventory(self, context):
         """ Display every item in your inventory.
 
-        :return: a string of the player's inventory items
+        :return: a string of the player's inventory
         """
         if context.invoked_subcommand is None:
             player = Game.get_player(context.message.author)
@@ -114,10 +114,11 @@ class MemberCog:
 
     @commands.command(aliases=['h', 'harv'])
     async def harvest(self, context, resource_name, desired_amount=5):
-        """ Harvest items from the resource.
+        """ Harvest materials from a resource.
 
         :param resource_name: of the resource to find on the island
-        :param desired_amount: the amount of items to gather"""
+        :param desired_amount: the amount of materials to harvest
+        """
         player = Game.get_player(context.message.author)
         channel = context.message.channel
 
@@ -139,32 +140,33 @@ class MemberCog:
 
         if not resource:
             return await channel.send(f'The resource "{resource_name}" is not on the current island.')
-        elif resource.item_amount < desired_amount:
-            return await channel.send(f'The resource has {resource.item_amount} items left to harvest.')
+        elif resource.material_amount < desired_amount:
+            return await channel.send(f'The resource has {resource.material_amount} materials left to harvest.')
 
         player_inv = player.inventory
         if not player_inv.validate_is_room(desired_amount):
             return await channel.send('You don\'t have enough room in your inventory.')
 
-        time_to_finish = format_time(resource.average_item_harvest_time * desired_amount)
+        time_to_finish = format_time(resource.average_harvest_time * desired_amount)
         if '#' not in resource_name:
             resource_name = f'{resource.name}#{resource.number}'
-        msg = await channel.send(f'Harvesting {desired_amount} items from {resource_name}, '
+        msg = await channel.send(f'Harvesting {desired_amount} materials from {resource_name}, '
                                  f'estimated time to finish {time_to_finish}')
 
         player.set_action(Action.HARVESTING)
 
-        harvested_items = await resource.harvest(desired_amount)
-        for item_name, item_amt in harvested_items.items():
-            player_inv.add_item(item=item_name, amount=item_amt)
+        harvested_materials = await resource.harvest(desired_amount)
+        for name, amt in harvested_materials.items():
+            player_inv.add_material(material=name, amount=amt)
 
         player.set_action(Action.IDLE)
 
-        finished_message = f'{context.message.author.mention} has finished harvesting.'
+        finished_message = f'{context.message.author.mention} has finished harvesting materials.'
         finished_message += '\n```'
-        for item_name, item_amt in harvested_items.items():
-            finished_message += f'\n{item_name.ljust(8)} : {str(item_amt).zfill(3)}'
+        for name, amt in harvested_materials.items():
+            finished_message += f'\n{name.ljust(8)} : {str(amt).zfill(3)}'
         finished_message += '\n```'
+
         await msg.edit(content=finished_message)
 
     @commands.command(aliases=['t', 'trav'])

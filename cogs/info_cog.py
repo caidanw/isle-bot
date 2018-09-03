@@ -8,12 +8,9 @@ from discord.ext.commands.bot import _default_help_command
 
 import settings
 from game.game import Game
-from game.enums.action import Action
 from game.objects.island import Island
-from game.items import items
 from ui.reaction import Reaction
 from utils import logger
-from utils.clock import format_time
 
 
 class InfoCog:
@@ -163,10 +160,10 @@ class InfoCog:
             msg += '\n' + '-' * len(header)
             for resource in sorted(island.resources, key=attrgetter('name', 'number')):
                 full_name = resource.name.title() + '#' + str(resource.number)
-                item_amount = str(resource.item_amount).zfill(3)
-                max_item_amount = str(resource.max_item_amount).zfill(3)
+                material_amount = str(resource.material_amount).zfill(3)
+                max_material_amount = str(resource.max_material_amount).zfill(3)
 
-                msg += f'\n{full_name.ljust(10)} : {item_amount} : {max_item_amount}'
+                msg += f'\n{full_name.ljust(10)} : {material_amount} : {max_material_amount}'
 
         msg += '\n```'
 

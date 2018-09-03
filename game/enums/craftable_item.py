@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class CraftableItem(Enum):
-    """ Items that can be crafted from harvested items using a recipe, value represents durability. """
+    """ Items that can be crafted from harvested materials using a recipe, value represents durability. """
 
     # tools
     STONE_AXE = 10

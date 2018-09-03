@@ -28,21 +28,21 @@ class CraftCog:
         display_name = ' '.join(item_to_craft)
 
         try:
-            recipe = Recipe[recipe_name].needs_items()
+            recipe = Recipe[recipe_name].needs_materials()
         except KeyError:
             return await channel.send(f'Could not find the recipe for "{display_name}".')
 
         if not inventory.enough_to_craft(recipe):
-            return await channel.send(f'You do not have enough harvested items to craft this item.')
+            return await channel.send(f'You do not have enough materials to craft this item.')
 
         time_to_craft = sum([items.get_by_name(item.name).harvest_time * recipe.get(item) for item in recipe])
         message = await channel.send(f'Crafting {display_name}, time to craft {format_time(time_to_craft)}')
         await asyncio.sleep(time_to_craft)
 
         for item, amount in recipe.items():
-            inventory.remove_item(item.name, amount)
+            inventory.remove_material(item.name, amount)
 
-        inventory.add_craftable(CraftableItem[recipe_name])
+        inventory.add_item(CraftableItem[recipe_name])
         await message.edit(content=f'{author.mention} finished crafting {display_name}')
 
     @commands.group()
@@ -50,14 +50,14 @@ class CraftCog:
         """ Get the recipe of the desired craftable item. """
         channel = context.message.channel
 
+        if len(item_name) == 0:
+            return await channel.send('A recipe name is required. Try "?help recipe"')
+
         input_name = ' '.join(item_name)
 
         command = self.bot.get_command('recipe').get_command(input_name)
         if command:
             return await command.invoke(context)
-
-        if len(item_name) == 0:
-            return await channel.send('A recipe name is required. Try "?help recipe"')
 
         recipe_name = '_'.join(item_name).upper()
 

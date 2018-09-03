@@ -73,7 +73,7 @@ def get_by_name(name, new_object=True):
 class ItemLookup(enum.Enum):
     """ Look up items based on their class name """
 
-    """ Items that can be harvested or used in recipes, value represents harvest time. """
+    """ Materials that can be harvested or used in recipes, value represents harvest time. """
 
     # forest
     WOOD = 1
@@ -96,7 +96,7 @@ class ItemLookup(enum.Enum):
 
     FAIRY = 101
 
-    """ Tools that can be crafted from harvested items. """
+    """ Tools that can be crafted from harvested materials. """
 
     # todo: convert tools to classes
     STONE_AXE = 200

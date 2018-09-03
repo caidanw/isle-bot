@@ -15,9 +15,9 @@ class Resource(BaseModel):
 
     name = CharField()
     number = IntegerField(default=0)
-    gives_items = JSONField(default=[])
-    max_item_amount = IntegerField(default=100)
-    item_amount = IntegerField(default=100)
+    gives_materials = JSONField(default=[])
+    max_material_amount = IntegerField(default=100)
+    material_amount = IntegerField(default=100)
     island = ForeignKeyField(Island, backref='resources')
 
     @classmethod
@@ -33,47 +33,47 @@ class Resource(BaseModel):
         resource = get_random_resource()  # get a random resource from our json data
         name = resource['name']
         resource_num = island.get_amount_of_resources(name) + 1
-        items = resource['gives_items']
+        materials = resource['gives_materials']
         amount = random.randint(min_amt, max_amt)
 
         return Resource.create(name=name,
                                number=resource_num,
-                               gives_items=items,
-                               max_item_amount=amount,
-                               item_amount=amount,
+                               gives_materials=materials,
+                               max_material_amount=amount,
+                               material_amount=amount,
                                island=island)
 
     @property
-    def average_item_harvest_time(self):
+    def average_harvest_time(self):
         total_time = 0
-        for item_name in self.gives_items:
+        for item_name in self.gives_materials:
             total_time += items.get_by_name(item_name).harvest_time
-        return total_time // len(self.gives_items)
+        return total_time // len(self.gives_materials)
 
     async def harvest(self, amount):
-        """ Remove the amount of items within this resource,
-        then wait until the player has 'harvested' the items.
+        """ Remove the amount of materials within this resource,
+        then wait until the player has 'harvested' the materials.
 
-        :param amount: of items to harvest
-        :return: an ItemStack with the harvested item and amount
+        :param amount: of materials to harvest
+        :return: an ItemStack with the harvested material and amount
         """
 
-        self.item_amount -= amount
+        self.material_amount -= amount
         self.save()
 
-        harvested_items = {}
+        harvested_materials = {}
         for i in range(amount):
-            item_name = random.choice(self.gives_items)
+            item_name = random.choice(self.gives_materials)
 
             # have the program wait until the player has finished harvesting one item
             await asyncio.sleep(items.get_by_name(item_name).harvest_time)
 
-            if harvested_items.get(item_name) is None:
-                harvested_items[item_name] = 1
+            if harvested_materials.get(item_name) is None:
+                harvested_materials[item_name] = 1
             else:
-                harvested_items[item_name] += 1
+                harvested_materials[item_name] += 1
 
-        return harvested_items
+        return harvested_materials
 
 
 def get_random_resource():

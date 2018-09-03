@@ -50,7 +50,7 @@ def write_logs(filename=LOG_FILE_NAME, logout=False):
 
     with open(filename, 'a') as f:
         print(f'{date_time()} Writing logs to {filename}')
-        
+
         if logout:
             LOG_KEEP.append('\n\n')
 
