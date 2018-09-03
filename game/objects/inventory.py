@@ -58,7 +58,7 @@ class Inventory(BaseModel):
     def add_item(self, item, amount=1):
         if amount > 0:
             for i in range(amount):
-                self.items.append({'name': item.name, 'durability': item.durability()})
+                self.items.append({'name': item.name, 'durability': item.durability})
             self.save()
             return True
         return False
@@ -94,7 +94,7 @@ class Inventory(BaseModel):
             output += '\n'
 
         if crafted:
-            output += '\nITEMS'
+            output += '\nCRAFTED ITEMS'
             if len(self.items) > 0:
                 output += '\nITEM       : DURABILITY'
                 for item in self.items:

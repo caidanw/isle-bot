@@ -1,12 +1,12 @@
 from discord import User
 
-from game.items.items import Item
+from game.items.items import Living
 from ui.level_up_menu import LevelUpMenu
 
 
-class Fairy(Item):
+class Fairy(Living):
     def __init__(self):
-        super().__init__('fairy', 10, consumable=True)
+        super().__init__('fairy', 10)
 
     async def consume(self, client, user: User):
         dm_channel = user.dm_channel

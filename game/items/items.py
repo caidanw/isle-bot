@@ -1,19 +1,22 @@
 import enum
-import math
 
 from discord import User
 
 
 class Item:
-    def __init__(self, name, harvest_time, consumable=False):
+    def __init__(self, name, consumable=False):
         self.name = name.upper()
-        self.harvest_time = harvest_time
         self.consumable = consumable
 
         try:
-            self.uid = get_uid_by_name(self.name)
+            if isinstance(self, Material):
+                self.uid = get_material_uid(self.name)
+            elif isinstance(self, Living):
+                self.uid = get_living_uid(self.name)
+            elif isinstance(self, Crafted):
+                self.uid = get_crafted_uid(self.name)
         except KeyError:
-            raise ValueError(f'Item "{name}" is not registered. Check ItemLookup(Enum)')
+            raise ValueError(f'Item "{name}" is not registered. Check ItemIndex(Enum)')
 
     @property
     def can_consume(self):
@@ -23,46 +26,102 @@ class Item:
         pass  # leave blank as child classes will be able to define the exact behavior
 
 
-def get_uid_by_name(name):
+class Material(Item):
+    def __init__(self, name, harvest_time, consumable=False):
+        super().__init__(name, consumable)
+        self.harvest_time = harvest_time
+
+
+class Living(Material):
+    def __init__(self, name, harvest_time):
+        super().__init__(name, harvest_time, consumable=True)
+
+
+class Crafted(Item):
+    def __init__(self, name, durability):
+        super().__init__(name)
+        self.durability = durability
+
+
+def get_material_uid(name):
     if isinstance(name, str):
-        name = name.upper()  # want to get the right value
         try:
-            return ItemLookup[name].value
+            name = name.upper()  # want to get the right value
+            return MaterialIndex[name].value
         except KeyError:
             return None
     else:
-        raise ValueError('name must be a string')
+        raise ValueError('material name must be a string')
+
+
+def get_living_uid(name):
+    if isinstance(name, str):
+        try:
+            name = name.upper()  # want to get the right value
+            return LivingIndex[name].value
+        except KeyError:
+            return None
+    else:
+        raise ValueError('material name must be a string')
+
+
+def get_crafted_uid(name):
+    if isinstance(name, str):
+        try:
+            name = name.upper()  # want to get the right value
+            return CraftedIndex[name].value
+        except KeyError:
+            return None
+    else:
+        raise ValueError('material name must be a string')
 
 
 def get_name_by_uid(uid):
     if isinstance(uid, int):
-        return ItemLookup(int(uid)).name
+        return ItemIndex(int(uid)).name
     else:
         raise ValueError('id must be an integer')
 
 
-def _roundup(x):
-    return int(math.ceil(x / 100.0)) * 100  # round number to the nearest 100
+def get_class_type(name):
+    # make upper and replace space with underscore
+    name = name.upper()
+    name = name.replace(' ', '_')
+
+    material = list(MaterialIndex.__members__.keys())
+    living = list(LivingIndex.__members__.keys())
+    crafted = list(CraftedIndex.__members__.keys())
+
+    class_type = None
+
+    if name in material:
+        class_type = Material
+    elif name in living:
+        class_type = Living
+    elif name in crafted:
+        class_type = Crafted
+
+    return class_type
 
 
 def get_by_name(name, new_object=True):
-    name = name.title()  # need to make into CamelCase for item class name
-    uid = get_uid_by_name(name)
-
-    if uid is None:
+    class_type = get_class_type(name)
+    if class_type is None:
         return None
 
-    from game.items import harvested, living
-
-    item_type_file = {
-        100: harvested,
-        200: living,
-        # 300: tools
+    from game.items import material, living, crafted
+    item_file = {
+        Material: material,
+        Living: living,
+        Crafted: crafted,
     }
 
-    item_type = item_type_file.get(_roundup(uid))
+    # need to make into CamelCase for item class name
+    name = name.title()
+    name = name.replace(' ', '')
+    name = name.replace('_', '')
 
-    item_class = getattr(item_type, name)
+    item_class = getattr(item_file.get(class_type), name)
 
     if new_object:
         return item_class()  # create a new instance of the class
@@ -70,9 +129,13 @@ def get_by_name(name, new_object=True):
         return item_class  # just return the class
 
 
-class ItemLookup(enum.Enum):
+class ItemIndex(enum.Enum):
     """ Look up items based on their class name """
+    def __str__(self):
+        return self.name
 
+
+class MaterialIndex(ItemIndex):
     """ Materials that can be harvested or used in recipes, value represents harvest time. """
 
     # forest
@@ -92,14 +155,14 @@ class ItemLookup(enum.Enum):
     GRASS = 8
     WHEAT = 9
 
+
+class LivingIndex(ItemIndex):
     """ Living things that don't have much of a purpose other than to be eaten or traded. """
 
-    FAIRY = 101
+    FAIRY = 1
 
-    """ Tools that can be crafted from harvested materials. """
 
-    # todo: convert tools to classes
-    STONE_AXE = 200
+class CraftedIndex(ItemIndex):
+    """ Items that can be crafted from harvested materials. """
 
-    def __str__(self):
-        return self.name
+    STONE_AXE = 1
