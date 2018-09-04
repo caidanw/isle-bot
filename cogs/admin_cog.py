@@ -49,7 +49,7 @@ class AdminCog:
             return await context.send('You must be on an island to use this command.')
 
         res = Resource.random(island, name)
-        await context.send(f'Added "{res.f_name}" to "{island.name}" of "{island.owner.name}"')
+        await context.send(f'Added "{res.f_name}" to "{island.name}" of "{island.owner.name}".')
 
     @commands.group(hidden=True, aliases=['p'])
     async def player(self, context):
@@ -68,7 +68,7 @@ class AdminCog:
         try:
             amount = int(amount)
         except ValueError:
-            return await context.send(f'Inventory amount must be an integer, you entered "{amount}"')
+            return await context.send(f'Inventory amount must be an integer, you entered "{amount}".')
 
         if amount < 1:
             return await context.send('Inventory amount can not be less than 1.')
@@ -81,7 +81,7 @@ class AdminCog:
         inventory.max_materials = amount
         inventory.save()
 
-        await context.send(f'Set max materials for "{player.username}" to {inventory.max_materials}')
+        await context.send(f'Set max materials for "{player.username}" to {inventory.max_materials}.')
 
     @player.command(hiddent=True, aliases=['act'])
     async def action(self, context, name, action):
@@ -99,7 +99,40 @@ class AdminCog:
             return await context.send(f'Player "{name}" does not exist.')
 
         player.set_action(action)
-        await context.send(f'Set action for "{player.username}" to {player.f_action}')
+        await context.send(f'Set action for "{player.username}" to {player.f_action}.')
+
+    @player.command(hiddent=True)
+    async def stat(self, context, name, stat, amount):
+        """ Command only available to developers.
+
+        Add amount to the player's stat.
+        """
+        stat = stat.lower()
+        if stat not in ['vigor', 'strength', 'dexterity', 'fortitude']:
+            return await context.send(f'Stat "{stat}" does not exist.')
+
+        player = Game.get_player_by_name(name)
+        if player is None:
+            return await context.send(f'Player "{name}" does not exist.')
+        try:
+            amount = int(amount)
+        except ValueError:
+            return await context.send(f'Increase amount must be an integer, you entered "{amount}".')
+
+        if amount < 1:
+            return await context.send('Increase amount can not be less than 1.')
+
+        stats = player.stats
+        if stat == 'vigor':
+            stats.increase_vigor(amount)
+        elif stat == 'strength':
+            stats.increase_strength(amount)
+        elif stat == 'dexterity':
+            stats.increase_dexterity(amount)
+        elif stat == 'fortitude':
+            stats.increase_fortitude(amount)
+
+        await context.send(f'Increased {stat} for "{player.username}" by {amount}.')
 
 
 def is_admin(author):
