@@ -87,7 +87,8 @@ async def on_member_remove(member):
 
     if player in union.members:
         message = player.leave_union()
-        await bot.send_message(member.guild, message)
+        # TODO: get this working with sending to the proper channel
+        # await bot.send_message(member.guild, message)
 
 
 @bot.event
