@@ -1,3 +1,31 @@
+from utils.cache import Cache
+
+
+CONFIG_DIR = 'data/config.json'
+
+
+""" Configuration data """
+
+DEBUGGING = Cache.get_from_json('data/config.json')['debugging']
+
+
+def get_token():
+    if DEBUGGING:
+        token = Cache.get_from_json(CONFIG_DIR)['dev_token']
+    else:
+        token = Cache.get_from_json(CONFIG_DIR)['token']
+
+    if token is None:
+        if DEBUGGING:
+            raise ValueError(f'IsleBot "dev_token" not found in {CONFIG_DIR}')
+        else:
+            raise ValueError(f'IsleBot "token" not found in {CONFIG_DIR}')
+
+    return token
+
+
+""" Message settings """
+
 # how long to wait until delete message (for reducing spam)
 DEFAULT_DELETE_DELAY = 60  # in seconds
 
@@ -6,6 +34,10 @@ DEFAULT_TIMEOUT = 30  # in seconds
 
 LOG_DELAY = 10
 
+
+""" Security settings """
+
 DEVELOPER_IDS = [
     178948814256734208  # mildmelon#5380 lead developer
 ]
+

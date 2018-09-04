@@ -6,7 +6,6 @@ from game.enums.action import Action
 from game.game import Game
 from game.objects.resource import Resource
 from utils import logger
-from utils.cache import Cache
 
 
 class AdminCog:

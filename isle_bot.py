@@ -8,19 +8,17 @@ from discord.abc import PrivateChannel
 from discord.ext import commands
 from discord.ext.commands import Bot
 
+import settings
 from game import world_tasks
 from game.game import Game
 from utils import manage, logger
-from utils.cache import Cache
 from utils.manage import find_open_channel
 
-DEBUGGING = Cache.get_from_json('data/config.json')['debugging']
 PREFIXES = ('!', '?', '.', '~')
-CONFIG_DIR = 'data/config.json'
 COGS_DIR = "cogs."  # this specifies the directory of extensions to load when the bot starts up ('.' replaces '/')
 
 bot = Bot(PREFIXES)
-bot.remove_command('help')  # I have my own custom help command, I don't use any of the pre-made filth
+bot.remove_command('help')  # I have my own custom help command, I won't use any of that pre-made filth
 
 
 @bot.event
@@ -95,7 +93,7 @@ async def on_member_remove(member):
 @bot.event
 async def on_command_error(context, exception):
     """ Handle errors that are given from the bot. """
-    if DEBUGGING:
+    if settings.DEBUGGING:
         logger.log(exception)
         traceback.print_exception(type(exception), exception, exception.__traceback__, file=sys.stderr)
 
@@ -128,30 +126,13 @@ if __name__ == "__main__":
                 bot.load_extension(extension_path)
                 logger.log(f'Loaded extension {extension}')
         except Exception as e:
-            if DEBUGGING:
+            if settings.DEBUGGING:
                 traceback.print_exception(type(e), e, e.__traceback__, file=sys.stderr)
             exc = f'{type(e).__name__}: {e}'
             print(f'Failed to load extension {extension}:\n\t{exc}')
 
+    # run tasks for the game before starting the bot, this includes starting infinite looping tasks
     world_tasks.register_tasks(bot)
 
-    def get_token(dev=False):
-        if dev:
-            token = Cache.get_from_json(CONFIG_DIR)['dev_token']
-        else:
-            token = Cache.get_from_json(CONFIG_DIR)['token']
-
-        if token is None:
-            if dev:
-                raise ValueError(f'IsleBot "dev_token" not found in {CONFIG_DIR}')
-            else:
-                raise ValueError(f'IsleBot "token" not found in {CONFIG_DIR}')
-
-        return token
-
-    # determine the login to use
-    if DEBUGGING:
-        # logging.basicConfig(level=logging.DEBUG)
-        bot.run(get_token(dev=True))
-    else:
-        bot.run(get_token())
+    # login and start the bot
+    bot.run(settings.get_token())
