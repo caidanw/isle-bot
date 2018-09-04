@@ -50,6 +50,38 @@ class AdminCog:
         res = Resource.random(island, name)
         await context.send(f'Added "{res.f_name}" to "{island.name}" of "{island.owner.name}"')
 
+    @commands.group(hidden=True, aliases=['p'])
+    async def player(self, context):
+        """ Command only available to developers.
+
+        Alter player attributes.
+        """
+        is_admin(context.author)
+
+    @player.command(hiddent=True, aliases=['inv'])
+    async def inventory(self, context, name, amount):
+        """ Command only available to developers.
+
+        Set the player's max inventory amount.
+        """
+        try:
+            amount = int(amount)
+        except ValueError:
+            return await context.send(f'Inventory amount must be an integer, you entered "{amount}"')
+
+        if amount < 1:
+            return await context.send('Inventory amount can not be less than 1.')
+
+        player = Game.get_player_by_name(name)
+        if player is None:
+            return await context.send(f'Player "{name}" does not exist.')
+
+        inventory = player.inventory
+        inventory.max_materials = amount
+        inventory.save()
+
+        await context.send(f'Set max materials for "{player.username}" to {inventory.max_materials}')
+
 
 def is_admin(author):
     if author.id not in settings.DEVELOPER_IDS:
