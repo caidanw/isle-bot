@@ -16,13 +16,13 @@ def register_tasks(client: Client):
     background_tasks = [replenish_resources, set_players_action_idle]
 
     for task in background_tasks:
-        logger.log(f'Registering world task {task.__name__}')
         client.loop.create_task(task(client))
+        logger.log_world_task(task, 'registered')
 
 
 async def replenish_resources(client: Client):
     await client.wait_until_ready()  # wait until the client is ready to go
-    logger.log(f'Running world task {replenish_resources.__name__}')
+    logger.log_world_task(replenish_resources, 'starting...')
 
     while not client.is_closed():
         # replenish the items for all resources that aren't currently full
@@ -30,7 +30,7 @@ async def replenish_resources(client: Client):
                         .where(Resource.material_amount < Resource.max_material_amount)
         query.execute()
 
-        logger.log('\tReplenished all resources')
+        logger.log_world_task(replenish_resources, 'Replenished all resources')
 
         # wait for the appropriate amount of time between replenishment
         await asyncio.sleep(HOUR)
@@ -38,9 +38,9 @@ async def replenish_resources(client: Client):
 
 async def set_players_action_idle(client: Client):
     await client.wait_until_ready()  # wait until the client is ready to go
-    logger.log(f'Running world task {set_players_action_idle.__name__}')
+    logger.log_world_task(set_players_action_idle, 'starting...')
 
     query = Player.update(action=Action.IDLE.value).where(Player.action != Action.IDLE.value)
     query.execute()
 
-    logger.log('\tSet all player actions to IDLE')
+    logger.log_world_task(set_players_action_idle, 'Set all player actions to IDLE')

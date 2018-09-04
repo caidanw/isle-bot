@@ -25,7 +25,7 @@ def connect():
         # create the proper objects if there aren't any
         if len(db_tables) != len(object_tables):
             db.create_tables(object_tables)
-            logger.log_db('Created new objects {}'.format(
+            logger.log_db('Created new object tables {}'.format(
                 [table.__name__ for table in object_tables if table not in db_tables]
             ))
 

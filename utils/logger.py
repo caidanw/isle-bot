@@ -8,24 +8,26 @@ LOG_KEEP = []
 LAST_WRITE = datetime.datetime.utcnow()
 
 
+def log(comment):
+    say_and_keep(f'{date_time()} {comment}')
+
+
 def log_command(author, command, issued=True):
-    dt = date_time()
     if issued:
-        say_and_keep(f'{dt} {author} issued command "{command}"')
+        log(f'{author} issued command "{command}"')
     else:
-        say_and_keep(f'{dt} {author} finished command "{command}"')
+        log(f'{author} finished command "{command}"')
 
 
 def log_db(action, returned=None):
-    dt = date_time()
     if returned:
-        say_and_keep(f'{dt} {action} returned "{returned}"')
+        log(f'{action} returned "{returned}"')
     else:
-        say_and_keep(f'{dt} {action}')
+        log(f'{action}')
 
 
-def log(comment):
-    say_and_keep(f'{date_time()} {comment}')
+def log_world_task(task, action):
+    log(f'[World Task: {task.__name__}] {action}')
 
 
 def date_time():
