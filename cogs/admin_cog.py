@@ -2,6 +2,7 @@ from discord.ext import commands
 from discord.ext.commands import CommandNotFound
 
 import settings
+from game.enums.action import Action
 from game.game import Game
 from game.objects.resource import Resource
 from utils import logger
@@ -81,6 +82,24 @@ class AdminCog:
         inventory.save()
 
         await context.send(f'Set max materials for "{player.username}" to {inventory.max_materials}')
+
+    @player.command(hiddent=True, aliases=['act'])
+    async def action(self, context, name, action):
+        """ Command only available to developers.
+
+        Set the player's current action.
+        """
+        try:
+            action = Action[action.upper()]
+        except KeyError:
+            return await context.send(f'Action "{action}" does not exist.')
+
+        player = Game.get_player_by_name(name)
+        if player is None:
+            return await context.send(f'Player "{name}" does not exist.')
+
+        player.set_action(action)
+        await context.send(f'Set action for "{player.username}" to {player.f_action}')
 
 
 def is_admin(author):
