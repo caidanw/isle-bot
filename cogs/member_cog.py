@@ -12,6 +12,7 @@ from game.objects.inventory import Inventory
 from game.objects.island import Island
 from game.objects.player import Player
 from game.objects.player_stat import PlayerStat
+from ui.reaction import Reaction
 from utils.clock import format_time
 from game.enums.action import Action
 
@@ -47,6 +48,36 @@ class MemberCog:
                                stats=PlayerStat.create())
 
         await channel.send(f'The machine has created {player.username} for {union.name}.')
+
+        dm_channel = await author.create_dm()
+
+        welcome_msg_part_one = f"""Welcome {player.username}, here is the rundown of the game.
+        
+        The bot responds to a few discriminators for commands, all discriminators are (`?` `!` `.` `~`), you can use these like so eg. `?help` `!help` `.help` `~help` and they will all work for any command.
+        If you are struggling with a command, try using `?help command_name` and it will give you a message with command usage and what it does.
+
+        Each discord server is created into a union, every union is in the same game world. You can travel between unions and trade with other players (not currently supported).
+        Each union starts with one floating island, that island has resources (you can find an islands resources by using `?info resource` or `?info res`).
+        You can harvest materials from resources with ?harvest resource amount eg. `?harvest forest 20.` You can not choose the exact material you harvest, as they are given out randomly.
+        You can craft new items using ?craft item name. To find a list of recipes do `?recipe all` or to find a specific recipe do `?recipe item name`.
+        You can also eat materials that you harvest, although most materials can not be eaten, try finding out what you can eat as you may be surprised. Use `?eat material`.
+        """
+
+        welcome_msg_part_two = """Another note on the `?info` command, if you do `?help info` you can see what information is available.
+        Using `?info me` will show you all of your stats. You can level up stats by eating certain materials.
+        Higher level stats allow you to do more damage, block more damage, or have more starting health.
+        
+        You can fight other players using ?fight player name (player name is case sensitive). eg `?fight mildmelon` is not the same as `?fight MildMelon`.
+        When in combat, you are presented with a menu of actions, start from left to right are the actions you can choose.
+        Attack: :crossed_swords: | Defend: :shield: | Use Item: :package: | Pass Turn: :no_entry_sign: | Surrender: :flag_white:
+        Currently, using an item during combat is not implemented, and remember... Don't pass your turn, unless you want to die.
+
+        You may also do a private message with IsleBot if you don't want to clog up the general chat or you want to do an action privately.
+        Good luck, have fun, and message `mildmelon#5380` or anyone on the `Arcane Blood` server if you have any questions.
+        """
+
+        await dm_channel.send(welcome_msg_part_one)
+        await dm_channel.send(welcome_msg_part_two)
 
     @commands.command(aliases=['e', 'consume'])
     async def eat(self, context, *item_name):
