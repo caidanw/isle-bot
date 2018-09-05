@@ -51,10 +51,11 @@ def write_logs(filename=LOG_FILE_NAME, logout=False):
     LAST_WRITE = datetime.datetime.utcnow()
 
     with open(filename, 'a') as f:
-        print(f'{date_time()} Writing logs to {filename}')
-
         if logout:
             LOG_KEEP.append('\n\n')
+            print(f'{date_time()} Finished logging, appending new lines')
+        else:
+            print(f'{date_time()} Writing logs to {filename}')
 
         f.write('\n'.join(LOG_KEEP))
         LOG_KEEP.clear()
