@@ -53,28 +53,42 @@ class MemberCog:
 
         welcome_msg_part_one = f"""Welcome {player.username}, here is the rundown of the game.
         
-        The bot responds to a few discriminators for commands, all discriminators are (`?` `!` `.` `~`) you can use these like so, eg. `?help` `!help` `.help` `~help` and they will all mean the same to the bot.
-        This was done with making it easier for you to use in mind, depending on which platform you keyboard has, you can choose your most comfortable fit of discriminator.
-        If you are struggling with a command, try using `?help command_name` and it will give you a message with command usage and what it does.
+        The bot responds to a few discriminators for commands, all discriminators are (`?` `!` `.` `~`).
+        For example: `?help` `!help` `.help` `~help` will all mean the same to the `help` command to the bot.
+        This was done with making it easier for you to use in mind, depending on which platform you keyboard has,
+        you can choose your most comfortable fit of discriminator.
+        
+        If a command is confusing, try using `?help command_name` which will show you command usage and parameters.
 
-        Each discord server is created into a union, every union is in the same game world. You can travel between unions and trade with other players (not currently supported).
-        Each union starts with one floating island, that island has resources (you can find an islands resources by using `?info resource` or `?info res`).
-        You can harvest materials from resources with ?harvest resource amount eg. `?harvest forest 20.` You can not choose the exact material you harvest, as they are given out randomly.
-        You can craft new items using ?craft item name. To find a list of recipes do `?recipe all` or to find a specific recipe do `?recipe item name`.
-        You can also eat materials that you harvest, although most materials can not be eaten, try finding out what you can eat as you may be surprised. Use `?eat material`.
+        Each discord server is created into a union, every union is in the same game world.
+        You can travel between unions and trade with other players (not currently supported).
+        Each union starts with one floating island, that island has resources (you can find
+        an islands resources by using `?info resource` or `?info res`).
+        
+        You can harvest materials from resources with ?harvest resource amount eg. `?harvest forest 20.`
+        You can not choose the exact material you harvest, as they are given out randomly.
+        
+        You can craft new items using `?craft item name`. 
+        To find a list of recipes do `?recipe`, to find a specific recipe do `?recipe item name`.
+        
+        You can also eat materials that you harvest, although most materials can not be eaten,
+        try finding out what you can eat as you may be surprised. Use `?eat material`.
         """
 
         welcome_msg_part_two = """Another note on the `?info` command, if you do `?help info` you can see what information is available.
         Using `?info me` will show you all of your stats. You can level up stats by eating certain materials.
         Higher level stats allow you to do more damage, block more damage, or have more starting health.
         
-        You can fight other players using ?fight player name (player name is case sensitive). For example, `?fight mildmelon` is not the same as `?fight MildMelon`.
-        When in combat, you are presented with a menu of actions, start from left to right are the actions you can choose.
+        You can fight other players using ?fight player name (player name is case sensitive).
+        For example, `?fight mildmelon` is not the same as `?fight MildMelon`.
+        When in combat, you are presented with a menu of actions, from left to right are the actions you can choose.
         Attack: :crossed_swords: | Defend: :shield: | Use Item: :package: | Pass Turn: :no_entry_sign: | Surrender: :flag_white:
-        Currently, using an item during combat is not implemented, and remember... Don't pass your turn, unless you want to die.
+        Currently, using an item during combat is not implemented, and remember... you have 10s to make a decision,
+        before your turn is passed automatically.
 
-        You may also do a private message with IsleBot if you don't want to clog up the general chat or you want to do an action privately.
-        Good luck, have fun, and message `mildmelon#5380` or anyone on the `Arcane Blood` server if you have any questions.
+        Good luck, have fun! Message `mildmelon#5380`, or on the `Arcane Blood` server if you have any questions.
+        
+        PS: You may also private message IsleBot if you want to do actions privately, the commands as the same.
         """
 
         await dm_channel.send(welcome_msg_part_one)
