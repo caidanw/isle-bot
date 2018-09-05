@@ -26,7 +26,7 @@ class UnionCog:
         if union is None:
             return await channel.send('That union does not exist or is not registered.')
 
-        player = Game.get_player(context.message.author)
+        player = Game.get_player(context.author)
         if player and player.union:
             return await channel.send(f'You already belong to the union {player.union.name}')
         elif player is None:
@@ -38,10 +38,10 @@ class UnionCog:
     @commands.command()
     async def leave(self, context):
         """ Leave your current union. """
-        player = Game.get_player(context.message.author)
+        player = Game.get_player(context.author)
 
         message = player.leave_union()
-        await context.message.channel.send(message)
+        await context.send(message)
 
 
 def setup(bot):

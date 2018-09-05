@@ -19,7 +19,7 @@ class CombatCog:
     async def fight(self, context, *target_player_name):
         """ Fight another player to the death, or until one of you wusses out. """
         channel = context.message.channel
-        user = context.message.author
+        user = context.author
         player = Game.get_player(user)
 
         if not player.is_idle:
@@ -58,9 +58,9 @@ class CombatCog:
         target_dm = target_user.dm_channel if target_user.dm_channel else await target_user.create_dm()
 
         fight_request_menu = ConfirmMenu(self.bot, target_dm,
-                                        [f'{player.username} has requested to fight you.',
-                                            'You declined the request.',
-                                            'You accepted the request, waiting to fight.'])
+                                         [f'{player.username} has requested to fight you.',
+                                          'You declined the request.',
+                                          'You accepted the request, waiting to fight.'])
 
         await fight_request_menu.send()
 
@@ -70,7 +70,7 @@ class CombatCog:
 
         accepted_request = await fight_request_menu.wait_for_user_reaction(target_user)
 
-        if not accepted_request:
+        if accepted_request is None:
             player.set_action(Action.IDLE)
             await request_status_msg.edit(
                 content=f'{target_player.username} has declined the request to fight.',

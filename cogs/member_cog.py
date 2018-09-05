@@ -27,7 +27,7 @@ class MemberCog:
          The union you choose to be born at will stay with you and be visible to all players until death.
          """
         channel = context.message.channel
-        author = context.message.author
+        author = context.author
         union = context.message.guild
 
         if Game.get_player(author) is not None:
@@ -55,12 +55,12 @@ class MemberCog:
          This can be used to restore health, or increase a stat level.
          """
         channel = context.message.channel
-        author = context.message.author
+        author = context.author
 
         if len(item_name) == 0:
             return await channel.send('An item name is required. Try "?help eat"')
 
-        player = Game.get_player(context.message.author)
+        player = Game.get_player(context.author)
 
         if not player.is_idle:
             return await channel.send(f'You can not do anymore actions until you have finished {player.f_action}')
@@ -94,23 +94,23 @@ class MemberCog:
         :return: a string of the player's inventory
         """
         if context.invoked_subcommand is None:
-            player = Game.get_player(context.message.author)
-            await context.message.channel.send(player.inventory.to_message(harvested=True, crafted=True))
+            player = Game.get_player(context.author)
+            await context.send(player.inventory.to_message(harvested=True, crafted=True))
 
     @inventory.command(aliases=['m'])
     async def max(self, context):
-        player = Game.get_player(context.message.author)
-        await context.message.channel.send(player.inventory.to_message())
+        player = Game.get_player(context.author)
+        await context.send(player.inventory.to_message())
 
     @inventory.command(aliases=['h', 'harvest'])
     async def harvested(self, context):
-        player = Game.get_player(context.message.author)
-        await context.message.channel.send(player.inventory.to_message(harvested=True))
+        player = Game.get_player(context.author)
+        await context.send(player.inventory.to_message(harvested=True))
 
     @inventory.command(aliases=['c', 'craft'])
     async def crafted(self, context):
-        player = Game.get_player(context.message.author)
-        await context.message.channel.send(player.inventory.to_message(crafted=True))
+        player = Game.get_player(context.author)
+        await context.send(player.inventory.to_message(crafted=True))
 
     @commands.command(aliases=['h', 'harv'])
     async def harvest(self, context, resource_name, desired_amount=5):
@@ -119,7 +119,7 @@ class MemberCog:
         :param resource_name: of the resource to find on the island
         :param desired_amount: the amount of materials to harvest
         """
-        player = Game.get_player(context.message.author)
+        player = Game.get_player(context.author)
         channel = context.message.channel
 
         if not player.is_idle:
@@ -161,7 +161,7 @@ class MemberCog:
 
         player.set_action(Action.IDLE)
 
-        finished_message = f'{context.message.author.mention} has finished harvesting materials.'
+        finished_message = f'{context.author.mention} has finished harvesting materials.'
         finished_message += '\n```'
         for name, amt in harvested_materials.items():
             finished_message += f'\n{name.ljust(8)} : {str(amt).zfill(3)}'
@@ -174,7 +174,7 @@ class MemberCog:
         """ Travel to another island or union. """
         channel = context.message.channel
         guild = context.message.guild
-        author = context.message.author
+        author = context.author
 
         if not destination:
             return await channel.send('You must enter a destination.')

@@ -20,7 +20,7 @@ class CraftCog:
         if len(item_to_craft) == 0:
             return await channel.send('You must enter a recipe name. Try "?help craft"')
 
-        author = context.message.author
+        author = context.author
         inventory = Game.get_player(author).inventory
 
         recipe_name = '_'.join(item_to_craft).upper()
@@ -83,7 +83,7 @@ class CraftCog:
             output += f'\n{name} : {recipe}'
         output += '\n```'
 
-        await context.message.channel.send(output)
+        await context.send(output)
 
 
 def setup(bot):

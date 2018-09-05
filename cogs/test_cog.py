@@ -11,7 +11,7 @@ class TestCog:
     @commands.command(aliases=['hi'])
     async def hello(self, context):
         """ Replies with a nice comment. """
-        await context.message.channel.send(f'Hello {context.message.author.name}, you looking dashing today.')
+        await context.send(f'Hello {context.author.name}, you looking dashing today.')
 
     @commands.command()
     async def smile(self, context):
@@ -25,7 +25,7 @@ class TestCog:
                                         ['Hello, continue?', 'Oh, sorry to hear that.', 'Thanks for understanding.'],
                                         [Reaction.DISMISS.value, Reaction.CONFIRM.value])
         await reaction_message.send()
-        await reaction_message.wait_for_user_reaction(context.message.author)
+        await reaction_message.wait_for_user_reaction(context.author)
 
 
 def setup(bot):
