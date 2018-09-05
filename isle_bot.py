@@ -70,7 +70,7 @@ async def on_message(message):
     if not isinstance(channel, PrivateChannel):
         union = game.get_union(message.guild)
         if union is None:
-            await channel.send('This discord guild is now registered as a union.')
+            await channel.send('This discord guild is not registered as a union.')
             return await manage.ask_guild_to_join_game(bot, message.guild, channel)
 
     await bot.process_commands(message)
