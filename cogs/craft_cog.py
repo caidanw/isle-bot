@@ -44,46 +44,39 @@ class CraftCog:
         inventory.add_item(items.get_by_name(recipe_name))
         await message.edit(content=f'{author.mention} finished crafting {display_name}')
 
-    @commands.group()
+    @commands.command(aliases=['recipes'])
     async def recipe(self, context, *item_name):
         """ Get the recipe of the desired craftable item. """
-        channel = context.message.channel
-
         if len(item_name) == 0:
-            return await channel.send('A recipe name is required. Try "?help recipe"')
+            message = self.list_recipes()  # return all recipes when in the even of an empty item_name
+        else:
+            input_name = ' '.join(item_name)
 
-        input_name = ' '.join(item_name)
+            try:
+                recipe_name = '_'.join(item_name).upper()
+                recipe = Recipe[recipe_name]
 
-        command = self.bot.get_command('recipe').get_command(input_name)
-        if command:
-            return await command.invoke(context)
+                message = recipe.to_extended_string()
+            except KeyError:
+                message = f'Could not find the recipe for "{input_name}".'
 
-        recipe_name = '_'.join(item_name).upper()
+        await context.send(message)
 
-        try:
-            recipe = Recipe[recipe_name]
-        except KeyError:
-            return await channel.send(f'Could not find the recipe for "{input_name}".')
-
-        await channel.send(recipe.to_extended_string())
-
-    @recipe.command(aliases=['all'])
-    async def list(self, context):
+    @staticmethod
+    def list_recipes():
         """ Get all of the recipes of the craftable items. """
-        output = 'Recipe List:'
-        output += '```\n'
-        for item in Recipe:
-            name = item.name.replace('_', ' ')
+        output = '```\n'
+        output += 'RECIPE LIST'
 
+        for item in Recipe:
             try:
                 recipe = item.to_short_string()
             except Exception:
-                recipe = 'Unavailable'
+                recipe = f'Unavailable'
+            output += f'\n\t{item.name.replace("_", " ")} : {recipe}'  # format item name and recipe string
 
-            output += f'\n{name} : {recipe}'
         output += '\n```'
-
-        await context.send(output)
+        return output
 
 
 def setup(bot):

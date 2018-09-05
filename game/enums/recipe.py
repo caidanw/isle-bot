@@ -17,20 +17,11 @@ class Recipe(Enum):
         return self.value
 
     def to_short_string(self):
-        output = '['
-
-        index = 0
+        ingredients = []
         for material, amt in self.value.items():
-            name = str(material)
-            amt = str(amt)
-            if index >= 1:
-                output += ', '
-            output += f'{name} : {amt}'
-            index += 1
+            ingredients.append(f'{str(material)} : {str(amt)}')
 
-        output += ']'
-
-        return output
+        return f'[{", ".join(ingredients)}]'
 
     def to_extended_string(self):
         output = '```\n'
