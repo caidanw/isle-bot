@@ -53,7 +53,8 @@ class MemberCog:
 
         welcome_msg_part_one = f"""Welcome {player.username}, here is the rundown of the game.
         
-        The bot responds to a few discriminators for commands, all discriminators are (`?` `!` `.` `~`), you can use these like so eg. `?help` `!help` `.help` `~help` and they will all work for any command.
+        The bot responds to a few discriminators for commands, all discriminators are (`?` `!` `.` `~`) you can use these like so, eg. `?help` `!help` `.help` `~help` and they will all mean the same to the bot.
+        This was done with making it easier for you to use in mind, depending on which platform you keyboard has, you can choose your most comfortable fit of discriminator.
         If you are struggling with a command, try using `?help command_name` and it will give you a message with command usage and what it does.
 
         Each discord server is created into a union, every union is in the same game world. You can travel between unions and trade with other players (not currently supported).
@@ -67,7 +68,7 @@ class MemberCog:
         Using `?info me` will show you all of your stats. You can level up stats by eating certain materials.
         Higher level stats allow you to do more damage, block more damage, or have more starting health.
         
-        You can fight other players using ?fight player name (player name is case sensitive). eg `?fight mildmelon` is not the same as `?fight MildMelon`.
+        You can fight other players using ?fight player name (player name is case sensitive). For example, `?fight mildmelon` is not the same as `?fight MildMelon`.
         When in combat, you are presented with a menu of actions, start from left to right are the actions you can choose.
         Attack: :crossed_swords: | Defend: :shield: | Use Item: :package: | Pass Turn: :no_entry_sign: | Surrender: :flag_white:
         Currently, using an item during combat is not implemented, and remember... Don't pass your turn, unless you want to die.
