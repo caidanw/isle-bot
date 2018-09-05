@@ -147,11 +147,11 @@ class CombatCog:
 
             """ Check if either play has died or surrendered. """
 
-            if (player_1.health <= 0 or player_2.health <= 0) or (p1_action == Reaction.WHITE_FLAG or
-                                                                  p2_action == Reaction.WHITE_FLAG):
+            if (player_1.health <= 0 or player_2.health <= 0) or (p1_action == Reaction.FLAG_WHITE or
+                                                                  p2_action == Reaction.FLAG_WHITE):
 
-                p1_surrendered = p1_action == Reaction.WHITE_FLAG
-                p2_surrendered = p2_action == Reaction.WHITE_FLAG
+                p1_surrendered = p1_action == Reaction.FLAG_WHITE
+                p2_surrendered = p2_action == Reaction.FLAG_WHITE
 
                 if p1_surrendered or p2_surrendered:
                     fight_end_msg = 'The fight has ended, {loser} has surrendered, {winner} has won!'

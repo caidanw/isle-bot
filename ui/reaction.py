@@ -10,7 +10,7 @@ class Reaction(Enum):
     SHIELD = '\U0001f6e1'           # 🛡️
     PACKAGE = '\U0001f4e6'          # 📦
     NO_ENTRY_SIGN = '\U0001f6ab'    # 🚫
-    WHITE_FLAG = '\U0001f3f3'       # 🏳️
+    FLAG_WHITE = '\U0001f3f3'       # 🏳️
 
     HEART = '\u2764'                # ❤️
     MUSCLE = '\U0001f4aa'           # 💪

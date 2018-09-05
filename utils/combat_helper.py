@@ -7,7 +7,7 @@ combat_descriptions = {
                                  'You took a critical hit worth {received_dmg} damage',
         Reaction.SHIELD: 'You stare, and {opponent} defends against your glare. Nothing happens.',
         Reaction.PACKAGE: 'You stare, while {opponent} uses an item.',
-        Reaction.WHITE_FLAG: 'You stare, and {opponent} surrenders. Your stare was very effective.'
+        Reaction.FLAG_WHITE: 'You stare, and {opponent} surrenders. Your stare was very effective.'
     },
     Reaction.CROSSED_SWORDS: {
         Reaction.NO_ENTRY_SIGN: 'You attack, and {opponent} does nothing. '
@@ -16,7 +16,7 @@ combat_descriptions = {
                                  'You dealt {dealt_dmg} damage, and took {received_dmg} damage',
         Reaction.SHIELD: 'You attack, but {opponent} blocked your attack. You dealt {dealt_dmg} damage.',
         Reaction.PACKAGE: 'You attack, and {opponent} used an item. You dealt {dealt_dmg} damage.',
-        Reaction.WHITE_FLAG: 'You attack, but {opponent} surrendered. You dealt {dealt_dmg} damage.'
+        Reaction.FLAG_WHITE: 'You attack, but {opponent} surrendered. You dealt {dealt_dmg} damage.'
     },
     Reaction.SHIELD: {
         Reaction.NO_ENTRY_SIGN: 'You defend, and {opponent} did nothing. {opponent} stares deeply into your soul.',
@@ -24,21 +24,21 @@ combat_descriptions = {
                                  'You blocked {blocked_dmg} damage, and took {received_dmg} damage',
         Reaction.SHIELD: 'You defended, and {opponent} defend. Nothing happens.',
         Reaction.PACKAGE: 'You defended, and {opponent} used an item.',
-        Reaction.WHITE_FLAG: 'You defended, and {opponent} surrendered.'
+        Reaction.FLAG_WHITE: 'You defended, and {opponent} surrendered.'
     },
     Reaction.PACKAGE: {
         Reaction.NO_ENTRY_SIGN: 'You use an item, while {opponent} stares at you.',
         Reaction.CROSSED_SWORDS: 'You use an item, while {opponent} attacks. You took {received_dmg} damage.',
         Reaction.SHIELD: 'You use an item, and {opponent} defends. Nothing happens.',
         Reaction.PACKAGE: 'You use an item, and {opponent} uses an item.',
-        Reaction.WHITE_FLAG: 'You use an item, while {opponent} surrenders.'
+        Reaction.FLAG_WHITE: 'You use an item, while {opponent} surrenders.'
     },
-    Reaction.WHITE_FLAG: {
+    Reaction.FLAG_WHITE: {
         Reaction.NO_ENTRY_SIGN: 'You surrender, while {opponent} stares at you.',
         Reaction.CROSSED_SWORDS: 'You surrender, and {opponent} attacks. You take {received_dmg} damage.',
         Reaction.SHIELD: 'You surrender, and {opponent} defends.',
         Reaction.PACKAGE: 'You surrender, while {opponent} uses an item.',
-        Reaction.WHITE_FLAG: 'You surrender, and {opponent} surrenders.'
+        Reaction.FLAG_WHITE: 'You surrender, and {opponent} surrenders.'
     }
 }
 
@@ -74,7 +74,7 @@ async def handle_combat_actions(player_1, p1_action, player_2, p2_action):
             pass
         elif p2_action == Reaction.PACKAGE:
             pass
-        elif p2_action == Reaction.WHITE_FLAG:
+        elif p2_action == Reaction.FLAG_WHITE:
             pass
     elif p1_action == Reaction.CROSSED_SWORDS:
         if p2_action == Reaction.NO_ENTRY_SIGN:
@@ -103,7 +103,7 @@ async def handle_combat_actions(player_1, p1_action, player_2, p2_action):
 
             p1_desc_values['dealt_dmg'] = player_1.damage
             p2_desc_values['received_dmg'] = player_1.damage
-        elif p2_action == Reaction.WHITE_FLAG:
+        elif p2_action == Reaction.FLAG_WHITE:
             player_2.health -= player_1.damage
 
             p1_desc_values['dealt_dmg'] = player_1.damage
@@ -122,7 +122,7 @@ async def handle_combat_actions(player_1, p1_action, player_2, p2_action):
             pass
         elif p2_action == Reaction.PACKAGE:
             pass
-        elif p2_action == Reaction.WHITE_FLAG:
+        elif p2_action == Reaction.FLAG_WHITE:
             pass
     elif p1_action == Reaction.PACKAGE:
         if p2_action == Reaction.NO_ENTRY_SIGN:
@@ -136,9 +136,9 @@ async def handle_combat_actions(player_1, p1_action, player_2, p2_action):
             pass
         elif p2_action == Reaction.PACKAGE:
             pass
-        elif p2_action == Reaction.WHITE_FLAG:
+        elif p2_action == Reaction.FLAG_WHITE:
             pass
-    elif p1_action == Reaction.WHITE_FLAG:
+    elif p1_action == Reaction.FLAG_WHITE:
         if p2_action == Reaction.NO_ENTRY_SIGN:
             pass
         elif p2_action == Reaction.CROSSED_SWORDS:
@@ -150,7 +150,7 @@ async def handle_combat_actions(player_1, p1_action, player_2, p2_action):
             pass
         elif p2_action == Reaction.PACKAGE:
             pass
-        elif p2_action == Reaction.WHITE_FLAG:
+        elif p2_action == Reaction.FLAG_WHITE:
             pass
 
     p1_msg = p1_desc.get(p2_action).format(**p1_desc_values)

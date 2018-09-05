@@ -12,11 +12,11 @@ MESSAGES = ['Choose an action...',
             'You chose to pass this turn.',
             'You chose to surrender.']
 
-REACTIONS = [Reaction.CROSSED_SWORDS.value,     # attack
-             Reaction.SHIELD.value,             # defend
-             Reaction.PACKAGE.value,            # use item
-             Reaction.NO_ENTRY_SIGN.value,      # pass
-             Reaction.WHITE_FLAG.value]         # surrender
+REACTIONS = [Reaction.CROSSED_SWORDS.value,  # attack
+             Reaction.SHIELD.value,  # defend
+             Reaction.PACKAGE.value,  # use item
+             Reaction.NO_ENTRY_SIGN.value,  # pass
+             Reaction.FLAG_WHITE.value]         # surrender
 
 
 class CombatMenu(ReactionMenu):
