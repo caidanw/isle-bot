@@ -47,15 +47,21 @@ def write_logs(filename=LOG_FILE_NAME, logout=False):
     if len(LOG_KEEP) == 0 and not logout:
         return
 
+    # copy the logs, then clear the old ones
+    old_logs = LOG_KEEP.copy()
+    LOG_KEEP.clear()
+    # append an empty string so we get a newline at the end, or we get chunky logs, no one wants chunky logs
+    old_logs.append('')
+
     global LAST_WRITE
     LAST_WRITE = datetime.datetime.utcnow()
 
     with open(filename, 'a') as f:
         if logout:
-            LOG_KEEP.append('\n\n')
             print(f'{date_time()} Finished logging, appending new lines')
+            LOG_KEEP.append('\n\n')
         else:
-            print(f'{date_time()} Writing logs to {filename}')
+            print(f'{date_time()} Writing logs to "{filename}"')
 
-        f.write('\n'.join(LOG_KEEP))
-        LOG_KEEP.clear()
+        f.write('\n'.join(old_logs))
+    print(f'{date_time()} Finished writing logs to "{filename}"')
