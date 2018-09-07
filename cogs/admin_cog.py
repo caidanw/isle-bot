@@ -4,6 +4,7 @@ from discord.ext.commands import CommandNotFound
 import settings
 from game.enums.action import Action
 from game.game import Game
+from game.objects.island import Island
 from game.objects.resource import Resource
 from utils import logger
 
@@ -49,6 +50,27 @@ class AdminCog:
 
         res = Resource.random(island, name)
         await context.send(f'Added "{res.f_name}" to "{island.name}" of "{island.owner.name}".')
+
+    @add.command(hidden=True, aliases=['isl'])
+    async def island(self, context, *guild_name):
+        """ Command only available to developers.
+
+        Add a new island to the current guild_name.
+        """
+        if not guild_name:
+            union = Game.get_union(context.guild)
+        else:
+            guild_name = ' '.join(guild_name)
+            union = Game.search_unions(guild_name)
+            if union is None:
+                return await context.send(f'Could not find any union under the name "{guild_name}"')
+
+        island = Island.create()
+
+        union.max_islands += 1
+        if union.claim_island(island):
+            return await context.send(f'"{union.name}" claimed {island.name}')
+        await context.send(f'Failed to claim {island.name} for "{union.name}"')
 
     @commands.group(hidden=True, aliases=['p'])
     async def player(self, context):
