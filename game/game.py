@@ -66,7 +66,7 @@ class Game:
         :param name: the name of the union to search for
         :return: the union if found, otherwise None
         """
-        return Union.get_or_none(fn.Lower(Union.name) == name)
+        return Union.get_or_none(Union.name == name)
 
     @classmethod
     def search_unions_by_guild_id(cls, guild_id: int):
