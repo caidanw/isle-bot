@@ -6,15 +6,18 @@ from discord.abc import PrivateChannel
 from discord.ext import commands
 
 import settings
+from game.enums.action import Action
 from game.game import Game
 from game.items import items
 from game.objects.inventory import Inventory
 from game.objects.island import Island
 from game.objects.player import Player
 from game.objects.player_stat import PlayerStat
-from ui.reaction import Reaction
+from utils import logger
 from utils.clock import format_time
-from game.enums.action import Action
+
+travelers = {}
+re_island = re.compile('(island|isl|i)#(\d+)')
 
 
 class MemberCog:
@@ -218,57 +221,60 @@ class MemberCog:
     @commands.command(aliases=['t', 'trav'])
     async def travel(self, context, *destination):
         """ Travel to another island or union. """
-        channel = context.message.channel
-        guild = context.message.guild
-        author = context.author
-
         if not destination:
-            return await channel.send('You must enter a destination.')
+            return await context.send('You must enter a destination.')
 
-        destination_name = " ".join(destination)
-        island_number = re.search('island#(\d+)', destination_name).group(1)
-        island_number = int(island_number)
+        destination_name = ' '.join(destination)
+        local_union = Game.get_union(context.guild)
+
+        island = None
+        match = re_island.match(destination_name)
+        if match is not None and len(match.groups()) != 0:
+            island_number = int(match.group(2))
+            island = Game.search_islands_by_number(local_union, island_number)
+            if island is None:
+                return await context.send(f'There are no islands under the name "{destination_name}".')
 
         union = Game.search_unions(destination_name)
 
-        local_union = None
-        if union is None:
-            local_union = Game.search_unions_by_guild_id(guild.id)
-            island = Game.search_islands_by_number(local_union, island_number)
-        else:
-            island = Game.search_islands_by_number(union, island_number)
-
         if union is None and island is None:
-            return await channel.send('There are no unions or islands under that name.')
+            return await context.send(f'There are no unions under the name "{destination_name}".')
 
-        player = Game.get_player(author)
+        player = Game.get_player(context.author)
+
+        if not player.is_idle:
+            return await context.send(f'You can not do any more actions until you have finished {player.f_action}')
 
         if union:
             if player.union.id == union.id:
-                return await channel.send('You are already at this union.')
+                return await context.send('You are already at this union.')
 
             # TODO: add vehicle checking, but for now just return a generic string
-            return await channel.send('You can not travel out of your union, because you do not have any vehicles.')
+            return await context.send('You can not travel out of your union, because you do not have any vehicles.')
 
         if island:
             if player.get_location.id == island.id:
-                return await channel.send('You are already on this island.')
+                return await context.send('You are already on this island.')
 
             if island not in local_union.islands:
-                return await channel.send('That island is not a part of this union. '
+                return await context.send('That island is not a part of this union. '
                                           'You must first travel to that union\'s location.')
 
             # TODO: confirm using reactions that the player wants to travel there
 
-            # TODO: estimate the eta, based on distance
-            message = await channel.send(f'You start heading towards {island.name}. ETA: 02s')
+            # TODO: estimate the time of arrival, based on distance
+            message = await context.send(f'You start heading towards {island.name}. `ETA: 15s`')
 
-            player.set_action(Action.TRAVELING)
-            await asyncio.sleep(random.randint(1, 3))
-            player.set_action(Action.IDLE)
+            await player_travel(player, island, random.randint(10, 20))
+            await message.edit(content=f'{context.author.mention} has arrived at {island.name}')
 
-            player.set_location(island)
-            await message.edit(content=f'{author.mention} has arrived at {island.name}')
+
+async def player_travel(player, destination, travel_time):
+    player.set_action(Action.TRAVELING)
+    await asyncio.sleep(travel_time)
+    player.set_action(Action.IDLE)
+
+    player.set_location(destination)
 
 
 def setup(bot):
