@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-bash stop_bot.sh &&
 printf "\nGetting latest changes...\n"
 git pull &&
 printf "\n"
