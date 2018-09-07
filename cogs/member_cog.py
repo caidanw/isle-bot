@@ -162,44 +162,53 @@ class MemberCog:
         await context.send(player.inventory.to_message(crafted=True))
 
     @commands.command(aliases=['h', 'harv'])
-    async def harvest(self, context, resource_name, desired_amount=5):
+    async def harvest(self, context, resource_name, desired_amount=None):
         """ Harvest materials from a resource.
 
         :param resource_name: of the resource to find on the island
         :param desired_amount: the amount of materials to harvest
         """
         player = Game.get_player(context.author)
-        channel = context.message.channel
 
         if not player.is_idle:
-            return await channel.send(f'You can not do any more actions until you have finished {player.f_action}')
+            return await context.send(f'You can not do any more actions until you have finished {player.f_action}')
 
         if not isinstance(player.get_location, Island):
-            return await channel.send('You can not harvest here, you are currently not on an island.')
+            return await context.send('You can not harvest here, you are currently not on an island.')
 
         island = player.get_location
         if not isinstance(island, Island):
-            return await channel.send('You must be on an island to harvest resources.')
+            return await context.send('You must be on an island to harvest resources.')
 
         resource = island.get_resource(resource_name)
 
         if isinstance(resource, str):
             # at this point the resource is an error message we need to give to the player
-            return await channel.send(resource)
+            return await context.send(resource)
+
+        if desired_amount is None:
+            desired_amount = 5
+        else:
+            try:
+                desired_amount = int(desired_amount)
+                if desired_amount < 1:
+                    raise ValueError
+            except (ValueError, TypeError):
+                return await context.send(f'Must enter a positive number, you entered "{desired_amount}"')
 
         if not resource:
-            return await channel.send(f'The resource "{resource_name}" is not on the current island.')
+            return await context.send(f'The resource "{resource_name}" is not on the current island.')
         elif resource.material_amount < desired_amount:
-            return await channel.send(f'The resource has {resource.material_amount} materials left to harvest.')
+            return await context.send(f'The resource has {resource.material_amount} materials left to harvest.')
 
         player_inv = player.inventory
         if not player_inv.validate_is_room(desired_amount):
-            return await channel.send('You don\'t have enough room in your inventory.')
+            return await context.send('You don\'t have enough room in your inventory.')
 
         time_to_finish = format_time(resource.average_harvest_time * desired_amount)
         if '#' not in resource_name:
             resource_name = f'{resource.name}#{resource.number}'
-        msg = await channel.send(f'Harvesting {desired_amount} materials from {resource_name}, '
+        msg = await context.send(f'Harvesting {desired_amount} materials from {resource_name}, '
                                  f'estimated time to finish {time_to_finish}')
 
         player.set_action(Action.HARVESTING)
