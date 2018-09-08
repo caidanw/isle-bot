@@ -57,18 +57,21 @@ class MemberCog:
         welcome_msg_part_one = f"""Welcome {player.username}, here is the rundown of the game.
         
         The bot responds to a few discriminators for commands, all discriminators are (`?` `!` `.` `~`).
-        For example: `?help` `!help` `.help` `~help` will all mean the same to the `help` command to the bot.
-        This was done with making it easier for you to use in mind, depending on which platform you keyboard has,
+        For example: `?help` `!help` `.help` `~help` will all mean the same `help` command to the bot.
+        This was done with making it easier for you to use in mind, depending on which platform your keyboard has,
         you can choose your most comfortable fit of discriminator.
         
-        If a command is confusing, try using `?help command_name` which will show you command usage and parameters.
+        If a command is confusing, try using `?help command name` which will show you command usage and parameters.
+        For example, the `?info` command has a lot of subcommands, to see all subcommands, use `?help info`.
+        If you want to see specific information about a subcommand you may use `?help command name subcommand name`.
+        For example, `?help info me` will show you what the `?info me` command will do.
 
         Each discord server is created into a union, every union is in the same game world.
         You can travel between unions and trade with other players (not currently supported).
         Each union starts with one floating island, that island has resources (you can find
         an islands resources by using `?info resource` or `?info res`).
         
-        You can harvest materials from resources with ?harvest resource amount eg. `?harvest forest 20.`
+        You can harvest materials from resources with `?harvest resource amount` eg. `?harvest forest 20`.
         You can not choose the exact material you harvest, as they are given out randomly.
         
         You can craft new items using `?craft item name`. 
@@ -82,7 +85,7 @@ class MemberCog:
         Using `?info me` will show you all of your stats. You can level up stats by eating certain materials.
         Higher level stats allow you to do more damage, block more damage, or have more starting health.
         
-        You can fight other players using ?fight player name (player name is case sensitive).
+        You can fight other players using `?fight player name` (player name is case sensitive).
         For example, `?fight mildmelon` is not the same as `?fight MildMelon`.
         When in combat, you are presented with a menu of actions, from left to right are the actions you can choose.
         Attack: :crossed_swords: | Defend: :shield: | Use Item: :package: | Pass Turn: :no_entry_sign: | Surrender: :flag_white:
