@@ -47,7 +47,7 @@ class ReactionMenu:
         try:
             response = await self.client.wait_for('reaction_add', check=check, timeout=settings.DEFAULT_TIMEOUT)
         except asyncio.TimeoutError:
-            return await self.message_literal.delete()
+            return await self.clear()
 
         emoji_code = str(response[0])
         await self.message_literal.edit(content=self.reaction_messages.get(emoji_code))

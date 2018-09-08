@@ -1,4 +1,4 @@
-from concurrent import futures
+import asyncio
 
 from discord import Client, User, TextChannel
 
@@ -27,8 +27,8 @@ class ConfirmMenu(ReactionMenu):
 
         try:
             response = await self.client.wait_for('reaction_add', check=check, timeout=settings.DEFAULT_TIMEOUT)
-        except futures.TimeoutError:
-            await self.message_literal.delete()
+        except asyncio.TimeoutError:
+            await self.clear()
             return None
 
         if response:
@@ -36,5 +36,5 @@ class ConfirmMenu(ReactionMenu):
             await self.message_literal.edit(content=self.reaction_messages.get(emoji_code))
             return emoji_code == Reaction.CONFIRM.value  # if the confirm button was clicked, then return true
         else:
-            await self.message_literal.delete()
+            await self.clear()
             return None
