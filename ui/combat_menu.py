@@ -4,8 +4,11 @@ from discord import Client, TextChannel, User
 
 from ui.reaction import Reaction
 from ui.reaction_menu import ReactionMenu
+from utils.clock import format_time
 
-MESSAGES = ['Choose an action...',
+ACTION_PASS = 10
+
+MESSAGES = [f'Choose an action... {format_time(ACTION_PASS)} til pass',
             'You chose to attack.',
             'You chose to defend.',
             'You chose to use an item.',
@@ -23,7 +26,7 @@ class CombatMenu(ReactionMenu):
     def __init__(self, client: Client, channel: TextChannel):
         super().__init__(client, channel, MESSAGES.copy(), REACTIONS)
 
-    async def wait_for_user_reaction(self, target_user: User, timeout=10):
+    async def wait_for_user_reaction(self, target_user: User, timeout=ACTION_PASS):
         if self.message_literal is None:
             raise ValueError('Message has not been sent yet, send a message before waiting for the response.')
         if target_user is None:
