@@ -38,7 +38,7 @@ class CombatCog:
         if target_player is None:
             return await channel.send(f'The player "{target_player_name}" does not exist, are they using an alias?')
         elif not target_player.is_idle:
-            return await channel.send(f'{target_player.username} is currently {player.f_action}, '
+            return await channel.send(f'{target_player.username} is currently {target_player.f_action}, '
                                       f'the recipient is unable to fight now.')
 
         target_user = self.bot.get_user(target_player.uuid)
