@@ -1,6 +1,6 @@
 from ui.reaction import Reaction
 
-combat_descriptions = {
+COMBAT_DESCRIPTIONS = {
     Reaction.NO_ENTRY_SIGN: {
         Reaction.NO_ENTRY_SIGN: 'You stare, {opponent} stares. It\'s awkward.',
         Reaction.CROSSED_SWORDS: 'You stare, and {opponent} attacks. '
@@ -20,9 +20,9 @@ combat_descriptions = {
     },
     Reaction.SHIELD: {
         Reaction.NO_ENTRY_SIGN: 'You defend, and {opponent} did nothing. {opponent} stares deeply into your soul.',
-        Reaction.CROSSED_SWORDS: 'You defended, and {opponent} attacks. '
+        Reaction.CROSSED_SWORDS: 'You defend, and {opponent} attacks. '
                                  'You blocked {blocked_dmg} damage, and took {received_dmg} damage',
-        Reaction.SHIELD: 'You defended, and {opponent} defend. Nothing happens.',
+        Reaction.SHIELD: 'You defend, and {opponent} defends. Nothing happens.',
         Reaction.PACKAGE: 'You defended, and {opponent} used an item.',
         Reaction.FLAG_WHITE: 'You defended, and {opponent} surrendered.'
     },
@@ -55,9 +55,6 @@ def get_damage_after_defense(damage, defense):
 
 
 async def handle_combat_actions(player_1, p1_action, player_2, p2_action):
-    p1_desc = combat_descriptions.get(p1_action)
-    p2_desc = combat_descriptions.get(p2_action)
-
     p1_desc_values = {'opponent': player_2.username}
     p2_desc_values = {'opponent': player_1.username}
 
@@ -153,8 +150,11 @@ async def handle_combat_actions(player_1, p1_action, player_2, p2_action):
         elif p2_action == Reaction.FLAG_WHITE:
             pass
 
-    p1_msg = p1_desc.get(p2_action).format(**p1_desc_values)
-    p2_msg = p2_desc.get(p1_action).format(**p2_desc_values)
+    p1_desc = COMBAT_DESCRIPTIONS.get(p1_action).get(p2_action)
+    p2_desc = COMBAT_DESCRIPTIONS.get(p2_action).get(p1_action)
+
+    p1_msg = p1_desc.format(**p1_desc_values)
+    p2_msg = p2_desc.format(**p2_desc_values)
 
     p1_msg = f'```\n{p1_msg}\n```'
     p2_msg = f'```\n{p2_msg}\n```'
@@ -173,4 +173,5 @@ def set_battle_stats(player):
     player.health = stats.vigor
     # Todo: add equipped weapons damage, for now it's just strength
     player.damage = stats.strength
+    # Todo: add equipped armor defense, for now it's just fortitude
     player.defense = stats.fortitude
