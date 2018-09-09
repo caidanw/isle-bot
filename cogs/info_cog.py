@@ -150,6 +150,7 @@ class InfoCog:
             return await channel.send('This island does not have any resources.')
 
         msg = '```'
+        msg += f'ISLAND {island.union_number}'
         if island.resources:
             header = f'{"RESOURCE".ljust(10)} : AMT : MAX'
             msg += '\n' + header
