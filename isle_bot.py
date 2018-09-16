@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 import sys
@@ -65,7 +66,8 @@ async def on_message(message):
 
     if not game.check_player_exists(message.author):
         if 'create' not in content and 'join' not in content:
-            return await channel.send('You are not registered as a part of this game. Try "?create"')
+            return await channel.send('You are not registered as a part of this game. Try "?create"',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
     if not isinstance(channel, PrivateChannel):
         union = game.get_union(message.guild)
@@ -102,17 +104,22 @@ async def on_command_error(context, exception):
     channel = context.message.channel
 
     if isinstance(exception, commands.CommandNotFound):
-        return await channel.send(f'Command "{cmd}" unknown. Try "?help"')
+        await channel.send(f'Command "{cmd}" unknown. Try "?help"', delete_after=settings.DEFAULT_DELETE_DELAY)
 
     elif isinstance(exception, discord.InvalidArgument):
-        return await channel.send(f'Invalid argument for command "{cmd}". Try "?help {cmd}"')
+        await channel.send(f'Invalid argument for command "{cmd}". Try "?help {cmd}"',
+                           delete_after=settings.DEFAULT_DELETE_DELAY)
 
     elif isinstance(exception, commands.MissingRequiredArgument):
-        return await channel.send(f'Missing argument for command "{cmd}". Try "?help {cmd}"')
+        await channel.send(f'Missing argument for command "{cmd}". Try "?help {cmd}"',
+                           delete_after=settings.DEFAULT_DELETE_DELAY)
 
     elif isinstance(exception, commands.CommandInvokeError):
-        return await channel.send('Oops, looks like something on the back end broke. '
-                                  'Please contact @mildmelon#5380.')
+        await channel.send('Oops, looks like something on the back end broke. Please contact @mildmelon#5380.',
+                           delete_after=settings.DEFAULT_DELETE_DELAY)
+
+    await asyncio.sleep(settings.DEFAULT_DELETE_DELAY)
+    await context.message.delete()
 
 
 if __name__ == "__main__":
