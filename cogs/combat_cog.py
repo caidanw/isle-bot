@@ -36,7 +36,11 @@ class CombatCog:
             return await channel.send('You must enter the player you wish to fight. Try "?help fight"',
                                       delete_after=settings.DEFAULT_DELETE_DELAY)
 
-        target_player = Game.get_player_by_name(target_player_name)
+        if target_player_name.startswith('<@') and target_player_name.endswith('>'):
+            target_player = Game.get_player_by_uuid(target_player_name.strip('<@>'))
+        else:
+            target_player = Game.get_player_by_name(target_player_name)
+
         if target_player is None:
             return await channel.send(f'The player "{target_player_name}" does not exist, are they using an alias?',
                                       delete_after=settings.DEFAULT_DELETE_DELAY)

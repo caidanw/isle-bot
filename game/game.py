@@ -93,6 +93,15 @@ class Game:
         return Player.get_or_none(Player.uuid == user.id)
 
     @classmethod
+    def get_player_by_uuid(cls, uuid: int):
+        """ Retrieve the Player from the database with the desired User.
+
+        :param uuid: to search for in the database by id
+        :return: [Player | None] object
+        """
+        return Player.get_or_none(Player.uuid == uuid)
+
+    @classmethod
     def get_player_by_name(cls, name: str):
         """ Retrieve the Player from the database with the desired name.
 
