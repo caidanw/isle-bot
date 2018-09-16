@@ -13,7 +13,6 @@ from game.objects.inventory import Inventory
 from game.objects.island import Island
 from game.objects.player import Player
 from game.objects.player_stat import PlayerStat
-from utils import logger
 from utils.clock import format_time
 
 travelers = {}
@@ -35,7 +34,8 @@ class MemberCog:
         union = context.message.guild
 
         if Game.get_player(author) is not None:
-            return await channel.send('You can not be recreated, please die first.')
+            return await channel.send('You can not be recreated, please die first.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         if isinstance(channel, PrivateChannel):
             return await author.create_dm('You can not be created on thin air. Only out of thin air. '
@@ -110,12 +110,14 @@ class MemberCog:
         author = context.author
 
         if len(item_name) == 0:
-            return await channel.send('An item name is required. Try "?help eat"')
+            return await channel.send('An item name is required. Try "?help eat"',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         player = Game.get_player(context.author)
 
         if not player.is_idle:
-            return await channel.send(f'You can not do anymore actions until you have finished {player.f_action}')
+            return await channel.send(f'You can not do anymore actions until you have finished {player.f_action}',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         input_name = ' '.join(item_name)
         item_name = '_'.join(item_name).upper()
@@ -147,41 +149,47 @@ class MemberCog:
         """
         if context.invoked_subcommand is None:
             player = Game.get_player(context.author)
-            await context.send(player.inventory.to_message(harvested=True, crafted=True))
+            await context.send(player.inventory.to_message(harvested=True, crafted=True),
+                               delete_after=settings.DEFAULT_DELETE_DELAY)
 
     @inventory.command(aliases=['m'])
     async def max(self, context):
         player = Game.get_player(context.author)
-        await context.send(player.inventory.to_message())
+        await context.send(player.inventory.to_message(),
+                           delete_after=settings.DEFAULT_DELETE_DELAY)
 
     @inventory.command(aliases=['h', 'harvest'])
     async def harvested(self, context):
         player = Game.get_player(context.author)
-        await context.send(player.inventory.to_message(harvested=True))
+        await context.send(player.inventory.to_message(harvested=True),
+                           delete_after=settings.DEFAULT_DELETE_DELAY)
 
     @inventory.command(aliases=['c', 'craft'])
     async def crafted(self, context):
         player = Game.get_player(context.author)
-        await context.send(player.inventory.to_message(crafted=True))
+        await context.send(player.inventory.to_message(crafted=True),
+                           delete_after=settings.DEFAULT_DELETE_DELAY)
 
     @commands.command(aliases=['h', 'harv'])
     async def harvest(self, context, resource_name, desired_amount=None):
         """ Harvest materials from a resource.
 
-        :param resource_name: of the resource to find on the island
-        :param desired_amount: the amount of materials to harvest
+        You can find all the resources on the current island by using '?info resources' or '?info res' (shorthand)
         """
         player = Game.get_player(context.author)
 
         if not player.is_idle:
-            return await context.send(f'You can not do any more actions until you have finished {player.f_action}')
+            return await context.send(f'You can not do any more actions until you have finished {player.f_action}',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         if not isinstance(player.get_location, Island):
-            return await context.send('You can not harvest here, you are currently not on an island.')
+            return await context.send('You can not harvest here, you are currently not on an island.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         island = player.get_location
         if not isinstance(island, Island):
-            return await context.send('You must be on an island to harvest resources.')
+            return await context.send('You must be on an island to harvest resources.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         resource = island.get_resource(resource_name)
 
@@ -197,16 +205,20 @@ class MemberCog:
                 if desired_amount < 1:
                     raise ValueError
             except (ValueError, TypeError):
-                return await context.send(f'Must enter a positive number, you entered "{desired_amount}"')
+                return await context.send(f'Must enter a positive number, you entered "{desired_amount}"',
+                                          delete_after=settings.DEFAULT_DELETE_DELAY)
 
         if not resource:
-            return await context.send(f'The resource "{resource_name}" is not on the current island.')
+            return await context.send(f'The resource "{resource_name}" is not on the current island.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
         elif resource.material_amount < desired_amount:
-            return await context.send(f'The resource has {resource.material_amount} materials left to harvest.')
+            return await context.send(f'The resource has {resource.material_amount} materials left to harvest.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         player_inv = player.inventory
         if not player_inv.validate_is_room(desired_amount):
-            return await context.send('You don\'t have enough room in your inventory.')
+            return await context.send('You don\'t have enough room in your inventory.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         time_to_finish = format_time(resource.average_harvest_time * desired_amount)
         if '#' not in resource_name:
@@ -245,32 +257,39 @@ class MemberCog:
             island_number = int(match.group(2))
             island = Game.search_islands_by_number(local_union, island_number)
             if island is None:
-                return await context.send(f'There are no islands under the name "{destination_name}".')
+                return await context.send(f'There are no islands under the name "{destination_name}".',
+                                          delete_after=settings.DEFAULT_DELETE_DELAY)
 
         union = Game.search_unions(destination_name)
 
         if union is None and island is None:
-            return await context.send(f'There are no unions under the name "{destination_name}".')
+            return await context.send(f'There are no unions under the name "{destination_name}".',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         player = Game.get_player(context.author)
 
         if not player.is_idle:
-            return await context.send(f'You can not do any more actions until you have finished {player.f_action}')
+            return await context.send(f'You can not do any more actions until you have finished {player.f_action}',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         if union:
             if player.union.id == union.id:
-                return await context.send('You are already at this union.')
+                return await context.send('You are already at this union.',
+                                          delete_after=settings.DEFAULT_DELETE_DELAY)
 
             # TODO: add vehicle checking, but for now just return a generic string
-            return await context.send('You can not travel out of your union, because you do not have any vehicles.')
+            return await context.send('You can not travel out of your union, because you do not have any vehicles.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         if island:
             if player.get_location.id == island.id:
-                return await context.send('You are already on this island.')
+                return await context.send('You are already on this island.',
+                                          delete_after=settings.DEFAULT_DELETE_DELAY)
 
             if island not in local_union.islands:
                 return await context.send('That island is not a part of this union. '
-                                          'You must first travel to that union\'s location.')
+                                          'You must first travel to that union\'s location.',
+                                          delete_after=settings.DEFAULT_DELETE_DELAY)
 
             # TODO: confirm using reactions that the player wants to travel there
 

@@ -28,28 +28,35 @@ class CombatCog:
                 msg += 'Please refrain from going on murder sprees.'
             else:
                 msg += 'You can not do another action now.'
-            return await channel.send(msg)
+            return await channel.send(msg,
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         target_player_name = ' '.join(target_player_name)
         if target_player_name == '':
-            return await channel.send('You must enter the player you wish to fight. Try "?help fight"')
+            return await channel.send('You must enter the player you wish to fight. Try "?help fight"',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         target_player = Game.get_player_by_name(target_player_name)
         if target_player is None:
-            return await channel.send(f'The player "{target_player_name}" does not exist, are they using an alias?')
+            return await channel.send(f'The player "{target_player_name}" does not exist, are they using an alias?',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
         elif not target_player.is_idle:
             return await channel.send(f'{target_player.username} is currently {target_player.f_action}, '
-                                      f'the recipient is unable to fight now.')
+                                      f'the recipient is unable to fight now.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         target_user = self.bot.get_user(target_player.uuid)
         if target_user is None:
-            return await channel.send(f'The player "{target_player_name}" isn\'t registered to discord.')
+            return await channel.send(f'The player "{target_player_name}" isn\'t registered to discord.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         if player.get_location.id != target_player.get_location.id:
-            return await channel.send('You must be in the same area to fight this player.')
+            return await channel.send('You must be in the same area to fight this player.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         if player.uuid == target_player.uuid:
-            return await channel.send('You can not fight yourself, try jumping into the abyss.')
+            return await channel.send('You can not fight yourself, try jumping into the abyss.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         # get the author's private channel, so we can let them know the request has been sent
         user_dm = user.dm_channel if user.dm_channel else await user.create_dm()

@@ -50,7 +50,6 @@ class InfoCog:
     async def info(self, context):
         """ Display info about yourself. """
         if context.invoked_subcommand is None:
-            channel = context.message.channel
             player = Game.get_player(context.author)
 
             msg = '```'
@@ -67,14 +66,14 @@ class InfoCog:
             msg += f'\nACTION : {str(player.get_action)}'
             msg += '```'
 
-            to_delete = await channel.send(msg)
-
-            if not isinstance(channel, PrivateChannel):
+            if not isinstance(context.channel, PrivateChannel):
+                await context.send(msg, delete_after=settings.DEFAULT_DELETE_DELAY)
                 # we can't delete the other user's direct message, so we save the sleep call
                 await asyncio.sleep(60)
                 # # delete the bot and user after a minute so chat doesn't get clogged
                 await context.message.delete()
-                await to_delete.delete()
+            else:
+                await context.send(msg)
 
     @info.command(aliases=['self'])
     async def me(self, context):
@@ -163,7 +162,7 @@ class InfoCog:
                 msg += f'\n{full_name.ljust(10)} : {material_amount} : {max_material_amount}'
         msg += '\n```'
 
-        await channel.send(msg)
+        await channel.send(msg, delete_after=settings.DEFAULT_DELETE_DELAY)
 
 
 def setup(bot):

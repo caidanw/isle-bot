@@ -41,15 +41,18 @@ class AdminCog:
         Add a new resource to the island the player is currently on.
         """
         if not Resource.is_valid_type(name):
-            return await context.send(f'"{name}" is not a valid resource type.')
+            return await context.send(f'"{name}" is not a valid resource type.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         island = Game.get_player(context.author).get_location
 
         if island is None:
-            return await context.send('You must be on an island to use this command.')
+            return await context.send('You must be on an island to use this command.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         res = Resource.random(island, name)
-        await context.send(f'Added "{res.f_name}" to "{island.name}" of "{island.owner.name}".')
+        await context.send(f'Added "{res.f_name}" to "{island.name}" of "{island.owner.name}".',
+                           delete_after=settings.DEFAULT_DELETE_DELAY)
 
     @add.command(hidden=True, aliases=['isl'])
     async def island(self, context, *guild_name):
@@ -63,14 +66,17 @@ class AdminCog:
             guild_name = ' '.join(guild_name)
             union = Game.search_unions(guild_name)
             if union is None:
-                return await context.send(f'Could not find any union under the name "{guild_name}"')
+                return await context.send(f'Could not find any union under the name "{guild_name}"',
+                                          delete_after=settings.DEFAULT_DELETE_DELAY)
 
         island = Island.create()
 
         union.max_islands += 1
         if union.claim_island(island):
-            return await context.send(f'"{union.name}" claimed {island.name}')
-        await context.send(f'Failed to claim {island.name} for "{union.name}"')
+            return await context.send(f'"{union.name}" claimed {island.name}',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
+        await context.send(f'Failed to claim {island.name} for "{union.name}"',
+                           delete_after=settings.DEFAULT_DELETE_DELAY)
 
     @commands.group(hidden=True, aliases=['p'])
     async def player(self, context):
@@ -89,20 +95,24 @@ class AdminCog:
         try:
             amount = int(amount)
         except ValueError:
-            return await context.send(f'Inventory amount must be an integer, you entered "{amount}".')
+            return await context.send(f'Inventory amount must be an integer, you entered "{amount}".',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         if amount < 1:
-            return await context.send('Inventory amount can not be less than 1.')
+            return await context.send('Inventory amount can not be less than 1.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         player = Game.get_player_by_name(name)
         if player is None:
-            return await context.send(f'Player "{name}" does not exist.')
+            return await context.send(f'Player "{name}" does not exist.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         inventory = player.inventory
         inventory.max_materials = amount
         inventory.save()
 
-        await context.send(f'Set max materials for "{player.username}" to {inventory.max_materials}.')
+        await context.send(f'Set max materials for "{player.username}" to {inventory.max_materials}.',
+                           delete_after=settings.DEFAULT_DELETE_DELAY)
 
     @player.command(hiddent=True, aliases=['act'])
     async def action(self, context, name, action):
@@ -113,14 +123,17 @@ class AdminCog:
         try:
             action = Action[action.upper()]
         except KeyError:
-            return await context.send(f'Action "{action}" does not exist.')
+            return await context.send(f'Action "{action}" does not exist.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         player = Game.get_player_by_name(name)
         if player is None:
-            return await context.send(f'Player "{name}" does not exist.')
+            return await context.send(f'Player "{name}" does not exist.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         player.set_action(action)
-        await context.send(f'Set action for "{player.username}" to {player.f_action}.')
+        await context.send(f'Set action for "{player.username}" to {player.f_action}.',
+                           delete_after=settings.DEFAULT_DELETE_DELAY)
 
     @player.command(hiddent=True)
     async def stat(self, context, name, stat, amount):
@@ -130,18 +143,22 @@ class AdminCog:
         """
         stat = stat.lower()
         if stat not in ['vigor', 'strength', 'dexterity', 'fortitude']:
-            return await context.send(f'Stat "{stat}" does not exist.')
+            return await context.send(f'Stat "{stat}" does not exist.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         player = Game.get_player_by_name(name)
         if player is None:
-            return await context.send(f'Player "{name}" does not exist.')
+            return await context.send(f'Player "{name}" does not exist.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
         try:
             amount = int(amount)
         except ValueError:
-            return await context.send(f'Increase amount must be an integer, you entered "{amount}".')
+            return await context.send(f'Increase amount must be an integer, you entered "{amount}".',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         if amount < 1:
-            return await context.send('Increase amount can not be less than 1.')
+            return await context.send('Increase amount can not be less than 1.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         stats = player.stats
         if stat == 'vigor':
@@ -153,7 +170,8 @@ class AdminCog:
         elif stat == 'fortitude':
             stats.increase_fortitude(amount)
 
-        await context.send(f'Increased {stat} for "{player.username}" by {amount}.')
+        await context.send(f'Increased {stat} for "{player.username}" by {amount}.',
+                           delete_after=settings.DEFAULT_DELETE_DELAY)
 
 
 def is_admin(author):

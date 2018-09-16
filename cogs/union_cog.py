@@ -1,6 +1,7 @@
 from discord.abc import PrivateChannel
 from discord.ext import commands
 
+import settings
 from game.game import Game
 
 
@@ -16,7 +17,8 @@ class UnionCog:
         is_private = isinstance(channel, PrivateChannel)
 
         if is_private and union_name is None:
-            return await channel.send('You must enter the name of the union you would like to join.')
+            return await channel.send('You must enter the name of the union you would like to join.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         if is_private:
             union = Game.search_unions(union_name)
@@ -24,11 +26,13 @@ class UnionCog:
             union = Game.get_union(context.message.guild)
 
         if union is None:
-            return await channel.send('That union does not exist or is not registered.')
+            return await channel.send('That union does not exist or is not registered.',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
 
         player = Game.get_player(context.author)
         if player and player.union:
-            return await channel.send(f'You already belong to the union {player.union.name}')
+            return await channel.send(f'You already belong to the union {player.union.name}',
+                                      delete_after=settings.DEFAULT_DELETE_DELAY)
         elif player is None:
             # invoke the 'create' command, instead of rewriting functionality
             return await self.bot.get_command('create').invoke(context)
