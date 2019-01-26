@@ -1,41 +1,46 @@
-from src.utils.cache import Cache
+import configparser
+
+CONFIG_PATH = 'src/data/config.ini'
+
+config = configparser.ConfigParser()
+config.read(CONFIG_PATH)
 
 
-CONFIG_DIR = 'src/data/config.json'
+# ==================
+# Configuration data
+# ==================
 
-
-""" Configuration data """
-
-DEBUGGING = Cache.get_from_json(CONFIG_DIR)['debugging']
+DEBUGGING = bool(int(config.get('bot', 'debugging')))
+TOKEN = config.get('bot', 'token')
+DEV_TOKEN = config.get('bot', 'dev_token')
 
 
 def get_token():
-    if DEBUGGING:
-        token = Cache.get_from_json(CONFIG_DIR)['dev_token']
-    else:
-        token = Cache.get_from_json(CONFIG_DIR)['token']
+    token = DEV_TOKEN if DEBUGGING else TOKEN
 
     if token is None:
         token_key = 'dev_token' if DEBUGGING else 'token'
-        raise ValueError(f'IsleBot "{token_key}" not found in {CONFIG_DIR}')
+        raise ValueError(f'IsleBot "{token_key}" not found in {CONFIG_PATH}')
 
     return token
 
 
-""" Message settings """
+# ================
+# Message settings
+# ================
 
 # how long to wait until delete message (for reducing spam)
-DEFAULT_DELETE_DELAY = 60  # in seconds
+DEFAULT_DELETE_DELAY = int(config.get('message', 'default_delete_delay'))  # in seconds
 
 # how long to wait until a client stops waiting for a reaction or message
-DEFAULT_TIMEOUT = 30  # in seconds
+DEFAULT_TIMEOUT = int(config.get('message', 'default_timeout'))  # in seconds
 
-LOG_DELAY = 10
+LOG_DELAY = int(config.get('message', 'log_delay'))  # in seconds
 
 
-""" Security settings """
+# =================
+# Security settings
+# =================
 
-DEVELOPER_IDS = [
-    178948814256734208  # mildmelon#5380 lead developer
-]
+DEVELOPER_IDS = [int(dev[1]) for dev in config.items('developers')]
 
