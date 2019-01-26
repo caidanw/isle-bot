@@ -25,11 +25,11 @@ class Resource(BaseModel):
         total_time = 0
         for item_name in self.gives_materials:
             total_time += items.get_by_name(item_name).harvest_time
-        return total_time // len(self.gives_materials)
+        return total_time // len(list(self.gives_materials))
 
     @property
     def f_name(self):
-        return f'{self.name.title()}#{self.number}'
+        return f'{str(self.name).title()}#{self.number}'
 
     @classmethod
     def random(cls, island, name=None, min_amt=50, max_amt=500):
