@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import os
 import sys
 import traceback
@@ -9,14 +8,14 @@ from discord.abc import PrivateChannel
 from discord.ext import commands
 from discord.ext.commands import Bot
 
-import settings
-from game import world_tasks
-from game.game import Game
-from utils import manage, logger
-from utils.manage import find_open_channel
+from src import settings
+from src.game import world_tasks
+from src.game.game import Game
+from src.utils import logger, manage
+from src.utils.manage import find_open_channel
 
 PREFIXES = ('!', '?', '.', '~')
-COGS_DIR = "cogs."  # this specifies the directory of extensions to load when the bot starts up ('.' replaces '/')
+COGS_DIR = "src.cogs."  # this specifies the directory of extensions to load when the bot starts up ('.' replaces '/')
 
 bot = Bot(PREFIXES)
 bot.remove_command('help')  # I have my own custom help command, I won't use any of that pre-made filth
@@ -129,7 +128,7 @@ if __name__ == "__main__":
     # load all the extensions from the cogs directory
     for extension in os.listdir(COGS_DIR.replace('.', '/')):
         try:
-            if extension.endswith('.py'):
+            if extension.endswith('.py') and not extension.startswith('__'):
                 extension_path = COGS_DIR + extension.replace('.py', '')
                 bot.load_extension(extension_path)
                 logger.log(f'Loaded extension {extension}')

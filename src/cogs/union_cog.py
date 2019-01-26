@@ -1,8 +1,8 @@
 from discord.abc import PrivateChannel
 from discord.ext import commands
 
-import settings
-from game.game import Game
+from src import settings
+from src.game.game import Game
 
 
 class UnionCog:

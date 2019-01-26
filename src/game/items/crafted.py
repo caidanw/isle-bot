@@ -1,4 +1,4 @@
-from game.items.items import Crafted
+from src.game.items.items import Crafted
 
 
 class StoneAxe(Crafted):

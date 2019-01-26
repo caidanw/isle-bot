@@ -1,12 +1,12 @@
-import random
 import asyncio
+import random
 
 from peewee import *
 from playhouse.sqlite_ext import JSONField
 
-from src.game import BaseModel
-from src.game import Island
+from src.game.base_model import BaseModel
 from src.game.items import items
+from src.game.models import Island
 from src.utils.cache import Cache
 
 
@@ -95,5 +95,5 @@ def get_random_resource():
 
     :return: a dict of the resource
     """
-    resource_data = Cache.get_from_json('data/resources.json')
+    resource_data = Cache.get_from_json('src/data/resources.json')
     return random.choice(resource_data)

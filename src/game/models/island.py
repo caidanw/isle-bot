@@ -1,10 +1,10 @@
-from datetime import datetime
 import random
+from datetime import datetime
 
 from peewee import *
 
-from src.game import BaseModel
-from src.game import Union
+from src.game.base_model import BaseModel
+from src.game.models.union import Union
 
 
 class Island(BaseModel):
@@ -25,7 +25,7 @@ class Island(BaseModel):
         return self.union
 
     def get_amount_of_resources(self, name):
-        from src.game import Resource
+        from src.game.models import Resource
         return self.resources.select(fn.COUNT(Resource.name)).where(Resource.name == name).scalar()
 
     def get_resource(self, name, number=1):

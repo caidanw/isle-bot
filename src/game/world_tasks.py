@@ -2,10 +2,9 @@ import asyncio
 
 from discord import Client
 
-from game.enums.action import Action
-from game.objects.player import Player
-from game.objects.resource import Resource
-from utils import logger
+from src.game.enums.action import Action
+from src.game.models import Resource, Player
+from src.utils import logger
 
 MINUTE = 60
 HOUR = MINUTE * 60

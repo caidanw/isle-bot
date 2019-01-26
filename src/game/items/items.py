@@ -109,7 +109,9 @@ def get_by_name(name, new_object=True):
     if class_type is None:
         return None
 
-    from game.items import material, living, crafted
+    from src.game.items import crafted
+    from src.game.items import material
+    from src.game.items import living
     item_file = {
         Material: material,
         Living: living,

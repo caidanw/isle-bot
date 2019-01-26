@@ -1,9 +1,9 @@
 import datetime
 import time
 
-import settings
+from src import settings
 
-LOG_FILE_NAME = 'data/logs.txt'
+LOG_FILE_NAME = 'src/data/logs.txt'
 LOG_KEEP = []
 LAST_WRITE = datetime.datetime.utcnow()
 

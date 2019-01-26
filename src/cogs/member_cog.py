@@ -5,15 +5,15 @@ import re
 from discord.abc import PrivateChannel
 from discord.ext import commands
 
-import settings
-from game.enums.action import Action
-from game.game import Game
-from game.items import items
-from game.objects.inventory import Inventory
-from game.objects.island import Island
-from game.objects.player import Player
-from game.objects.player_stat import PlayerStat
-from utils.clock import format_time
+from src import settings
+from src.game.enums.action import Action
+from src.game.game import Game
+from src.game.items import items
+from src.game.models.inventory import Inventory
+from src.game.models.island import Island
+from src.game.models.player import Player
+from src.game.models.player_stat import PlayerStat
+from src.utils.clock import format_time
 
 travelers = {}
 re_island = re.compile('(island|isl|i)#(\d+)')

@@ -6,11 +6,11 @@ from discord.abc import PrivateChannel
 from discord.ext import commands
 from discord.ext.commands.bot import _default_help_command
 
-import settings
-from game.game import Game
-from game.objects.island import Island
+from src import settings
+from src.game.game import Game
+from src.game.models.island import Island
 from src.ui.reaction import Reaction
-from utils import logger
+from src.utils import logger
 
 
 class InfoCog:

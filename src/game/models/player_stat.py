@@ -1,6 +1,6 @@
 from peewee import IntegerField
 
-from src.game import BaseModel
+from src.game.base_model import BaseModel
 
 
 class PlayerStat(BaseModel):

@@ -2,7 +2,7 @@ import asyncio
 
 from discord import Client, TextChannel
 
-import settings
+from src import settings
 
 
 class ReactionMenu:

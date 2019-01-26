@@ -2,9 +2,9 @@ import asyncio
 
 from discord import Client, User, TextChannel
 
-import settings
-from ui.reaction import Reaction
-from ui.reaction_menu import ReactionMenu
+from src import settings
+from src.ui.reaction import Reaction
+from src.ui.reaction_menu import ReactionMenu
 
 REACTIONS = [Reaction.DISMISS.value, Reaction.CONFIRM.value]
 

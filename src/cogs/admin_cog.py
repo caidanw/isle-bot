@@ -1,12 +1,11 @@
 from discord.ext import commands
 from discord.ext.commands import CommandNotFound
 
-import settings
-from game.enums.action import Action
-from game.game import Game
-from game.objects.island import Island
-from game.objects.resource import Resource
-from utils import logger
+from src import settings
+from src.game.enums.action import Action
+from src.game.game import Game
+from src.game.models import Resource, Island
+from src.utils import logger
 
 
 class AdminCog:

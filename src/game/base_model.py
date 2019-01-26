@@ -1,6 +1,6 @@
 from peewee import Model
 
-from utils.cache import db
+from src.utils.cache import db
 
 
 class BaseModel(Model):

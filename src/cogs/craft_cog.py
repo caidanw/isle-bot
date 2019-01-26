@@ -2,11 +2,11 @@ import asyncio
 
 from discord.ext import commands
 
-import settings
-from game.enums.recipe import Recipe
-from game.game import Game
-from game.items import items
-from utils.clock import format_time
+from src import settings
+from src.game.enums.recipe import Recipe
+from src.game.game import Game
+from src.game.items import items
+from src.utils.clock import format_time
 
 
 class CraftCog:

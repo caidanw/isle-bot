@@ -2,9 +2,9 @@ from concurrent import futures
 
 from discord import Client, TextChannel, User
 
-from ui.reaction import Reaction
-from ui.reaction_menu import ReactionMenu
-from utils.clock import format_time
+from src.ui.reaction import Reaction
+from src.ui.reaction_menu import ReactionMenu
+from src.utils.clock import format_time
 
 ACTION_PASS = 10
 

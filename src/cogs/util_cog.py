@@ -2,8 +2,8 @@ import asyncio
 
 from discord.ext import commands
 
-from utils.clock import server_clock
-from utils.logger import log_command
+from src.utils.clock import server_clock
+from src.utils.logger import log_command
 
 
 class UtilCog:

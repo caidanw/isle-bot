@@ -1,12 +1,12 @@
-from utils.cache import Cache
+from src.utils.cache import Cache
 
 
-CONFIG_DIR = 'data/config.json'
+CONFIG_DIR = 'src/data/config.json'
 
 
 """ Configuration data """
 
-DEBUGGING = Cache.get_from_json('data/config.json')['debugging']
+DEBUGGING = Cache.get_from_json(CONFIG_DIR)['debugging']
 
 
 def get_token():

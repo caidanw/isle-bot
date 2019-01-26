@@ -1,11 +1,11 @@
 from peewee import *
 
-from src.game import BaseModel
-from src.game import PlayerStat
-from src.game import Union
-from src.game import Inventory
-from src.game import Island
-from src.game import Action
+from src.game.base_model import BaseModel
+from src.game.enums.action import Action
+from src.game.models.inventory import Inventory
+from src.game.models.island import Island
+from src.game.models.player_stat import PlayerStat
+from src.game.models.union import Union
 
 
 class Player(BaseModel):

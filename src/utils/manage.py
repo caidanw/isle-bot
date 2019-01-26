@@ -1,9 +1,9 @@
 from discord import HTTPException, TextChannel
 from discord.abc import PrivateChannel
 
-from game.game import Game
+from src.game.game import Game
 from src.ui.confirm_menu import ConfirmMenu
-from utils import logger
+from src.utils import logger
 
 
 def find_open_channel(guild):

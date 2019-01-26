@@ -1,6 +1,6 @@
 from enum import Enum
 
-from game.items.items import MaterialIndex
+from src.game.items.items import MaterialIndex
 
 
 class Recipe(Enum):

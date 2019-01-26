@@ -1,6 +1,6 @@
 from discord import User
 
-from game.items.items import Living
+from src.game.items.items import Living
 from src.ui.level_up_menu import LevelUpMenu
 
 

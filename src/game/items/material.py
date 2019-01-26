@@ -1,4 +1,4 @@
-from game.items.items import Material
+from src.game.items.items import Material
 
 """ Forest """
 
