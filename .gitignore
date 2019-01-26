@@ -5,16 +5,18 @@
 
 *.p
 
-data/config\.json
+src/data/config\.json
 
-data/universe\.db
+src/data/universe\.db
 
-data/universe\.db-shm
+src/data/universe\.db-shm
 
-data/universe\.db-wal
+src/data/universe\.db-wal
 
 *.db
 
 aws-isle-bot\.pem
 
-data/logs\.txt
+src/data/logs\.txt
+
+\.python-version
