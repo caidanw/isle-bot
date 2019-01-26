@@ -16,10 +16,8 @@ def get_token():
         token = Cache.get_from_json(CONFIG_DIR)['token']
 
     if token is None:
-        if DEBUGGING:
-            raise ValueError(f'IsleBot "dev_token" not found in {CONFIG_DIR}')
-        else:
-            raise ValueError(f'IsleBot "token" not found in {CONFIG_DIR}')
+        token_key = 'dev_token' if DEBUGGING else 'token'
+        raise ValueError(f'IsleBot "{token_key}" not found in {CONFIG_DIR}')
 
     return token
 

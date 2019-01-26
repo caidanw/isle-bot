@@ -2,7 +2,7 @@ from discord import HTTPException, TextChannel
 from discord.abc import PrivateChannel
 
 from game.game import Game
-from ui.confirm_menu import ConfirmMenu
+from src.ui.confirm_menu import ConfirmMenu
 from utils import logger
 
 

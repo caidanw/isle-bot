@@ -3,8 +3,8 @@ import random
 
 from peewee import *
 
-from game.base_model import BaseModel
-from game.objects.union import Union
+from src.game import BaseModel
+from src.game import Union
 
 
 class Island(BaseModel):
@@ -25,7 +25,7 @@ class Island(BaseModel):
         return self.union
 
     def get_amount_of_resources(self, name):
-        from game.objects.resource import Resource
+        from src.game import Resource
         return self.resources.select(fn.COUNT(Resource.name)).where(Resource.name == name).scalar()
 
     def get_resource(self, name, number=1):

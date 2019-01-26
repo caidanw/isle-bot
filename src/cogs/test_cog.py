@@ -1,7 +1,7 @@
 from discord.ext import commands
 
-from ui.reaction import Reaction
-from ui.reaction_menu import ReactionMenu
+from src.ui.reaction import Reaction
+from src.ui.reaction_menu import ReactionMenu
 
 
 class TestCog:

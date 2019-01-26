@@ -1,7 +1,7 @@
 from discord import User
 
 from game.items.items import Living
-from ui.level_up_menu import LevelUpMenu
+from src.ui.level_up_menu import LevelUpMenu
 
 
 class Fairy(Living):

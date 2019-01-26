@@ -4,10 +4,10 @@ import asyncio
 from peewee import *
 from playhouse.sqlite_ext import JSONField
 
-from game.base_model import BaseModel
-from game.objects.island import Island
-from game.items import items
-from utils.cache import Cache
+from src.game import BaseModel
+from src.game import Island
+from src.game.items import items
+from src.utils.cache import Cache
 
 
 class Resource(BaseModel):

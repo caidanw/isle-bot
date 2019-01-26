@@ -1,7 +1,7 @@
 from peewee import IntegerField
 from playhouse.sqlite_ext import JSONField
 
-from game.base_model import BaseModel
+from src.game import BaseModel
 
 
 class Inventory(BaseModel):

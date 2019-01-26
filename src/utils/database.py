@@ -15,6 +15,8 @@ def connect():
 
     :return: whether or not the connection was successful
     """
+    has_connected = False
+
     try:
         has_connected = db.connect()
         logger.log_db('Connecting to database', has_connected)
@@ -28,7 +30,7 @@ def connect():
             logger.log_db('Created new object tables {}'.format(
                 [table.__name__ for table in object_tables if table not in db_tables]
             ))
-
-        return has_connected
     except OperationalError as e:
         logger.log_db(e)
+
+    return has_connected
