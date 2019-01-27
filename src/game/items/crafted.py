@@ -9,3 +9,8 @@ class StoneAxe(Crafted):
 class StoneSword(Crafted):
     def __init__(self):
         super().__init__('stone sword', 15)
+
+
+class StoneShield(Crafted):
+    def __init__(self):
+        super().__init__('stone shield', 30)

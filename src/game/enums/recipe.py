@@ -10,6 +10,7 @@ class Recipe(Enum):
 
     STONE_AXE = {MaterialIndex.WOOD: 3, MaterialIndex.STONE: 2}
     STONE_SWORD = {MaterialIndex.WOOD: 2, MaterialIndex.STONE: 3}
+    STONE_SHIELD = {MaterialIndex.VINE: 5, MaterialIndex.STONE: 5}
 
     def __str__(self):
         return self.name

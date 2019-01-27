@@ -169,3 +169,4 @@ class CraftedIndex(ItemIndex):
 
     STONE_AXE = 1
     STONE_SWORD = 2
+    STONE_SHIELD = 3
