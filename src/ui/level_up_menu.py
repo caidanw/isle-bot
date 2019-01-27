@@ -1,7 +1,7 @@
 import asyncio
 
 from src import settings
-from src.game import Game
+from src.game.game import Game
 from src.ui.reaction import Reaction
 from src.ui.reaction_menu import ReactionMenu
 
