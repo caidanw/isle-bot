@@ -168,3 +168,4 @@ class CraftedIndex(ItemIndex):
     """ Items that can be crafted from harvested materials. """
 
     STONE_AXE = 1
+    STONE_SWORD = 2

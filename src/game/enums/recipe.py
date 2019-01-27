@@ -9,6 +9,7 @@ class Recipe(Enum):
     """
 
     STONE_AXE = {MaterialIndex.WOOD: 3, MaterialIndex.STONE: 2}
+    STONE_SWORD = {MaterialIndex.WOOD: 2, MaterialIndex.STONE: 3}
 
     def __str__(self):
         return self.name
@@ -19,7 +20,7 @@ class Recipe(Enum):
     def to_short_string(self):
         ingredients = []
         for material, amt in self.value.items():
-            ingredients.append(f'{str(material)} : {str(amt)}')
+            ingredients.append(f'{str(material)}: {str(amt)}')
 
         return f'[{", ".join(ingredients)}]'
 
