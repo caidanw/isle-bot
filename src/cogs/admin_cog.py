@@ -4,6 +4,7 @@ from discord.ext.commands import CommandNotFound
 from src import settings
 from src.cogs.__abstract_cog import AbstractCog
 from src.game.enums.action import Action
+from src.game.enums.stats import STAT_NAMES
 from src.game.game import Game
 from src.game.models import Resource, Island
 from src.utils import logger
@@ -139,7 +140,7 @@ class AdminCog(AbstractCog):
         Add amount to the player's stat.
         """
         stat = stat.lower()
-        if stat not in ['vigor', 'strength', 'dexterity', 'fortitude']:
+        if stat not in STAT_NAMES:
             return await context.send(f'Stat "{stat}" does not exist.',
                                       delete_after=settings.DEFAULT_DELETE_DELAY)
 
@@ -173,7 +174,7 @@ class AdminCog(AbstractCog):
 
 def is_admin(author):
     if author.id not in settings.DEVELOPER_IDS:
-        raise CommandNotFound(f'User {author} does not have permissions to use this command.')
+        raise CommandNotFound(f'User {author} does not have access to this command.')
 
 
 def setup(bot):
