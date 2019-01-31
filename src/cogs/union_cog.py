@@ -2,13 +2,11 @@ from discord.abc import PrivateChannel
 from discord.ext import commands
 
 from src import settings
+from src.cogs.__abstract_cog import AbstractCog
 from src.game.game import Game
 
 
-class UnionCog:
-    def __init__(self, bot):
-        self.bot = bot
-
+class UnionCog(AbstractCog):
     @commands.command(description='Join the union of the current discord guild, ' +
                                   'if a name is passed then join that union instead.')
     async def join(self, context, union_name=None):

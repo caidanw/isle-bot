@@ -3,6 +3,7 @@ import asyncio
 from discord.ext import commands
 
 from src import settings
+from src.cogs.__abstract_cog import AbstractCog
 from src.game.enums.action import Action
 from src.game.game import Game
 from src.ui.combat_menu import CombatMenu
@@ -11,10 +12,7 @@ from src.ui.reaction import Reaction
 from src.utils import combat_helper
 
 
-class CombatCog:
-    def __init__(self, bot):
-        self.bot = bot
-
+class CombatCog(AbstractCog):
     @commands.command(aliases=['kill'])
     async def fight(self, context, *target_player_name):
         """ Fight another player to the death, or until one of you wusses out. """

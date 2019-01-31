@@ -7,16 +7,14 @@ from discord.ext import commands
 from discord.ext.commands.bot import _default_help_command
 
 from src import settings
+from src.cogs.__abstract_cog import AbstractCog
 from src.game.game import Game
 from src.game.models.island import Island
 from src.ui.reaction import Reaction
 from src.utils import logger
 
 
-class InfoCog:
-    def __init__(self, bot):
-        self.bot = bot
-
+class InfoCog(AbstractCog):
     @commands.command(name='help')
     async def _help(self, context, *extra_commands):
         """ Get this message from the bot, and add a mailbox emoji to your help command. """

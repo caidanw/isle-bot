@@ -6,6 +6,7 @@ from discord.abc import PrivateChannel
 from discord.ext import commands
 
 from src import settings
+from src.cogs.__abstract_cog import AbstractCog
 from src.game.enums.action import Action
 from src.game.game import Game
 from src.game.items import items
@@ -19,10 +20,7 @@ travelers = {}
 re_island = re.compile('(island|isl|i)#(\d+)')
 
 
-class MemberCog:
-    def __init__(self, bot):
-        self.bot = bot
-
+class MemberCog(AbstractCog):
     @commands.command()
     async def create(self, context):
         """ Be born under a new union.

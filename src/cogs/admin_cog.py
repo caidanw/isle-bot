@@ -2,16 +2,14 @@ from discord.ext import commands
 from discord.ext.commands import CommandNotFound
 
 from src import settings
+from src.cogs.__abstract_cog import AbstractCog
 from src.game.enums.action import Action
 from src.game.game import Game
 from src.game.models import Resource, Island
 from src.utils import logger
 
 
-class AdminCog:
-    def __init__(self, bot):
-        self.bot = bot
-
+class AdminCog(AbstractCog):
     @commands.command(hidden=True)
     async def logout(self, context):
         """ Command only available to developers.

@@ -3,16 +3,14 @@ import asyncio
 from discord.ext import commands
 
 from src import settings
+from src.cogs.__abstract_cog import AbstractCog
 from src.game.enums.recipe import Recipe
 from src.game.game import Game
 from src.game.items import items
 from src.utils.clock import format_time
 
 
-class CraftCog:
-    def __init__(self, bot):
-        self.bot = bot
-
+class CraftCog(AbstractCog):
     @commands.command()
     async def craft(self, context, *item_to_craft):
         """ Craft a new item from harvested materials. """

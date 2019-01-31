@@ -1,13 +1,11 @@
 from discord.ext import commands
 
+from src.cogs.__abstract_cog import AbstractCog
 from src.ui.reaction import Reaction
 from src.ui.reaction_menu import ReactionMenu
 
 
-class TestCog:
-    def __init__(self, bot):
-        self.bot = bot
-
+class TestCog(AbstractCog):
     @commands.command(aliases=['hi'])
     async def hello(self, context):
         """ Replies with a nice comment. """
