@@ -6,9 +6,14 @@ from discord import User
 class Item:
     def __init__(self, name, consumable=False):
         self.name = name.upper()
-        self.consumable = consumable
+        self.is_consumable = consumable
 
         try:
+            # Import locally to avoid import loops
+            from .material import Material
+            from .crafted import Crafted
+            from .living import Living
+
             if isinstance(self, Material):
                 self.uid = get_material_uid(self.name)
             elif isinstance(self, Living):
@@ -18,29 +23,8 @@ class Item:
         except KeyError:
             raise ValueError(f'Item "{name}" is not registered. Check ItemIndex(Enum)')
 
-    @property
-    def can_consume(self):
-        return self.consumable
-
     async def consume(self, client, user: User):
         pass  # leave blank as child classes will be able to define the exact behavior
-
-
-class Material(Item):
-    def __init__(self, name, harvest_time, consumable=False):
-        super().__init__(name, consumable)
-        self.harvest_time = harvest_time
-
-
-class Living(Material):
-    def __init__(self, name, harvest_time):
-        super().__init__(name, harvest_time, consumable=True)
-
-
-class Crafted(Item):
-    def __init__(self, name, durability):
-        super().__init__(name)
-        self.durability = durability
 
 
 def get_material_uid(name):
@@ -145,7 +129,7 @@ class MaterialIndex(ItemIndex):
     MUSHROOM = 2
     LEAF = 3
 
-    # quarry
+    # mine
     STONE = 4
     IRON = 5
 
