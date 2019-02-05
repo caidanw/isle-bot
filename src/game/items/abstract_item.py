@@ -3,7 +3,7 @@ import enum
 from discord import User
 
 
-class Item:
+class AbstractItem:
     def __init__(self, name, consumable=False):
         self.name = name.upper()
         self.is_consumable = consumable
@@ -21,7 +21,7 @@ class Item:
             elif isinstance(self, Crafted):
                 self.uid = get_crafted_uid(self.name)
         except KeyError:
-            raise ValueError(f'Item "{name}" is not registered. Check ItemIndex(Enum)')
+            raise ValueError(f'AbstractItem "{name}" is not registered. Check ItemIndex(Enum)')
 
     async def consume(self, client, user: User):
         pass  # leave blank as child classes will be able to define the exact behavior
