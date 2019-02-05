@@ -2,7 +2,7 @@ from concurrent import futures
 
 from discord import Client, TextChannel, User
 
-from src.ui.reaction import Reaction
+from src.game.enums.reaction import Reaction
 from src.ui.reaction_menu import ReactionMenu
 from src.utils.clock import format_time
 

@@ -2,7 +2,7 @@ import asyncio
 
 from src import settings
 from src.game.game import Game
-from src.ui.reaction import Reaction
+from src.game.enums.reaction import Reaction
 from src.ui.reaction_menu import ReactionMenu
 
 MESSAGES = ['Choose a stat to level up.',
