@@ -6,14 +6,13 @@ from discord.abc import PrivateChannel
 from discord.ext import commands
 
 from src import settings
-from src.cogs.__abstract_cog import AbstractCog
+from src.cogs._abstract_cog import AbstractCog
 from src.game.enums.action import Action
 from src.game.game import Game
-from src.game.items import items
-from src.game.models.inventory import Inventory
-from src.game.models.island import Island
-from src.game.models.player import Player
-from src.game.models.player_stat import PlayerStat
+from src.models.inventory import Inventory
+from src.models import Island
+from src.models.player import Player
+from src.models.player_statistics import PlayerStatistics
 from src.utils.clock import format_time
 
 travelers = {}
@@ -46,7 +45,7 @@ class MemberCog(AbstractCog):
                                union=union,
                                on_island=union.get_island(),
                                inventory=Inventory.create(),
-                               stats=PlayerStat.create())
+                               stats=PlayerStatistics.create())
 
         await channel.send(f'The machine has created {player.username} for {union.name}.')
 
@@ -86,7 +85,7 @@ class MemberCog(AbstractCog):
         You can fight other players using `?fight player name` (player name is case sensitive).
         For example, `?fight mildmelon` is not the same as `?fight MildMelon`.
         When in combat, you are presented with a menu of actions, from left to right are the actions you can choose.
-        Attack: :crossed_swords: | Defend: :shield: | Use Item: :package: | Pass Turn: :no_entry_sign: | Surrender: :flag_white:
+        Attack: :crossed_swords: | Defend: :shield: | Use AbstractItem: :package: | Pass Turn: :no_entry_sign: | Surrender: :flag_white:
         Currently, using an item during combat is not implemented, and remember... you have 10s to make a decision,
         before your turn is passed automatically.
 
@@ -119,7 +118,7 @@ class MemberCog(AbstractCog):
 
         input_name = ' '.join(item_name)
         item_name = '_'.join(item_name).upper()
-        item = items.get_by_name(item_name)
+        item = item.get_by_name(item_name)
 
         if item is None:
             return await channel.send(f'The item "{input_name}" does not exist.',
@@ -129,7 +128,7 @@ class MemberCog(AbstractCog):
             return await channel.send(f'You do not have the item "{input_name}".',
                                       delete_after=settings.DEFAULT_DELETE_DELAY)
 
-        if not item.can_consume:
+        if not item.is_consumable:
             return await channel.send(f'You can not consume "{item.name.lower()}".',
                                       delete_after=settings.DEFAULT_DELETE_DELAY)
         else:

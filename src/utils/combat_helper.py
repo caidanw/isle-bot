@@ -1,4 +1,4 @@
-from src.ui.reaction import Reaction
+from src.game.enums.reaction import Reaction
 
 COMBAT_DESCRIPTIONS = {
     Reaction.NO_ENTRY_SIGN: {

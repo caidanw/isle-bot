@@ -7,10 +7,10 @@ from discord.ext import commands
 from discord.ext.commands.bot import _default_help_command
 
 from src import settings
-from src.cogs.__abstract_cog import AbstractCog
+from src.cogs._abstract_cog import AbstractCog
 from src.game.game import Game
-from src.game.models.island import Island
-from src.ui.reaction import Reaction
+from src.models import Island
+from src.game.enums.reaction import Reaction
 from src.utils import logger
 
 

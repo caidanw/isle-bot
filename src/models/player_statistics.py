@@ -1,9 +1,9 @@
 from peewee import IntegerField
 
-from src.game.models._abstract_model import AbstractModel
+from src.models.abstract_model import AbstractModel
 
 
-class PlayerStat(AbstractModel):
+class PlayerStatistics(AbstractModel):
     vigor = IntegerField(default=5)      # increases the base amount of max health
     strength = IntegerField(default=1)   # increases the base amount of damage dealt
     dexterity = IntegerField(default=1)  # increases the base chance to successfully land an attack

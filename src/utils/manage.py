@@ -2,7 +2,7 @@ from discord import HTTPException, TextChannel
 from discord.abc import PrivateChannel
 
 from src.game.game import Game
-from src.ui.confirm_menu import ConfirmMenu
+from src.menus.confirm_menu import ConfirmMenu
 from src.utils import logger
 
 
@@ -23,8 +23,8 @@ async def ask_guild_to_join_game(bot, guild, channel=None):
     # we don't to pollute our database with random guilds that are inactive, so ask first if they want to join
     confirm_msg = ConfirmMenu(bot, channel,
                               ['Welcome, would you like this guild to be registered within the game?',
-                                  'This guild will not be registered.',  # message when dismissed
-                                  'This guild is now registered.'])  # message when confirmed
+                               'This guild will not be registered.',  # message when dismissed
+                               'This guild is now registered.'])  # message when confirmed
     await confirm_msg.send()
     logger.log(f'Asking guild "{guild.name}" [id:{guild.id}] to join the game.')
     confirmed = await confirm_msg.wait_for_user_reaction()

@@ -3,12 +3,12 @@ import asyncio
 from discord.ext import commands
 
 from src import settings
-from src.cogs.__abstract_cog import AbstractCog
+from src.cogs._abstract_cog import AbstractCog
 from src.game.enums.action import Action
 from src.game.game import Game
-from src.ui.combat_menu import CombatMenu
-from src.ui.confirm_menu import ConfirmMenu
-from src.ui.reaction import Reaction
+from src.menus.combat_menu import CombatMenu
+from src.menus.confirm_menu import ConfirmMenu
+from src.game.enums.reaction import Reaction
 from src.utils import combat_helper
 
 

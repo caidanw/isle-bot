@@ -1,7 +1,12 @@
 from discord import User
 
-from src.game.items.items import Living
-from src.ui.level_up_menu import LevelUpMenu
+from src.game.items.material import Material
+from src.menus.level_up_menu import LevelUpMenu
+
+
+class Living(Material):
+    def __init__(self, name, harvest_time):
+        super().__init__(name, harvest_time, consumable=True)
 
 
 class Fairy(Living):

@@ -2,7 +2,7 @@ import asyncio
 
 from discord.ext import commands
 
-from src.cogs.__abstract_cog import AbstractCog
+from src.cogs._abstract_cog import AbstractCog
 from src.utils.clock import server_clock
 from src.utils.logger import log_command
 

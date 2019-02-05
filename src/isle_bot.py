@@ -128,7 +128,7 @@ if __name__ == "__main__":
     # load all the extensions from the cogs directory
     for extension in os.listdir(COGS_DIR.replace('.', '/')):
         try:
-            if extension.endswith('.py') and not extension.startswith('__'):
+            if extension.endswith('.py') and not extension.startswith('_'):
                 extension_path = COGS_DIR + extension.replace('.py', '')
                 bot.load_extension(extension_path)
                 logger.log(f'Loaded extension {extension}')

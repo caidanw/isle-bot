@@ -3,7 +3,7 @@ import asyncio
 from src import settings
 from src.game.game import Game
 from src.game.enums.reaction import Reaction
-from src.ui.reaction_menu import ReactionMenu
+from src.menus.abstract_menu import AbstractMenu
 
 MESSAGES = ['Choose a stat to level up.',
             'You chose to level up vigor.',
@@ -17,7 +17,7 @@ REACTIONS = [Reaction.HEART.value,   # vigor
              Reaction.SHIELD.value]  # fortitude
 
 
-class LevelUpMenu(ReactionMenu):
+class LevelUpMenu(AbstractMenu):
     def __init__(self, client, channel, user, level_amt):
         self.player = Game.get_player(user)
         self.level_amount = level_amt

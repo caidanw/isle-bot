@@ -4,7 +4,7 @@
     "gives_materials": ["WOOD", "MUSHROOM", "LEAF", "FAIRY"]
   },
   {
-    "name": "quarry",
+    "name": "mine",
     "gives_materials": ["STONE", "IRON"]
   },
   {

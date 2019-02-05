@@ -1,15 +1,17 @@
-from src.game.models.inventory import Inventory
-from src.game.models.island import Island
-from src.game.models.player import Player
-from src.game.models.player_statistics import PlayerStat
-from src.game.models.resource import Resource
-from src.game.models.union import Union
+from src.models.abstract_model import AbstractModel
+from src.models.inventory import Inventory
+from src.models.island import Island
+from src.models.player import Player
+from src.models.player_statistics import PlayerStatistics
+from src.models.resource import Resource
+from src.models.union import Union
 
 all_models = [
+    AbstractModel,
     Inventory,
     Island,
     Player,
-    PlayerStat,
+    PlayerStatistics,
     Resource,
     Union
 ]

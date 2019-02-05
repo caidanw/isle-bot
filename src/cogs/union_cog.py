@@ -2,7 +2,7 @@ from discord.abc import PrivateChannel
 from discord.ext import commands
 
 from src import settings
-from src.cogs.__abstract_cog import AbstractCog
+from src.cogs._abstract_cog import AbstractCog
 from src.game.game import Game
 
 

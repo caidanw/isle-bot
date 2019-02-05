@@ -1,8 +1,8 @@
 from discord.ext import commands
 
-from src.cogs.__abstract_cog import AbstractCog
-from src.ui.reaction import Reaction
-from src.ui.reaction_menu import ReactionMenu
+from src.cogs._abstract_cog import AbstractCog
+from src.game.enums.reaction import Reaction
+from src.menus.abstract_menu import AbstractMenu
 
 
 class TestCog(AbstractCog):
@@ -19,7 +19,7 @@ class TestCog(AbstractCog):
     @commands.command(aliases=['react'])
     async def reactions(self, context):
         """ Test out the reactions GUI. """
-        reaction_message = ReactionMenu(self.bot, context.message.channel,
+        reaction_message = AbstractMenu(self.bot, context.message.channel,
                                         ['Hello, continue?', 'Oh, sorry to hear that.', 'Thanks for understanding.'],
                                         [Reaction.DISMISS.value, Reaction.CONFIRM.value])
         await reaction_message.send()

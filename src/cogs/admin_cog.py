@@ -2,11 +2,11 @@ from discord.ext import commands
 from discord.ext.commands import CommandNotFound
 
 from src import settings
-from src.cogs.__abstract_cog import AbstractCog
+from src.cogs._abstract_cog import AbstractCog
 from src.game.enums.action import Action
 from src.game.enums.stats import STAT_NAMES
 from src.game.game import Game
-from src.game.models import Resource, Island
+from src.models import Resource, Island
 from src.utils import logger
 
 

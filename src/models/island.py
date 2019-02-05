@@ -3,8 +3,7 @@ from datetime import datetime
 
 from peewee import *
 
-from src.game.models._abstract_model import AbstractModel
-from src.game.models.union import Union
+from src.models import AbstractModel, Resource, Union
 
 
 class Island(AbstractModel):
@@ -25,7 +24,6 @@ class Island(AbstractModel):
         return self.union
 
     def get_amount_of_resources(self, name):
-        from src.game.models import Resource
         return self.resources.select(fn.COUNT(Resource.name)).where(Resource.name == name).scalar()
 
     def get_resource(self, name, number=1):

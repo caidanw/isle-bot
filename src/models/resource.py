@@ -4,10 +4,9 @@ import random
 from peewee import *
 from playhouse.sqlite_ext import JSONField
 
-from src.game.models._abstract_model import AbstractModel
-from src.game.items import _abstract_item
-from src.game.models import Island
-from src.game.resources._abstract_resource import AbstractResource
+from src.game.items import abstract_item
+from src.game.resources.abstract_resource import AbstractResource
+from src.models import AbstractModel, Island
 
 
 class Resource(AbstractModel):
@@ -24,7 +23,7 @@ class Resource(AbstractModel):
     def average_harvest_time(self):
         total_time = 0
         for item_name in self.materials:
-            total_time += _abstract_item.get_by_name(item_name).harvest_time
+            total_time += abstract_item.get_by_name(item_name).harvest_time
         return total_time // len(list(self.materials))
 
     @property
@@ -68,7 +67,7 @@ class Resource(AbstractModel):
             item_name = random.choice(self.materials)
 
             # have the program wait until the player has finished harvesting one item
-            await asyncio.sleep(_abstract_item.get_by_name(item_name).harvest_time)
+            await asyncio.sleep(abstract_item.get_by_name(item_name).harvest_time)
 
             if harvested_materials.get(item_name) is None:
                 harvested_materials[item_name] = 1

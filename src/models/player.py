@@ -1,11 +1,7 @@
 from peewee import *
 
-from src.game.models._abstract_model import AbstractModel
 from src.game.enums.action import Action
-from src.game.models.inventory import Inventory
-from src.game.models.island import Island
-from src.game.models.player_statistics import PlayerStat
-from src.game.models.union import Union
+from src.models import AbstractModel, Island, Union, Inventory, PlayerStatistics
 
 
 class Player(AbstractModel):
@@ -17,7 +13,7 @@ class Player(AbstractModel):
     union = ForeignKeyField(Union, backref='members', null=True)
     on_island = ForeignKeyField(Island, backref='residents', null=True)
     inventory = ForeignKeyField(Inventory)
-    stats = ForeignKeyField(PlayerStat)
+    stats = ForeignKeyField(PlayerStatistics)
 
     @property
     def is_idle(self):

@@ -1,12 +1,16 @@
 from enum import Enum
 
-from src.game.items.items import MaterialIndex
+from src.game.items.abstract_item import MaterialIndex
 
 
 class Recipe(Enum):
     """ A blueprint of sorts for what materials are needed to make a craftable item,
     value represents the harvested materials needed.
     """
+
+    WOOD_AXE = {MaterialIndex.WOOD: 5}
+    WOOD_SWORD = {MaterialIndex.WOOD: 5}
+    WOOD_SHIELD = {MaterialIndex.WOOD: 5, MaterialIndex.VINE: 5}
 
     STONE_AXE = {MaterialIndex.WOOD: 3, MaterialIndex.STONE: 2}
     STONE_SWORD = {MaterialIndex.WOOD: 2, MaterialIndex.STONE: 3}

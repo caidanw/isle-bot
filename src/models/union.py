@@ -2,7 +2,7 @@ from datetime import datetime
 
 from peewee import *
 
-from src.game.models._abstract_model import AbstractModel
+from src.models.abstract_model import AbstractModel
 
 
 class Union(AbstractModel):

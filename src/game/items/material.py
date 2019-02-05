@@ -1,7 +1,15 @@
-from src.game.items.items import Material
+from src.game.items.abstract_item import AbstractItem
 
-""" Forest """
 
+class Material(AbstractItem):
+    def __init__(self, name, harvest_time, consumable=False):
+        super().__init__(name, consumable)
+        self.harvest_time = harvest_time
+
+
+# ======
+# Forest
+# ======
 
 class Wood(Material):
     def __init__(self):
@@ -18,8 +26,9 @@ class Leaf(Material):
         super().__init__('leaf', 2)
 
 
-""" Quarry """
-
+# ====
+# Mine
+# ====
 
 class Stone(Material):
     def __init__(self):
@@ -31,8 +40,9 @@ class Iron(Material):
         super().__init__('iron', 12)
 
 
-""" Swamp"""
-
+# =====
+# Swamp
+# =====
 
 class Clay(Material):
     def __init__(self):
@@ -44,8 +54,9 @@ class Vine(Material):
         super().__init__('vine', 3)
 
 
-""" Field """
-
+# =====
+# Field
+# =====
 
 class Grass(Material):
     def __init__(self):

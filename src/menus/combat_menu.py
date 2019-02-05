@@ -3,7 +3,7 @@ from concurrent import futures
 from discord import Client, TextChannel, User
 
 from src.game.enums.reaction import Reaction
-from src.ui.reaction_menu import ReactionMenu
+from src.menus.abstract_menu import AbstractMenu
 from src.utils.clock import format_time
 
 ACTION_PASS = 10
@@ -22,7 +22,7 @@ REACTIONS = [Reaction.CROSSED_SWORDS.value,  # attack
              Reaction.FLAG_WHITE.value]         # surrender
 
 
-class CombatMenu(ReactionMenu):
+class CombatMenu(AbstractMenu):
     def __init__(self, client: Client, channel: TextChannel):
         super().__init__(client, channel, MESSAGES.copy(), REACTIONS)
 

@@ -1,6 +1,6 @@
 from sqlite3 import OperationalError
 
-from src.game import models
+from src import models
 from src.utils import logger
 from src.utils.cache import db
 

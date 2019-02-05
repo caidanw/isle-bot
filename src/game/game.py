@@ -1,13 +1,13 @@
 from discord import Guild, User
 from peewee import fn
 
-from src.game.models import Union, Player, Resource, Island
+from src.models import Union, Player, Island
 from src.utils import database
 from src.utils.logger import log_db
 
 
 class Game:
-    """Main game class."""
+    """ Main game class. """
 
     def __init__(self):
         """" Initialize main game system. """

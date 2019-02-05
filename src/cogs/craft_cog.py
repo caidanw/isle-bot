@@ -3,10 +3,10 @@ import asyncio
 from discord.ext import commands
 
 from src import settings
-from src.cogs.__abstract_cog import AbstractCog
+from src.cogs._abstract_cog import AbstractCog
 from src.game.enums.recipe import Recipe
 from src.game.game import Game
-from src.game.items import items
+from src.game.items import abstract_item
 from src.utils.clock import format_time
 
 
@@ -34,14 +34,14 @@ class CraftCog(AbstractCog):
         if not inventory.enough_to_craft(recipe):
             return await context.send(f'You do not have enough materials to craft this item.')
 
-        time_to_craft = sum([items.get_by_name(item.name).harvest_time * recipe.get(item) for item in recipe])
+        time_to_craft = sum([item.get_by_name(item.name).harvest_time * recipe.get(item) for item in recipe])
         message = await context.send(f'Crafting {display_name}, time to finish {format_time(time_to_craft)}')
         await asyncio.sleep(time_to_craft)
 
-        for item, amount in recipe.items():
-            inventory.remove_material(item.name, amount)
+        for recipe_item, recipe_amount in recipe.items():
+            inventory.remove_material(recipe_item.name, recipe_amount)
 
-        inventory.add_item(items.get_by_name(recipe_name))
+        inventory.add_item(abstract_item.get_by_name(recipe_name))
         await message.edit(content=f'{author.mention} finished crafting {display_name}')
 
     @commands.command(aliases=['recipes'])
