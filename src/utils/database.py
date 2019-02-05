@@ -10,16 +10,16 @@ def connect():
 
     :return: whether or not the connection was successful
     """
-    has_connected = False
+    successful_connection = False
 
     try:
-        has_connected = db.connect()
-        logger.log_db('Connecting to database', has_connected)
+        successful_connection = db.connect()
+        logger.log_db('Connecting to database', successful_connection)
 
         db_tables = db.get_tables()
 
         # create the proper objects if there aren't any
-        if len(db_tables) != len(models.all_models):
+        if len(db_tables) < len(models.all_models):
             db.create_tables(models.all_models)
             logger.log_db('Created new object tables {}'.format(
                 [table.__name__ for table in models.all_models if table not in db_tables]
@@ -27,4 +27,4 @@ def connect():
     except OperationalError as e:
         logger.log_db(e)
 
-    return has_connected
+    return successful_connection

@@ -7,7 +7,6 @@ from src.models.resource import Resource
 from src.models.union import Union
 
 all_models = [
-    AbstractModel,
     Inventory,
     Island,
     Player,
