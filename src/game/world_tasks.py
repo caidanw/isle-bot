@@ -19,9 +19,13 @@ def register_tasks(client: Client):
         logger.log_world_task(task, 'registered')
 
 
-async def replenish_resources(client: Client):
+async def __func_wait_for_client(func, client):
     await client.wait_until_ready()  # wait until the client is ready to go
-    logger.log_world_task(replenish_resources, 'Starting...')
+    logger.log_world_task(replenish_resources, f'Starting... {func.__name__}')
+
+
+async def replenish_resources(client: Client):
+    await __func_wait_for_client(replenish_resources, client)
 
     while not client.is_closed():
         # replenish the items for all resources that aren't currently full
@@ -32,12 +36,11 @@ async def replenish_resources(client: Client):
         logger.log_world_task(replenish_resources, 'Replenished all resources')
 
         # wait for the appropriate amount of time between replenishment
-        await asyncio.sleep(HOUR)
+        await asyncio.sleep(HOUR * 6)
 
 
 async def set_players_action_idle(client: Client):
-    await client.wait_until_ready()  # wait until the client is ready to go
-    logger.log_world_task(set_players_action_idle, 'Starting...')
+    await __func_wait_for_client(set_players_action_idle, client)
 
     query = Player.update(action=Action.IDLE.value).where(Player.action != Action.IDLE.value)
     query.execute()
