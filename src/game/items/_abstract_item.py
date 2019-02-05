@@ -46,7 +46,7 @@ def get_living_uid(name):
         except KeyError:
             return None
     else:
-        raise ValueError('material name must be a string')
+        raise ValueError('living material name must be a string')
 
 
 def get_crafted_uid(name):
@@ -57,14 +57,11 @@ def get_crafted_uid(name):
         except KeyError:
             return None
     else:
-        raise ValueError('material name must be a string')
+        raise ValueError('crafted item name must be a string')
 
 
 def get_name_by_uid(uid):
-    if isinstance(uid, int):
-        return ItemIndex(int(uid)).name
-    else:
-        raise ValueError('id must be an integer')
+    return ItemIndex(int(uid)).name
 
 
 def get_class_type(name):
@@ -79,10 +76,13 @@ def get_class_type(name):
     class_type = None
 
     if name in material:
+        from src.game.items.material import Material
         class_type = Material
     elif name in living:
+        from src.game.items.living import Living
         class_type = Living
     elif name in crafted:
+        from src.game.items.crafted import Crafted
         class_type = Crafted
 
     return class_type

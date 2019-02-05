@@ -2,10 +2,10 @@ from datetime import datetime
 
 from peewee import *
 
-from src.game.base_model import BaseModel
+from src.game.models._abstract_model import AbstractModel
 
 
-class Union(BaseModel):
+class Union(AbstractModel):
     """ Union class used to represent a Discord Guild. """
 
     guild_id = IntegerField()

@@ -3,11 +3,11 @@ from datetime import datetime
 
 from peewee import *
 
-from src.game.base_model import BaseModel
+from src.game.models._abstract_model import AbstractModel
 from src.game.models.union import Union
 
 
-class Island(BaseModel):
+class Island(AbstractModel):
     """
     Island class used to represent an area a Union can own,
     and a place for Players to harvest Resources.

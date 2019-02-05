@@ -1,14 +1,14 @@
 from peewee import *
 
-from src.game.base_model import BaseModel
+from src.game.models._abstract_model import AbstractModel
 from src.game.enums.action import Action
 from src.game.models.inventory import Inventory
 from src.game.models.island import Island
-from src.game.models.player_stat import PlayerStat
+from src.game.models.player_statistics import PlayerStat
 from src.game.models.union import Union
 
 
-class Player(BaseModel):
+class Player(AbstractModel):
     """ Player class used to represent a Discord User within the game world. """
 
     username = CharField()
