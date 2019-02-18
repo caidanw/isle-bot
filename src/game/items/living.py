@@ -1,7 +1,7 @@
 from discord import User
 
 from src.game.items.material import Material
-from src.menus.level_up_menu import LevelUpMenu
+from src.ui.menus.level_up_menu import LevelUpMenu
 
 
 class Living(Material):

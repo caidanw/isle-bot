@@ -4,7 +4,7 @@ from discord import Client, User, TextChannel
 
 from src import settings
 from src.game.enums.reaction import Reaction
-from src.menus.abstract_menu import AbstractMenu
+from src.ui.menus.abstract_menu import AbstractMenu
 
 REACTIONS = [Reaction.DISMISS.value, Reaction.CONFIRM.value]
 
@@ -13,7 +13,7 @@ class ConfirmMenu(AbstractMenu):
     def __init__(self, client: Client, channel: TextChannel, messages: list):
         super().__init__(client, channel, messages, REACTIONS)
 
-    async def wait_for_user_reaction(self, target_user: User=None):
+    async def wait_for_user_reaction(self, target_user: User = None):
         if self.message_literal is None:
             raise ValueError('Message has not been sent yet, send a message before waiting for the response.')
 

@@ -3,7 +3,7 @@ from concurrent import futures
 from discord import Client, TextChannel, User
 
 from src.game.enums.reaction import Reaction
-from src.menus.abstract_menu import AbstractMenu
+from src.ui.menus.abstract_menu import AbstractMenu
 from src.utils.clock import format_time
 
 ACTION_PASS = 10

@@ -8,9 +8,8 @@ from discord.ext.commands.bot import _default_help_command
 
 from src import settings
 from src.cogs._abstract_cog import AbstractCog
-from src.game.game import Game
-from src.models import Island
 from src.game.enums.reaction import Reaction
+from src.game.game import Game
 from src.utils import logger
 
 

@@ -2,7 +2,7 @@ from discord.ext import commands
 
 from src.cogs._abstract_cog import AbstractCog
 from src.game.enums.reaction import Reaction
-from src.menus.abstract_menu import AbstractMenu
+from src.ui.menus.abstract_menu import AbstractMenu
 
 
 class TestCog(AbstractCog):
