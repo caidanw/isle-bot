@@ -6,7 +6,8 @@ from playhouse.sqlite_ext import JSONField
 
 from src.game.items import abstract_item
 from src.game.resources.abstract_resource import AbstractResource
-from src.models import AbstractModel, Island
+from src.models.abstract_model import AbstractModel
+from src.models.island import Island
 
 
 class Resource(AbstractModel):

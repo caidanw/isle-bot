@@ -1,7 +1,11 @@
 from peewee import *
 
 from src.game.enums.action import Action
-from src.models import AbstractModel, Island, Union, Inventory, PlayerStatistics
+from src.models.abstract_model import AbstractModel
+from src.models.inventory import Inventory
+from src.models.island import Island
+from src.models.player_statistics import PlayerStatistics
+from src.models.union import Union
 
 
 class Player(AbstractModel):

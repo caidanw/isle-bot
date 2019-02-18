@@ -6,7 +6,8 @@ from src.cogs._abstract_cog import AbstractCog
 from src.game.enums.action import Action
 from src.game.enums.stats import STAT_NAMES
 from src.game.game import Game
-from src.models import Resource, Island
+from src.models.island import Island
+from src.models.resource import Resource
 from src.utils import logger
 
 

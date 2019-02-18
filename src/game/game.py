@@ -1,7 +1,10 @@
 from discord import Guild, User
 from peewee import fn
 
-from src.models import Union, Player, Island
+from src.models.island import Island
+from src.models.player import Player
+from src.models.resource import Resource
+from src.models.union import Union
 from src.utils import database
 from src.utils.logger import log_db
 

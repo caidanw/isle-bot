@@ -10,7 +10,6 @@ from src.cogs._abstract_cog import AbstractCog
 from src.game.enums.action import Action
 from src.game.game import Game
 from src.models.inventory import Inventory
-from src.models import Island
 from src.models.player import Player
 from src.models.player_statistics import PlayerStatistics
 from src.utils.clock import format_time

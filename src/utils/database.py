@@ -19,10 +19,10 @@ def connect():
         db_tables = db.get_tables()
 
         # create the proper objects if there aren't any
-        if len(db_tables) < len(models.all_models):
-            db.create_tables(models.all_models)
+        if len(db_tables) < len(models.all_models()):
+            db.create_tables(models.all_models())
             logger.log_db('Created new object tables {}'.format(
-                [table.__name__ for table in models.all_models if table not in db_tables]
+                [table.__name__ for table in models.all_models() if table not in db_tables]
             ))
     except OperationalError as e:
         logger.log_db(e)

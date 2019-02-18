@@ -3,7 +3,8 @@ import asyncio
 from discord import Client
 
 from src.game.enums.action import Action
-from src.models import Resource, Player
+from src.models.player import Player
+from src.models.resource import Resource
 from src.utils import logger
 
 MINUTE = 60
