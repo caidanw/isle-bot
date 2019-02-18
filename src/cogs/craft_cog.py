@@ -11,7 +11,7 @@ from src.utils.clock import format_time
 
 
 class CraftCog(AbstractCog):
-    @commands.command()
+    @commands.command(aliases=['c'])
     async def craft(self, context, *item_to_craft):
         """ Craft a new item from harvested materials. """
         if len(item_to_craft) == 0:
