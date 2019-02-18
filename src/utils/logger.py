@@ -3,7 +3,7 @@ import time
 
 from src import settings
 
-LOG_FILE_NAME = 'src/data/logs.txt'
+LOG_FILE_PATH = 'src/data/logs.txt'
 LOG_KEEP = []
 LAST_WRITE = datetime.datetime.utcnow()
 
@@ -43,8 +43,8 @@ def say_and_keep(message):
         write_logs()
 
 
-def write_logs(filename=LOG_FILE_NAME, logout=False):
-    if len(LOG_KEEP) == 0 and not logout:
+def write_logs(filename=LOG_FILE_PATH, force=False):
+    if len(LOG_KEEP) == 0 and not force:
         return
 
     # copy the logs, then clear the old ones
@@ -57,11 +57,11 @@ def write_logs(filename=LOG_FILE_NAME, logout=False):
     LAST_WRITE = datetime.datetime.utcnow()
 
     with open(filename, 'a') as f:
-        if logout:
+        if force:
             print(f'{date_time()} Finished logging, appending new lines')
-            LOG_KEEP.append('\n\n')
+            old_logs.append('\n\n')
         else:
             print(f'{date_time()} Writing logs to "{filename}"')
 
-        f.write('\n'.join(old_logs))
+        f.writelines(f'\n{line}' for line in old_logs)
     print(f'{date_time()} Finished writing logs to "{filename}"')

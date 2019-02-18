@@ -35,7 +35,7 @@ DEFAULT_DELETE_DELAY = int(config.get('message', 'default_delete_delay'))  # in 
 # how long to wait until a client stops waiting for a reaction or message
 DEFAULT_TIMEOUT = int(config.get('message', 'default_timeout'))  # in seconds
 
-LOG_DELAY = int(config.get('message', 'log_delay'))  # in seconds
+LOG_DELAY = float(config.get('message', 'log_delay'))  # in minutes
 
 
 # =================
