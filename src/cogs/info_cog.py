@@ -10,6 +10,7 @@ from src import settings
 from src.cogs._abstract_cog import AbstractCog
 from src.game.enums.reaction import Reaction
 from src.game.game import Game
+from src.models.island import Island
 from src.utils import logger
 
 

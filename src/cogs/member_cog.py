@@ -9,13 +9,15 @@ from src import settings
 from src.cogs._abstract_cog import AbstractCog
 from src.game.enums.action import Action
 from src.game.game import Game
+from src.game.items import abstract_item
 from src.models.inventory import Inventory
+from src.models.island import Island
 from src.models.player import Player
 from src.models.player_statistics import PlayerStatistics
 from src.utils.clock import format_time
 
 travelers = {}
-re_island = re.compile('(island|isl|i)#(\d+)')
+re_island = re.compile(r'(island|isl|i)#(\d+)')
 
 
 class MemberCog(AbstractCog):
@@ -117,7 +119,7 @@ class MemberCog(AbstractCog):
 
         input_name = ' '.join(item_name)
         item_name = '_'.join(item_name).upper()
-        item = item.get_by_name(item_name)
+        item = abstract_item.get_by_name(item_name)
 
         if item is None:
             return await channel.send(f'The item "{input_name}" does not exist.',
@@ -187,6 +189,7 @@ class MemberCog(AbstractCog):
             return await context.send('You must be on an island to harvest resources.',
                                       delete_after=settings.DEFAULT_DELETE_DELAY)
 
+        resource_name = resource_name.upper()
         resource = island.get_resource(resource_name)
 
         if isinstance(resource, str):

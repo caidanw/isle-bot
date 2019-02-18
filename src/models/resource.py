@@ -4,8 +4,8 @@ import random
 from peewee import *
 from playhouse.sqlite_ext import JSONField
 
+from src.game import resources
 from src.game.items import abstract_item
-from src.game.resources.abstract_resource import AbstractResource
 from src.models.abstract_model import AbstractModel
 from src.models.island import Island
 
@@ -16,8 +16,8 @@ class Resource(AbstractModel):
     name = CharField()
     number = IntegerField(default=0)
     materials = JSONField(default=[])
-    max_material_amount = IntegerField(default=100)
     material_amount = IntegerField(default=100)
+    max_material_amount = IntegerField(default=100)
     island = ForeignKeyField(Island, backref='resources')
 
     @property
@@ -41,15 +41,15 @@ class Resource(AbstractModel):
         :param max_amt: of items to give
         :return: a new instance of the this class
         """
-        resource = random.choice([cls() for cls in AbstractResource.__subclasses__()])
+        resource = random.choice(resources.all_resources())
         resource_num = island.get_amount_of_resources(name) + 1
         amount = random.randint(min_amt, max_amt)
 
         return Resource.create(name=resource.name,
                                number=resource_num,
-                               gives_materials=resource.materials,
-                               max_material_amount=amount,
+                               materials=resource.materials,
                                material_amount=amount,
+                               max_material_amount=amount,
                                island=island)
 
     async def harvest(self, amount):
@@ -79,4 +79,4 @@ class Resource(AbstractModel):
 
     @classmethod
     def is_valid_type(cls, name):
-        return name.lower() in ['forest', 'field', 'mine', 'swamp']
+        return name.upper() in ['FOREST', 'FIELD', 'MINE', 'SWAMP']

@@ -26,6 +26,9 @@ class AbstractItem:
     async def consume(self, client, user: User):
         pass  # leave blank as child classes will be able to define the exact behavior
 
+    def __str__(self):
+        return self.name
+
 
 def get_material_uid(name):
     if isinstance(name, str):
@@ -73,19 +76,15 @@ def get_class_type(name):
     living = list(LivingIndex.__members__.keys())
     crafted = list(CraftedIndex.__members__.keys())
 
-    class_type = None
-
     if name in material:
         from src.game.items.material import Material
-        class_type = Material
+        return Material
     elif name in living:
         from src.game.items.living import Living
-        class_type = Living
+        return Living
     elif name in crafted:
         from src.game.items.crafted import Crafted
-        class_type = Crafted
-
-    return class_type
+        return Crafted
 
 
 def get_by_name(name, new_object=True):
@@ -96,6 +95,9 @@ def get_by_name(name, new_object=True):
     from src.game.items import crafted
     from src.game.items import material
     from src.game.items import living
+    from src.game.items.material import Material
+    from src.game.items.living import Living
+    from src.game.items.crafted import Crafted
     item_file = {
         Material: material,
         Living: living,
